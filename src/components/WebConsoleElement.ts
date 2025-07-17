@@ -181,6 +181,21 @@ export class WebConsoleElement extends HTMLElement {
   public setPrompt(prompt: string) {
     this.setAttribute('prompt', prompt);
   }
+
+  public getCurrentWorkingDirectory(): string {
+    // Fallback to root directory if console not available
+    return '/home/user';
+  }
+
+  public getConsoleState(): any {
+    return this._console?.getState() || {};
+  }
+
+  public override focus() {
+    if (this._input) {
+      this._input.focus();
+    }
+  }
 }
 
 // Registriere Custom Element

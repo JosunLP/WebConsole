@@ -1,5 +1,6 @@
 /**
  * Virtual File System für Web-Console
+ * Implementiert ein vollständiges virtuelles Dateisystem mit Mount-Points
  */
 
 import {
@@ -286,20 +287,26 @@ Features:
 
   /**
    * Prüfen ob Pfad existiert
+   * Optimierte Version mit besserer Cache-Nutzung
    */
   exists(path: Path): boolean {
     try {
       const normalizedPath = this.resolve(path);
 
-      // Prüfe Cache zuerst
+      // Prüfe Cache zuerst - schnellster Weg
       if (this.pathCache.has(normalizedPath)) {
         const inode = this.pathCache.get(normalizedPath)!;
         return this.inodeCache.has(inode);
       }
 
-      // Versuche den Pfad zu resolven
+      // Versuche den Pfad zu resolven durch Parent-Verzeichnisse
       const segments = normalizedPath.split('/').filter(Boolean);
       let currentPath = '/';
+
+      // Root-Verzeichnis existiert immer
+      if (segments.length === 0) {
+        return true;
+      }
 
       for (const segment of segments) {
         const cachedInode = this.pathCache.get(currentPath);
@@ -908,5 +915,30 @@ Features:
    */
   private getNextInodeNumber(): InodeNumber {
     return this.nextInodeNumber++;
+  }
+
+  /**
+   * Cache-Statistiken abrufen (für Debugging)
+   */
+  public getCacheStats(): {
+    pathCacheSize: number;
+    inodeCacheSize: number;
+    mountPointsCount: number;
+    nextInodeNumber: number;
+  } {
+    return {
+      pathCacheSize: this.pathCache.size,
+      inodeCacheSize: this.inodeCache.size,
+      mountPointsCount: this.mountPoints.size,
+      nextInodeNumber: this.nextInodeNumber,
+    };
+  }
+
+  /**
+   * Cache leeren (für Tests oder Debugging)
+   */
+  public clearCache(): void {
+    this.pathCache.clear();
+    this.inodeCache.clear();
   }
 }

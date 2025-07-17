@@ -287,4 +287,31 @@ export class LocalStorageProvider implements IVFSProvider {
   async removeChild(parentInode: InodeNumber, name: string): Promise<void> {
     await this.removeDirEntry(parentInode, name);
   }
+
+  /**
+   * Provider-Statistiken abrufen
+   */
+  getProviderStats(): {
+    provider: string;
+    storageKey: string;
+    totalEntries: number;
+    storageSize: number;
+  } {
+    const data = localStorage.getItem(this.storageKey);
+    return {
+      provider: this.name,
+      storageKey: this.storageKey,
+      totalEntries: this.storage.size,
+      storageSize: data ? data.length : 0,
+    };
+  }
+
+  /**
+   * Storage bereinigen
+   */
+  clear(): void {
+    this.storage.clear();
+    this.nextInode = 1;
+    localStorage.removeItem(this.storageKey);
+  }
 }
