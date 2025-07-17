@@ -3,11 +3,9 @@
  * Implementiert ein virtuelles Dateisystem basierend auf localStorage
  */
 
-import { FileType } from "../../enums/FileType.enum.js";
-import type { IDirEntry } from "../../interfaces/IDirEntry.interface.js";
-import type { INode } from "../../interfaces/INode.interface.js";
-import type { IVFSProvider } from "../../interfaces/IVFSProvider.interface.js";
-import type { InodeNumber, PermissionMask } from "../../types/index.js";
+import { FileType, Permission, VfsItemType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
+import type { InodeNumber } from "../../types/index.js";
 
 interface StorageEntry {
   inode: INode;
@@ -49,27 +47,24 @@ export class LocalStorageProvider implements IVFSProvider {
     this.saveToStorage();
   }
 
-  async createInode(
-    type: FileType,
-    permissions: PermissionMask,
-  ): Promise<INode> {
+  async createInode(type: VfsItemType, permissions: number): Promise<INode> {
     const inode: INode = {
       inode: this.nextInode++,
       type,
-      permissions,
+      permissions: permissions as Permission,
       owner: "user",
       group: "users",
       size: 0,
-      atime: new Date(),
-      mtime: new Date(),
-      ctime: new Date(),
+      atime: Date.now(),
+      mtime: Date.now(),
+      ctime: Date.now(),
       nlink: 1,
     };
 
     const entry: StorageEntry = {
       inode,
-      data: type === FileType.FILE ? new Uint8Array(0) : undefined,
-      children: type === FileType.DIRECTORY ? new Map() : undefined,
+      data: type === VfsItemType.FILE ? new Uint8Array(0) : new Uint8Array(0),
+      children: type === VfsItemType.DIRECTORY ? new Map() : new Map(),
     };
 
     this.storage.set(inode.inode, entry);
@@ -106,7 +101,7 @@ export class LocalStorageProvider implements IVFSProvider {
     }
 
     Object.assign(entry.inode, updates);
-    entry.inode.mtime = new Date();
+    entry.inode.mtime = Date.now();
 
     this.saveToStorage();
     return entry.inode;
@@ -126,9 +121,6 @@ export class LocalStorageProvider implements IVFSProvider {
           name,
           type: childEntry.inode.type,
           inode: childInode,
-          permissions: childEntry.inode.permissions,
-          size: childEntry.inode.size,
-          mtime: childEntry.inode.mtime,
         });
       }
     }
@@ -160,7 +152,7 @@ export class LocalStorageProvider implements IVFSProvider {
     }
 
     entry.children.set(name, childInode);
-    entry.inode.mtime = new Date();
+    entry.inode.mtime = Date.now();
     this.saveToStorage();
   }
 
@@ -178,7 +170,7 @@ export class LocalStorageProvider implements IVFSProvider {
     }
 
     entry.children.delete(name);
-    entry.inode.mtime = new Date();
+    entry.inode.mtime = Date.now();
     this.saveToStorage();
   }
 
@@ -227,20 +219,22 @@ export class LocalStorageProvider implements IVFSProvider {
         const inode = parseInt(inodeStr, 10);
         const entry: StorageEntry = {
           inode: {
-            ...entryData.inode,
-            atime: new Date(entryData.inode.atime),
-            mtime: new Date(entryData.inode.mtime),
-            ctime: new Date(entryData.inode.ctime),
+            ...(entryData as any).inode,
+            atime: (entryData as any).inode.atime,
+            mtime: (entryData as any).inode.mtime,
+            ctime: (entryData as any).inode.ctime,
           },
-          data: entryData.data ? new Uint8Array(entryData.data) : undefined,
-          children: entryData.children
+          data: (entryData as any).data
+            ? new Uint8Array((entryData as any).data)
+            : new Uint8Array(0),
+          children: (entryData as any).children
             ? new Map(
-                Object.entries(entryData.children).map(([k, v]) => [
+                Object.entries((entryData as any).children).map(([k, v]) => [
                   k,
                   Number(v),
                 ]),
               )
-            : undefined,
+            : new Map(),
         };
         this.storage.set(inode, entry);
       }
@@ -252,13 +246,13 @@ export class LocalStorageProvider implements IVFSProvider {
 
   private saveToStorage(): void {
     try {
-      const data = {
+      const data: any = {
         nextInode: this.nextInode,
         entries: {},
       };
 
       for (const [inode, entry] of this.storage) {
-        data.entries[inode] = {
+        (data.entries as any)[inode] = {
           inode: entry.inode,
           data: entry.data ? Array.from(entry.data) : undefined,
           children: entry.children

@@ -55,6 +55,7 @@ export interface PipelineSegment {
   readonly command: string;
   readonly args: CommandArgs;
   readonly redirections: Redirection[];
+  readonly environment?: Environment; // Lokale Environment-Variablen für diesen Befehl
 }
 
 /**

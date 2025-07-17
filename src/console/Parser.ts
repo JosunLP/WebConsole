@@ -123,6 +123,7 @@ export class Parser {
     let command = "";
     const args: CommandArgs = [];
     const redirections: Redirection[] = [];
+    const environment: Environment = {};
 
     // Command-Name
     if (
@@ -143,6 +144,11 @@ export class Parser {
     while (!this.isCommandEnd()) {
       if (this.isRedirection()) {
         redirections.push(this.parseRedirection());
+      } else if (this.current().type === TokenType.ASSIGNMENT) {
+        // Environment-Variable assignment für diesen Befehl
+        const assignment = this.parseAssignment();
+        environment[assignment.key] = assignment.value;
+        this.advance();
       } else if (
         this.current().type === TokenType.WORD ||
         this.current().type === TokenType.STRING
@@ -162,6 +168,7 @@ export class Parser {
       command,
       args,
       redirections,
+      environment, // Hinzufügen der lokalen Environment-Variablen
     };
   }
 

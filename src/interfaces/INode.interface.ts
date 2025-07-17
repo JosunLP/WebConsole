@@ -14,8 +14,13 @@ export interface INode {
   type: VfsItemType;
   size: number;
   readonly nlink?: number;
+  readonly linkCount?: number; // Für ls-Command
   readonly blocks?: number;
-  readonly atime?: Timestamp; // Für Kompatibilität
-  mtime?: Timestamp; // Für Kompatibilität
-  readonly ctime?: Timestamp; // Für Kompatibilität
+  readonly atime?: Timestamp;
+  mtime?: Timestamp;
+  readonly ctime?: Timestamp;
+  readonly modified?: number; // Für Sortierung in ls
+  readonly owner?: string; // Für ls-Command
+  readonly group?: string; // Für ls-Command
+  readonly target?: string; // Für Symlinks
 }

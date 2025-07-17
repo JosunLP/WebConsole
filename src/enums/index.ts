@@ -9,7 +9,6 @@
 export { CommandType } from "./CommandType.enum";
 export { ConsoleEvent } from "./ConsoleEvent.enum";
 export { ExitCode } from "./ExitCode.enum";
-export { FileType } from "./FileType.enum";
 export { KernelEvent } from "./KernelEvent.enum";
 export { LogLevel } from "./LogLevel.enum";
 export { Permission } from "./Permission.enum";
@@ -18,4 +17,4 @@ export { RedirectionType } from "./RedirectionType.enum";
 export { ThemeMode } from "./ThemeMode.enum";
 export { VfsError } from "./VfsError.enum";
 export { VFSEvent } from "./VFSEvent.enum";
-export { VfsItemType } from "./VfsItemType.enum";
+export { FileType, VfsItemType } from "./VfsItemType.enum";

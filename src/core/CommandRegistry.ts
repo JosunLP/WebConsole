@@ -45,8 +45,9 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Registry initialisieren und Built-in Commands registrieren
    */
   async initialize(): Promise<void> {
-    // Built-in Commands werden lazy geladen wenn sie aufgerufen werden
-    // Hier könnten wir die Registry für Standard-Commands vorbereiten
+    // Built-in Commands dynamisch registrieren - sie werden lazy geladen
+    // Hier können wir bereits einen Default-Satz registrieren
+    this.registerBuiltinCommands(null); // VFS wird später per Kernel injiziert
   }
 
   /**
@@ -254,22 +255,11 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Register all built-in commands
    */
   registerBuiltinCommands(vfs: any): void {
-    // File system commands that need VFS
-    this.register(new LsCommand(vfs) as ICommandHandler);
-    this.register(new CdCommand(vfs) as ICommandHandler);
-
-    // File system commands that don't need VFS constructor param
-    this.register(new PwdCommand() as ICommandHandler);
-    this.register(new CatCommand() as ICommandHandler);
-    this.register(new MkdirCommand() as ICommandHandler);
-    this.register(new CpCommand() as ICommandHandler);
-    this.register(new MvCommand() as ICommandHandler);
-    this.register(new RmCommand() as ICommandHandler);
-
-    // Utility commands
+    // Commands that work without VFS
     this.register(new EchoCommand() as ICommandHandler);
     this.register(new ClearCommand() as ICommandHandler);
     this.register(new HelpCommand(this) as ICommandHandler);
+    this.register(new PwdCommand() as ICommandHandler);
 
     // Environment commands
     this.register(new ExportCommand() as ICommandHandler);
@@ -277,8 +267,19 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
     this.register(new EnvCommand() as ICommandHandler);
     this.register(new HistoryCommand() as ICommandHandler);
 
-    // Console commands
+    // Theme commands
     this.register(new ThemeCommand() as ICommandHandler);
+
+    // VFS-dependent commands (register only if VFS is available)
+    if (vfs) {
+      this.register(new LsCommand(vfs) as ICommandHandler);
+      this.register(new CdCommand(vfs) as ICommandHandler);
+      this.register(new CatCommand() as ICommandHandler);
+      this.register(new MkdirCommand() as ICommandHandler);
+      this.register(new CpCommand() as ICommandHandler);
+      this.register(new MvCommand() as ICommandHandler);
+      this.register(new RmCommand() as ICommandHandler);
+    }
   }
 
   /**

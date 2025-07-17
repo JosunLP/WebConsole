@@ -2,10 +2,10 @@
  * ls - List directory contents
  */
 
-import { ExitCode, FileType } from "../../enums/index.js";
-import { IDirEntry, INode, IVFS } from "../../interfaces/index.js";
-import { CommandContext } from "../../types/index.js";
-import { BaseCommand } from "../BaseCommand.js";
+import { ExitCode, FileType } from "../../enums/index.ts";
+import { IDirEntry, INode, IVFS } from "../../interfaces/index.ts";
+import { CommandContext } from "../../types/index.ts";
+import { BaseCommand } from "../BaseCommand.ts";
 
 export class LsCommand extends BaseCommand {
   constructor(private vfs: IVFS) {
@@ -157,7 +157,7 @@ export class LsCommand extends BaseCommand {
       let comparison: number;
 
       if (sortByTime) {
-        comparison = b.stat.modified - a.stat.modified; // Newer first
+        comparison = (b.stat.modified || 0) - (a.stat.modified || 0); // Newer first
       } else {
         comparison = a.entry.name.localeCompare(b.entry.name); // Alphabetical
       }
@@ -256,11 +256,11 @@ export class LsCommand extends BaseCommand {
     const perms = this.formatPermissions(stat.permissions);
 
     // Link count
-    const linkCount = stat.linkCount.toString().padStart(3);
+    const linkCount = (stat.linkCount || 1).toString().padStart(3);
 
     // Owner and group
-    const owner = stat.owner.padEnd(8);
-    const group = stat.group.padEnd(8);
+    const owner = (stat.owner || "user").padEnd(8);
+    const group = (stat.group || "user").padEnd(8);
 
     // File size
     const size = humanReadable
@@ -268,7 +268,7 @@ export class LsCommand extends BaseCommand {
       : stat.size.toString().padStart(8);
 
     // Date
-    const date = this.formatDate(stat.modified).padEnd(12);
+    const date = this.formatDate(stat.modified || Date.now()).padEnd(12);
 
     // File name with color
     let name = entry.name;

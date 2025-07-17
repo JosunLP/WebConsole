@@ -18,4 +18,7 @@ export interface ICommandRegistry {
   alias(alias: string, command: string): void;
   unalias(alias: string): void;
   getAliases(): Record<string, string>;
+
+  // Built-in Commands
+  registerBuiltinCommands(vfs: any): void;
 }

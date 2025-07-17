@@ -4,12 +4,14 @@
 
 import { ConsoleInstance } from "../console/index.js";
 import { CommandRegistry } from "./CommandRegistry.js";
+import { ComponentRegistry } from "./ComponentRegistry.js";
 import { EventEmitter } from "./EventEmitter.js";
 import { Logger } from "./Logger.js";
 import { StateManager } from "./StateManager.js";
 import { VFS } from "./VFS.js";
 
 import type { ICommandRegistry } from "../interfaces/ICommandRegistry.interface.js";
+import type { IComponentRegistry } from "../interfaces/IComponentRegistry.interface.js";
 import type { IConsole } from "../interfaces/IConsole.interface.js";
 import type { IConsoleOptions } from "../interfaces/IConsoleOptions.interface.js";
 import type { IKernel } from "../interfaces/IKernel.interface.js";
@@ -20,6 +22,7 @@ import type { IVFS } from "../interfaces/IVFS.interface.js";
 import type { ID } from "../types/index.js";
 
 import { KernelEvent } from "../enums/KernelEvent.enum.js";
+import { PluginManager } from "../plugins/PluginManager.js";
 
 export class Kernel extends EventEmitter implements IKernel {
   private static _instance: Kernel | null = null;
@@ -31,6 +34,8 @@ export class Kernel extends EventEmitter implements IKernel {
   private _vfs: IVFS;
   private _themeManager: IThemeManager | null = null;
   private _commandRegistry: ICommandRegistry;
+  private _componentRegistry: IComponentRegistry;
+  private _pluginManager: PluginManager;
   private _logger: ILogger;
   private _globalState: IStateManager;
 
@@ -45,6 +50,8 @@ export class Kernel extends EventEmitter implements IKernel {
     this._globalState = new StateManager("global");
     this._vfs = new VFS();
     this._commandRegistry = new CommandRegistry();
+    this._componentRegistry = new ComponentRegistry();
+    this._pluginManager = new PluginManager();
 
     this._logger.info("Kernel initialized");
   }
@@ -77,6 +84,12 @@ export class Kernel extends EventEmitter implements IKernel {
 
       // Initialize command registry with built-ins
       await this._commandRegistry.initialize();
+
+      // Inject VFS into command registry for VFS-dependent commands
+      this._commandRegistry.registerBuiltinCommands(this._vfs);
+
+      // Initialize component registry with built-in components
+      await this._componentRegistry.registerBuiltInComponents();
 
       // Initialize theme manager
       const { ThemeManager } = await import("./ThemeManager.js");
@@ -139,6 +152,14 @@ export class Kernel extends EventEmitter implements IKernel {
 
   public getCommandRegistry(): ICommandRegistry {
     return this._commandRegistry;
+  }
+
+  public getComponentRegistry(): IComponentRegistry {
+    return this._componentRegistry;
+  }
+
+  public getPluginManager(): PluginManager {
+    return this._pluginManager;
   }
 
   public getLogger(): ILogger {

@@ -5,6 +5,7 @@
 import { ID } from "../types/index.js";
 
 import { ICommandRegistry } from "./ICommandRegistry.interface.js";
+import { IComponentRegistry } from "./IComponentRegistry.interface.js";
 import { IConsole } from "./IConsole.interface.js";
 import { IConsoleOptions } from "./IConsoleOptions.interface.js";
 import { IEventEmitter } from "./IEventEmitter.interface.js";
@@ -25,6 +26,8 @@ export interface IKernel extends IEventEmitter {
   getVFS(): IVFS;
   getThemeManager(): IThemeManager;
   getCommandRegistry(): ICommandRegistry;
+  getComponentRegistry(): IComponentRegistry;
+  getPluginManager(): any; // PluginManager type will be imported separately
   getLogger(): ILogger;
 
   // Console Management

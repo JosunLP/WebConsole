@@ -3,10 +3,8 @@
  * Implementiert ein rein im Speicher basiertes virtuelles Dateisystem
  */
 
-import { FileType } from "../../enums/FileType.enum.js";
-import type { IDirEntry } from "../../interfaces/IDirEntry.interface.js";
-import type { INode } from "../../interfaces/INode.interface.js";
-import type { IVFSProvider } from "../../interfaces/IVFSProvider.interface.js";
+import { FileType, Permission, VfsItemType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
 import type {
   InodeNumber,
   PermissionMask,
@@ -57,32 +55,29 @@ export class MemoryProvider implements IVFSProvider {
     const updatedInode: INode = {
       ...entry.inode,
       size: data.length,
-      modified: Date.now(),
-      accessed: Date.now(),
+      mtime: Date.now(),
+      atime: Date.now(),
     };
 
     entry.inode = updatedInode;
   }
 
   async createInode(
-    type: FileType,
+    type: VfsItemType,
     permissions: PermissionMask,
   ): Promise<INode> {
     const now = Date.now();
     const inode: INode = {
       inode: this.nextInode++,
       type,
-      permissions,
+      permissions: permissions as Permission,
       owner: "user",
       group: "user",
       size: 0,
-      created: now,
-      modified: now,
-      accessed: now,
       mtime: now,
       atime: now,
       ctime: now,
-      blocks: [],
+      blocks: 0,
       linkCount: 1,
     };
 
@@ -237,18 +232,15 @@ export class MemoryProvider implements IVFSProvider {
     const now = Date.now();
     const rootInode: INode = {
       inode: this.nextInode++,
-      type: FileType.DIRECTORY,
-      permissions: 0o755,
+      type: VfsItemType.DIRECTORY,
+      permissions: 0o755 as Permission,
       owner: "root",
       group: "root",
       size: 0,
-      created: now,
-      modified: now,
-      accessed: now,
       mtime: now,
       atime: now,
       ctime: now,
-      blocks: [],
+      blocks: 0,
       linkCount: 2, // '.' und '..'
     };
 
