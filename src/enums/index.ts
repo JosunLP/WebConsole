@@ -22,6 +22,8 @@ export enum ExitCode {
   SUCCESS = 0,
   /** Allgemeiner Fehler */
   ERROR = 1,
+  /** Allgemeiner Fehler (Alias für ERROR) */
+  FAILURE = 1,
   /** Ungültige Verwendung eines Shell-Builtins */
   MISUSE = 2,
   /** Befehl nicht gefunden */
@@ -50,6 +52,42 @@ export enum FileType {
   CHAR_DEVICE = 'char',
   /** Named Pipe */
   FIFO = 'fifo'
+}
+
+/**
+ * VFS-Eintragstypen (kompatibel mit FileType)
+ */
+export enum VfsItemType {
+  /** Reguläre Datei */
+  FILE = 'file',
+  /** Verzeichnis */
+  DIRECTORY = 'directory',
+  /** Symbolischer Link */
+  SYMLINK = 'symlink'
+}
+
+/**
+ * VFS-Fehlercodes
+ */
+export enum VfsError {
+  /** Datei oder Verzeichnis nicht gefunden */
+  NOT_FOUND = 'ENOENT',
+  /** Zugriff verweigert */
+  ACCESS_DENIED = 'EACCES',
+  /** Ist ein Verzeichnis */
+  IS_DIRECTORY = 'EISDIR',
+  /** Ist keine Datei */
+  NOT_A_FILE = 'ENOTFILE',
+  /** Datei existiert bereits */
+  FILE_EXISTS = 'EEXIST',
+  /** Verzeichnis nicht leer */
+  NOT_EMPTY = 'ENOTEMPTY',
+  /** Ungültiger Pfad */
+  INVALID_PATH = 'EINVAL',
+  /** Kein Speicherplatz */
+  NO_SPACE = 'ENOSPC',
+  /** Zu viele Links */
+  TOO_MANY_LINKS = 'EMLINK'
 }
 
 /**
