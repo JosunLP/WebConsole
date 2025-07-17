@@ -2,8 +2,8 @@
  * Theme Manager Interface
  */
 
-import { IEventEmitter } from "./IEventEmitter.interface.js";
-import { ITheme } from "./ITheme.interface.js";
+import { IEventEmitter } from './IEventEmitter.interface.js';
+import { ITheme } from './ITheme.interface.js';
 
 export interface IThemeManager extends IEventEmitter {
   getCurrentTheme(): ITheme;
@@ -19,4 +19,7 @@ export interface IThemeManager extends IEventEmitter {
   // Token-Zugriff
   getToken(name: string): string | undefined;
   setToken(name: string, value: string): void;
+
+  // Cleanup
+  dispose(): void;
 }

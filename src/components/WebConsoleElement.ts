@@ -147,8 +147,20 @@ export class WebConsoleElement extends HTMLElement {
         this.style.height = value;
         break;
       case 'theme':
-        // TODO: Theme-Wechsel implementieren
+        this.applyTheme(value);
         break;
+    }
+  }
+
+  private async applyTheme(themeName: string) {
+    try {
+      const themeManager = kernel.getThemeManager();
+      if (themeManager) {
+        await themeManager.setTheme(themeName);
+        themeManager.injectCSS();
+      }
+    } catch (error) {
+      console.warn(`Failed to apply theme '${themeName}':`, error);
     }
   }
 

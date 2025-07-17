@@ -2,10 +2,10 @@
  * VFS-Provider Interface
  */
 
-import { VfsItemType } from "../enums/index.js";
-import { InodeNumber, PermissionMask } from "../types/index.js";
-import { IDirEntry } from "./IDirEntry.interface.js";
-import { INode } from "./INode.interface.js";
+import { VfsItemType } from '../enums/index.js';
+import { InodeNumber, PermissionMask } from '../types/index.js';
+import { IDirEntry } from './IDirEntry.interface.js';
+import { INode } from './INode.interface.js';
 
 export interface IVFSProvider {
   readonly name: string;
@@ -18,4 +18,15 @@ export interface IVFSProvider {
   updateInode(inode: InodeNumber, updates: Partial<INode>): Promise<INode>;
   readDir(inode: InodeNumber): Promise<IDirEntry[]>;
   exists(inode: InodeNumber): Promise<boolean>;
+
+  // Optional initialization method
+  initialize?(): Promise<void>;
+
+  // Optional directory management
+  addChild?(
+    parentInode: InodeNumber,
+    name: string,
+    childInode: InodeNumber
+  ): Promise<void>;
+  removeChild?(parentInode: InodeNumber, name: string): Promise<void>;
 }
