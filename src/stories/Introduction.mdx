@@ -1,0 +1,90 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="📚 WebConsole Documentation" />
+
+# 🖥️ WebConsole Test Suite
+
+Willkommen zur **WebConsole Storybook Test Suite**! Diese interaktive Testumgebung ersetzt die einfache `test.html` und bietet umfassende Tests für alle WebConsole-Components.
+
+## 🎯 Was ist WebConsole?
+
+WebConsole ist eine **modulare, vollständig im Browser laufende Console-Bibliothek** für moderne Web-Anwendungen.
+
+### ✨ Features
+- 🔧 **Modulare Architektur** - Kernel, VFS, StateManager, Parser
+- 🗂️ **Virtuelles Dateisystem** - POSIX-ähnlich mit localStorage-Backend
+- 🎨 **Framework-agnostisch** - Angular, React, Vue, Svelte, Web Components
+- 🔒 **Sicherheit** - Sandbox, CSP-kompatibel, keine eval()-Nutzung
+- 📦 **Tree-Shaking** - Minimale Bundle-Größe durch modularen Aufbau
+
+## 🧪 Test-Kategorien
+
+### 1. **Components**
+Teste die Web-Components und UI-Elemente:
+- **WebConsole** - Native Web Component mit verschiedenen Konfigurationen
+- **Interactive Demo** - Vollständig funktionsfähige Console mit Test-Commands
+
+### 2. **Core System**
+Teste die Core-Architektur:
+- **Kernel Tests** - Singleton-Controller Lifecycle-Management
+- **VFS Tests** - Virtual File System Operationen
+- **Command Tests** - Command-Execution und Parser
+
+## 🚀 Schnellstart
+
+1. **Component testen:**
+   - Navigiere zu \`Components/WebConsole\`
+   - Wähle "Interactive Demo"
+   - Teste Commands: \`echo\`, \`help\`, \`clear\`, \`test\`
+
+2. **Core-System testen:**
+   - Navigiere zu \`Core/System Tests\`
+   - Klicke "🧪 Run All Tests" für automatischen Durchlauf
+   - Oder teste einzelne Module manuell
+
+## ⚡ Verfügbare Commands
+
+Teste diese Commands in allen Interactive Demos:
+
+\`\`\`bash
+echo [text]    # Text ausgeben
+help           # Hilfe anzeigen
+clear          # Console leeren
+test           # System-Test
+\`\`\`
+
+## 🛠️ Development
+
+**Build erstellen:**
+\`\`\`bash
+npm run build
+\`\`\`
+
+**Storybook starten:**
+\`\`\`bash
+npm run storybook
+\`\`\`
+
+**Tests ausführen:**
+\`\`\`bash
+npm run test
+\`\`\`
+
+## 📊 Aktueller Status
+
+- ✅ **Core-System** (80%) - Kernel, VFS, StateManager
+- ✅ **Native Web Component** (90%) - Vollständig funktionsfähig
+- ⚠️ **Command Parser** (50%) - Basis-Implementation
+- ⚠️ **React Component** (60%) - JSX-Build-Issues
+- ❌ **Built-in Commands** (20%) - Nur Basic-Commands
+- ❌ **Theme System** (0%) - Geplant
+
+## 🔗 Links
+
+- **GitHub:** [WebConsole Repository](#)
+- **Documentation:** [PROJECT.md](./docs/PROJECT.md)
+- **Status:** [STATUS.md](./STATUS.md)
+
+---
+
+*Viel Spaß beim Testen! 🎉*

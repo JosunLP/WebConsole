@@ -11,10 +11,26 @@ npm install
 npm run build
 ```
 
-### 2. Test-Seite öffnen
+### 2. Test mit Storybook (Empfohlen)
 
 ```bash
-# HTTP-Server starten (für ES Module)
+npm run storybook  # Startet auf http://localhost:6006
+```
+
+**Storybook bietet:**
+
+- 🎮 Interactive Demos mit Test-Buttons
+- 🔧 Core-System Tests (Kernel, VFS, StateManager)
+- 📱 Component Tests in verschiedenen Konfigurationen
+- 📚 Live-Dokumentation mit Code-Beispielen
+
+### 3. Alternative: Lokaler HTTP-Server
+
+```bash
+# Einfach:
+npm run serve
+
+# Oder manuell:
 python -m http.server 8000
 # oder
 npx http-server .
@@ -82,7 +98,7 @@ Web-Console ermöglicht es Entwicklern, in Sekundenschnelle eine Windows-Termina
 
 ### Verzeichnis-Struktur
 
-```
+```bash
 src/
 ├── types/          # Globale TypeScript-Typen
 ├── enums/          # Globale Enums
@@ -353,4 +369,4 @@ MIT License - siehe [LICENSE](LICENSE) für Details.
 
 ---
 
-**Made with ❤️ für die Developer Community**
+**_Made with ❤️ für die Developer Community_**

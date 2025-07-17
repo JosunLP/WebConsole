@@ -30,11 +30,13 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "serve": "powershell -ExecutionPolicy Bypass -File start-server.ps1",
-    "test": "vitest",
+    "test": "npm run storybook",
+    "test:storybook": "storybook dev -p 6006",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "keywords": [
     "console",
@@ -50,14 +52,18 @@
   "author": "Web-Console Team",
   "license": "MIT",
   "devDependencies": {
+    "@storybook/addon-docs": "^9.0.17",
+    "@storybook/html-vite": "^9.0.17",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
+    "eslint-plugin-storybook": "^9.0.17",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
+    "storybook": "^9.0.17",
     "typescript": "^5.8.3",
-    "vitest": "^1.0.0"
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@angular/core": ">=16.0.0",
@@ -78,5 +84,10 @@
     "svelte": {
       "optional": true
     }
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }
