@@ -44,7 +44,7 @@ export class LocalStorageProvider implements IVFSProvider {
 
     entry.data = data;
     entry.inode.size = data.length;
-    entry.inode.mtime = new Date();
+    (entry.inode as any).mtime = Date.now();
 
     this.saveToStorage();
   }

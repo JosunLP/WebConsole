@@ -5,7 +5,10 @@
 // Interface Exports
 export type { ICommandHandler } from "./ICommandHandler.interface.js";
 export type { ICommandRegistry } from "./ICommandRegistry.interface.js";
-export type { IComponentRegistry } from "./IComponentRegistry.interface.js";
+export type {
+  IComponent,
+  IComponentRegistry,
+} from "./IComponentRegistry.interface.js";
 export type { IConsole } from "./IConsole.interface.js";
 export type { IConsoleOptions } from "./IConsoleOptions.interface.js";
 export type { IDirEntry } from "./IDirEntry.interface.js";

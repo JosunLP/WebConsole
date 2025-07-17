@@ -1,0 +1,32 @@
+// TypeScript-Konfiguration für Entwicklung mit weniger restriktiven Regeln
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.stories.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

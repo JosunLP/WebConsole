@@ -1,21 +1,36 @@
-/**
- * Hauptexport für die Web-Console-Bibliothek
- */
+// Einfacher Build-Test ohne Framework-spezifische Teile
+import { WebConsoleElement } from "./components/WebConsoleElement.js";
+import { Kernel } from "./core/Kernel.js";
 
-// Core-Exports
-export * from "./core/index.js";
-export * from "./enums/index.js";
-export * from "./interfaces/index.js";
-export * from "./types/index.js";
+// Core-Exports für grundlegende Funktionalität
+export { Kernel, WebConsoleElement };
 
-// Utils
-export * from "./utils/index.js";
+// Core-Klassen
+export { CommandRegistry } from "./core/CommandRegistry.js";
+export { ComponentRegistry } from "./core/ComponentRegistry.js";
+export { StateManager } from "./core/StateManager.js";
+export { ThemeManager } from "./core/ThemeManager.js";
+export { VFS } from "./core/VFS.js";
 
-// Console
-export * from "./console/index.js";
+// Console-Komponenten
+export { ConsoleInstance } from "./console/ConsoleInstance.js";
+export { Lexer } from "./console/Lexer.js";
+export { Parser } from "./console/Parser.js";
 
-// Components (Native Web Components)
-export * from "./components/index.js";
+// Base-Classes für Extension
+export { BaseCommand } from "./console/BaseCommand.js";
 
-// Kernel Singleton für einfachen Zugriff
-export { kernel } from "./core/Kernel.js";
+// Themes
+export * as Themes from "./themes/index.js";
+
+// Types & Interfaces für API
+export type * from "./enums/index.js";
+export type * from "./interfaces/index.js";
+export type * from "./types/index.js";
+
+console.log("✅ WebConsole Core loaded successfully!");
+
+// Auto-Register Web Component
+if (typeof window !== "undefined" && !customElements.get("web-console")) {
+  customElements.define("web-console", WebConsoleElement);
+}

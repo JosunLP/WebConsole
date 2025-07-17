@@ -63,7 +63,7 @@ export class VFS extends EventEmitter implements IVFS {
   private async initializeRoot(): Promise<void> {
     // Default LocalStorage Provider für Root-Filesystem
     const { LocalStorageProvider } = await import(
-      "../core/providers/LocalStorageProvider.js"
+      "./providers/LocalStorageProvider.js"
     );
     const rootProvider = new LocalStorageProvider("web-console-root");
 
@@ -839,9 +839,26 @@ Features:
     name: string,
     options: Record<string, unknown>,
   ): Promise<IVFSProvider> {
-    // Hier würde die Provider-Registry verwendet
-    // Vorerst Dummy-Implementation
-    throw new Error(`Provider not implemented: ${name}`);
+    switch (name) {
+      case "localStorage": {
+        const { LocalStorageProvider } = await import(
+          "./providers/LocalStorageProvider.js"
+        );
+        return new LocalStorageProvider(options.storageKey as string);
+      }
+      case "memory": {
+        const { MemoryProvider } = await import(
+          "./providers/MemoryProvider.js"
+        );
+        return new MemoryProvider();
+      }
+      case "indexedDB": {
+        // TODO: Implement IndexedDBProvider
+        throw new Error("IndexedDB provider not yet implemented");
+      }
+      default:
+        throw new Error(`Unknown provider: ${name}`);
+    }
   }
 
   /**

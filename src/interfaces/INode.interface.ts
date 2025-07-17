@@ -2,32 +2,20 @@
  * VFS-Inode (Filesystem-Metadaten)
  */
 
-import {
-  BlockAddress,
-  InodeNumber,
-  MimeType,
-  Path,
-  PermissionMask,
-  Timestamp,
-} from "../types/index.js";
+import { Timestamp } from "../types/index.js";
 
-import { FileType } from "../enums/index.js";
+import { Permission, VfsItemType } from "../enums/index.js";
 
 export interface INode {
-  readonly inode: InodeNumber;
-  readonly type: FileType;
-  readonly permissions: PermissionMask;
-  readonly owner: string;
-  readonly group: string;
-  readonly size: number;
-  readonly created: Timestamp;
-  readonly modified: Timestamp;
-  readonly accessed: Timestamp;
-  readonly mtime?: Timestamp; // Für Kompatibilität
+  readonly inode: number;
+  permissions: Permission;
+  readonly uid?: number;
+  readonly gid?: number;
+  type: VfsItemType;
+  size: number;
+  readonly nlink?: number;
+  readonly blocks?: number;
   readonly atime?: Timestamp; // Für Kompatibilität
+  mtime?: Timestamp; // Für Kompatibilität
   readonly ctime?: Timestamp; // Für Kompatibilität
-  readonly mimeType?: MimeType;
-  readonly blocks: BlockAddress[];
-  readonly linkCount: number;
-  readonly target?: Path; // Für Symlinks
 }

@@ -9,3 +9,18 @@ export interface IComponentRegistry {
   isRegistered(name: string): boolean;
   list(): string[];
 }
+
+/**
+ * Component Interface - Basis für alle Komponenten
+ */
+export interface IComponent {
+  readonly name: string;
+  readonly version: string;
+
+  initialize?(): Promise<void>;
+  destroy?(): Promise<void>;
+
+  // Framework-spezifische Properties
+  element?: HTMLElement;
+  instance?: unknown;
+}

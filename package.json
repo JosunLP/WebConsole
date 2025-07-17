@@ -28,15 +28,22 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsc -p tsconfig.dev.json",
+    "build:prod": "tsc",
+    "build:watch": "tsc -p tsconfig.dev.json --watch",
+    "dev": "tsc -p tsconfig.dev.json --watch",
+    "serve": "node scripts/serve.js",
+    "start": "npm run build && npm run serve",
+    "dev:full": "concurrently \"npm run build:watch\" \"npm run serve\"",
     "test": "npm run storybook",
     "test:storybook": "storybook dev -p 6006",
+    "demo": "npm run build && npm run serve",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build:prod",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "examples": "npm run serve"
   },
   "keywords": [
     "console",
@@ -57,8 +64,10 @@
     "@types/node": "^20.19.8",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.0.0",
     "eslint-plugin-storybook": "^9.0.17",
+    "http-server": "^14.1.1",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
     "storybook": "^9.0.17",

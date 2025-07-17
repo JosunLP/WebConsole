@@ -11,10 +11,17 @@ import { AliasCommand } from "../console/commands/AliasCommand.js";
 import { CatCommand } from "../console/commands/CatCommand.js";
 import { CdCommand } from "../console/commands/CdCommand.js";
 import { ClearCommand } from "../console/commands/ClearCommand.js";
+import { CpCommand } from "../console/commands/CpCommand.js";
 import { EchoCommand } from "../console/commands/EchoCommand.js";
+import { EnvCommand } from "../console/commands/EnvCommand.js";
 import { ExportCommand } from "../console/commands/ExportCommand.js";
+import { HelpCommand } from "../console/commands/HelpCommand.js";
+import { HistoryCommand } from "../console/commands/HistoryCommand.js";
 import { LsCommand } from "../console/commands/LsCommand.js";
+import { MkdirCommand } from "../console/commands/MkdirCommand.js";
+import { MvCommand } from "../console/commands/MvCommand.js";
 import { PwdCommand } from "../console/commands/PwdCommand.js";
+import { RmCommand } from "../console/commands/RmCommand.js";
 import { ThemeCommand } from "../console/commands/ThemeCommand.js";
 
 /**
@@ -254,14 +261,21 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
     // File system commands that don't need VFS constructor param
     this.register(new PwdCommand() as ICommandHandler);
     this.register(new CatCommand() as ICommandHandler);
+    this.register(new MkdirCommand() as ICommandHandler);
+    this.register(new CpCommand() as ICommandHandler);
+    this.register(new MvCommand() as ICommandHandler);
+    this.register(new RmCommand() as ICommandHandler);
 
     // Utility commands
     this.register(new EchoCommand() as ICommandHandler);
     this.register(new ClearCommand() as ICommandHandler);
+    this.register(new HelpCommand(this) as ICommandHandler);
 
     // Environment commands
     this.register(new ExportCommand() as ICommandHandler);
     this.register(new AliasCommand() as ICommandHandler);
+    this.register(new EnvCommand() as ICommandHandler);
+    this.register(new HistoryCommand() as ICommandHandler);
 
     // Console commands
     this.register(new ThemeCommand() as ICommandHandler);

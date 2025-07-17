@@ -1,8 +1,19 @@
-# WebConsole
+# 🚀 WebConsole
 
-Eine modulare Browser-basierte Console-Bibliothek mit virtuellem Dateisystem und Framework-Support.
+Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen.
 
-## 🚀 Schnellstart
+## ✨ Features
+
+- 🖥️ **Browser-basierte Konsole** - Keine Server-Abhängigkeiten
+- 🔧 **Modulare Architektur** - Kernel, VFS, StateManager, Parser
+- 📁 **Virtuelles Dateisystem** - POSIX-ähnliche Operationen mit localStorage-Backend
+- 🎨 **Flexibles Theme-System** - CSS Custom Properties mit Hot-Reload
+- ⚡ **Framework-Agnostisch** - Native Web Components, React, Angular, Vue, Svelte
+- 📦 **Tree-Shaking freundlich** - Minimale Bundle-Größe
+- � **Sicherheit** - Sandbox-Umgebung, CSP-kompatibel
+- 📚 **TypeScript** - Vollständige Type-Unterstützung
+
+## 🚀 Quick Start
 
 ### 1. Build erstellen
 
