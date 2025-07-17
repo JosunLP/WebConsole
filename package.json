@@ -93,10 +93,5 @@
     "svelte": {
       "optional": true
     }
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
   }
 }

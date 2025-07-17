@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "outDir": "./dist",
@@ -19,7 +19,9 @@
     "emitDecoratorMetadata": true,
     "exactOptionalPropertyTypes": false,
     "noImplicitAny": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "jsx": "react-jsx",
+    "noEmit": false
   },
   "include": ["src/**/*"],
   "exclude": [
@@ -27,6 +29,10 @@
     "dist",
     "**/*.stories.ts",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/components/angular/WebConsole.component.ts",
+    "src/components/angular/WebConsole.module.ts",
+    "src/components/vue/WebConsole.vue",
+    "src/components/svelte/WebConsole.svelte"
   ]
 }
