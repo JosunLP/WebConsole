@@ -96,7 +96,7 @@ const meta = {
 
     const testCreateConsole = async () => {
       log("📱 Creating console instance...");
-      const console = await kernel.createConsole({ prompt: "test:~$ " });
+      await kernel.createConsole({ prompt: "test:~$ " });
       log(`✅ Console created successfully`);
     };
 

@@ -134,12 +134,13 @@ export class WebConsoleElement extends HTMLElement {
 
   private updateAttribute(name: string, value: string) {
     switch (name) {
-      case "prompt":
+      case "prompt": {
         const promptElement = this.shadowRoot!.querySelector("#prompt");
         if (promptElement) {
           promptElement.textContent = value || "$ ";
         }
         break;
+      }
       case "width":
         this.style.width = value;
         break;

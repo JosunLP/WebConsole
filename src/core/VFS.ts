@@ -375,7 +375,7 @@ Features:
       throw new Error(`Parent directory not found: ${parentPath}`);
     }
 
-    const dirName = this.basename(normalizedPath);
+    // const dirName = this.basename(normalizedPath);
     const inode = await this.createDirectory(normalizedPath, options?.mode);
 
     this.emit(VFSEvent.DIRECTORY_CREATED, {
@@ -704,7 +704,7 @@ Features:
       throw new Error(`Path not found: ${path}`);
     }
 
-    const inode = await this.getInode(resolution.inode);
+    // const inode = await this.getInode(resolution.inode);
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
       { permissions },
@@ -777,7 +777,7 @@ Features:
    * Inode aus Cache oder Provider laden
    */
   private async getInode(inodeNumber: InodeNumber): Promise<INode> {
-    let inode = this.inodeCache.get(inodeNumber);
+    const inode = this.inodeCache.get(inodeNumber);
     if (!inode) {
       // Versuche von Provider zu laden
       for (const mountPoint of this.mountPoints.values()) {
@@ -803,7 +803,7 @@ Features:
   private async createFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>,
+    _options?: Partial<INode>,
   ): Promise<INode> {
     const normalizedPath = this.resolve(path);
     const parentPath = this.dirname(normalizedPath);

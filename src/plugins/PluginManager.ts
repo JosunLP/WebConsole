@@ -191,7 +191,7 @@ no changes added to commit
 `,
             );
             return ExitCode.SUCCESS;
-          case "add":
+          case "add": {
             const files = args.slice(1);
             if (files.length === 0) {
               await writeToStream(
@@ -205,6 +205,7 @@ no changes added to commit
               `Added files: ${files.join(", ")}\n`,
             );
             return ExitCode.SUCCESS;
+          }
           default:
             await writeToStream(
               context.stderr,

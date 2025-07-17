@@ -246,6 +246,7 @@ export function isValidPath(path: string): boolean {
   }
 
   // Keine ungültigen Zeichen
+  // eslint-disable-next-line no-control-regex
   const invalidChars = /[<>:"|?*\x00-\x1f]/;
   if (invalidChars.test(path)) {
     return false;

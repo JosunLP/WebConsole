@@ -5,11 +5,7 @@
 
 import { FileType, Permission, VfsItemType } from "../../enums/index.js";
 import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
-import type {
-  InodeNumber,
-  PermissionMask,
-  Timestamp,
-} from "../../types/index.js";
+import type { InodeNumber, PermissionMask } from "../../types/index.js";
 
 interface MemoryEntry {
   inode: INode;
@@ -17,11 +13,11 @@ interface MemoryEntry {
   children?: Map<string, InodeNumber>;
 }
 
-interface MutableINode extends Omit<INode, "size" | "modified" | "accessed"> {
-  size: number;
-  modified: Timestamp;
-  accessed: Timestamp;
-}
+// interface MutableINode extends Omit<INode, "size" | "modified" | "accessed"> {
+//   size: number;
+//   modified: Timestamp;
+//   accessed: Timestamp;
+// }
 
 export class MemoryProvider implements IVFSProvider {
   public readonly name = "memory";

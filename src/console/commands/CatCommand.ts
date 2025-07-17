@@ -134,7 +134,7 @@ export class CatCommand extends BaseCommand {
 
     // Process each line
     let lineNumber = 1;
-    const processedLines = lines.map((line, index) => {
+    const processedLines = lines.map((line, _index) => {
       let processedLine = line;
 
       // Show tabs as ^I
@@ -279,7 +279,7 @@ export class CatCommand extends BaseCommand {
 
   private async readFromStdin(
     context: CommandContext,
-    options: {
+    _options: {
       showLineNumbers: boolean;
       showNonBlank: boolean;
       showEnds: boolean;

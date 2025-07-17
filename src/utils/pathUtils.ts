@@ -6,7 +6,19 @@ import { Path } from "../types/index.js";
 
 export class PathUtils {
   /**
-   * Normalisiert einen Pfad und entfernt redundante Segmente
+   * Normalisiert einen Pfad und entfernt red  static sanitizeFilename(name: string): string {
+    // Remove invalid characters using character codes instead of control chars
+    return name
+      .replace(/[<>:"/\\|?*]/g, "_")
+      .split("")
+      .map(char => {
+        const code = char.charCodeAt(0);
+        return code >= 0 && code <= 31 ? "_" : char;
+      })
+      .join("")
+      .replace(/^\.+$/, "_")
+      .substring(0, 255);
+  }Segmente
    */
   static normalize(path: Path): Path {
     if (!path || path === "") {
@@ -146,12 +158,18 @@ export class PathUtils {
   }
 
   /**
-   * Erstellt einen gültigen Dateinamen
+   * Sanitizes a filename by removing invalid characters
    */
   static sanitizeFilename(name: string): string {
-    // Remove invalid characters
+    // Remove invalid characters using character codes instead of control chars
     return name
-      .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+      .replace(/[<>:"/\\|?*]/g, "_")
+      .split("")
+      .map((char) => {
+        const code = char.charCodeAt(0);
+        return code >= 0 && code <= 31 ? "_" : char;
+      })
+      .join("")
       .replace(/^\.+$/, "_")
       .substring(0, 255);
   }

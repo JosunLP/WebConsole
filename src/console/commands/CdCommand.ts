@@ -79,7 +79,7 @@ export class CdCommand extends BaseCommand {
       }
 
       // Set OLDPWD to current directory
-      const oldPwd = context.workingDirectory;
+      // const _oldPwd = context.workingDirectory;
 
       // Change directory by updating the context
       // Note: In a real implementation, this would be handled by the Console class

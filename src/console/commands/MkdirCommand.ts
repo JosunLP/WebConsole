@@ -37,7 +37,7 @@ export class MkdirCommand extends BaseCommand {
     }
 
     const vfs = context.vfs;
-    const currentDir = context.workingDirectory;
+    // const currentDir = context.workingDirectory;
     let hasErrors = false;
 
     for (const dirPath of directories) {

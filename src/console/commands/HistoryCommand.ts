@@ -62,7 +62,7 @@ export class HistoryCommand extends BaseCommand {
     }
   }
 
-  private getCommandHistory(context: CommandContext): string[] {
+  private getCommandHistory(_context: CommandContext): string[] {
     // Try to get history from localStorage or session storage
     try {
       const historyJson = localStorage.getItem("webconsole-history");
