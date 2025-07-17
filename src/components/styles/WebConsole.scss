@@ -1,0 +1,117 @@
+// React WebConsole Component Styles
+@use 'sass:color';
+
+.web-console {
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: $line-height;
+  background-color: $color-bg-primary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  height: var(--web-console-height, 400px);
+  width: var(--web-console-width, 100%);
+
+  &__output {
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: $spacing-md;
+  }
+
+  &__input-line {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid $color-border;
+    padding-top: $spacing-md;
+  }
+
+  &__prompt {
+    color: $color-accent;
+    margin-right: $spacing-md;
+    font-weight: bold;
+  }
+
+  &__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    outline: none;
+  }
+
+  &__line {
+    margin: 2px 0;
+
+    &--command {
+      color: color.adjust($color-accent, $lightness: 10%);
+    }
+
+    &--error {
+      color: $color-error;
+    }
+
+    &--output {
+      color: $color-success;
+    }
+
+    &--info {
+      color: $color-warning;
+    }
+  }
+
+  &__error,
+  &__loading {
+    padding: $spacing-md;
+    text-align: center;
+  }
+
+  &__error {
+    color: $color-error;
+  }
+
+  // Theme variants
+  &--dark {
+    background-color: $color-bg-primary;
+    color: $color-text-primary;
+  }
+
+  &--light {
+    background-color: #ffffff;
+    color: #333333;
+    border-color: #d0d7de;
+
+    .web-console__input-line {
+      border-top-color: #d0d7de;
+    }
+
+    .web-console__prompt {
+      color: #0969da;
+    }
+
+    .web-console__line {
+      &--command {
+        color: #0969da;
+      }
+
+      &--error {
+        color: #d1242f;
+      }
+
+      &--output {
+        color: #1a7f37;
+      }
+
+      &--info {
+        color: #9a6700;
+      }
+    }
+  }
+}

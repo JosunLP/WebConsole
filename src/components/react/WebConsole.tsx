@@ -6,7 +6,26 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { IConsole } from '../../interfaces/IConsole.interface.js';
 import type { IConsoleOptions } from '../../interfaces/IConsoleOptions.interface.js';
 import type { CommandResult } from '../../types/index.js';
+import '../styles/WebConsole.scss';
 import { useCommandHistory, useConsole, useTheme } from './hooks.js';
+
+// CSS custom properties utility function
+function setCSSVariables(
+  element: HTMLElement | null,
+  width: string | number,
+  height: string | number
+) {
+  if (element) {
+    element.style.setProperty(
+      '--web-console-width',
+      typeof width === 'number' ? `${width}px` : width
+    );
+    element.style.setProperty(
+      '--web-console-height',
+      typeof height === 'number' ? `${height}px` : height
+    );
+  }
+}
 
 export interface WebConsoleProps {
   prompt?: string;
@@ -42,6 +61,7 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   const { console, isLoading, error, executeCommand } =
@@ -49,6 +69,13 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
   const { setTheme: changeTheme, currentTheme } = useTheme();
   const { addCommand, getPreviousCommand, getNextCommand } =
     useCommandHistory();
+
+  // Set CSS variables for dynamic sizing
+  useEffect(() => {
+    if (terminalRef.current) {
+      setCSSVariables(terminalRef.current, width, height);
+    }
+  }, [width, height]);
 
   // Theme-Änderung
   useEffect(() => {
@@ -170,92 +197,29 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
     }
   }, []);
 
-  // CSS-in-JS Styles mit Theme-Integration
-  const getTerminalStyle = (): React.CSSProperties => ({
-    fontFamily:
-      currentTheme?.tokens['font-family'] ||
-      "'Consolas', 'Monaco', 'Courier New', monospace",
-    fontSize: currentTheme?.tokens['font-size'] || '14px',
-    lineHeight: currentTheme?.tokens['line-height'] || '1.4',
-    backgroundColor: currentTheme?.tokens['color-bg-primary'] || '#1e1e1e',
-    color: currentTheme?.tokens['color-text-primary'] || '#cccccc',
-    border: `1px solid ${currentTheme?.tokens['color-border'] || '#3e3e42'}`,
-    borderRadius: currentTheme?.tokens['border-radius'] || '4px',
-    display: 'flex',
-    flexDirection: 'column',
-    height: typeof height === 'number' ? `${height}px` : height,
-    width: typeof width === 'number' ? `${width}px` : width,
-    overflow: 'hidden',
-    padding: currentTheme?.tokens['spacing-md'] || '8px',
-    boxSizing: 'border-box',
-    ...style,
-  });
-
-  const getOutputStyle = (): React.CSSProperties => ({
-    flex: 1,
-    overflowY: 'auto',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-word',
-    marginBottom: currentTheme?.tokens['spacing-md'] || '8px',
-  });
-
-  const getInputLineStyle = (): React.CSSProperties => ({
-    display: 'flex',
-    alignItems: 'center',
-    borderTop: `1px solid ${currentTheme?.tokens['color-border'] || '#3e3e42'}`,
-    paddingTop: currentTheme?.tokens['spacing-md'] || '8px',
-  });
-
-  const getPromptStyle = (): React.CSSProperties => ({
-    color: currentTheme?.tokens['color-accent'] || '#569cd6',
-    marginRight: currentTheme?.tokens['spacing-md'] || '8px',
-    fontWeight: 'bold',
-  });
-
-  const getInputStyle = (): React.CSSProperties => ({
-    flex: 1,
-    background: 'transparent',
-    border: 'none',
-    color: 'inherit',
-    font: 'inherit',
-    outline: 'none',
-  });
-
-  const getLineStyle = (type: OutputLine['type']): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      margin: '2px 0',
-    };
-
-    switch (type) {
-      case 'command':
-        return {
-          ...base,
-          color: currentTheme?.tokens['color-text-secondary'] || '#9cdcfe',
-        };
-      case 'error':
-        return {
-          ...base,
-          color: currentTheme?.tokens['color-error'] || '#f85149',
-        };
-      case 'output':
-        return {
-          ...base,
-          color: currentTheme?.tokens['color-success'] || '#7ee787',
-        };
-      case 'info':
-        return {
-          ...base,
-          color: currentTheme?.tokens['color-warning'] || '#f9c74f',
-        };
-      default:
-        return base;
-    }
+  // Style utilities mit Theme-Integration
+  const getTerminalClassName = () => {
+    const baseClass = 'web-console';
+    const themeClass = currentTheme?.name
+      ? `web-console--${currentTheme.name}`
+      : 'web-console--dark';
+    return `${baseClass} ${themeClass} ${className}`.trim();
   };
+
+  const getLineClassName = (type: OutputLine['type']) => {
+    return `web-console__line web-console__line--${type}`;
+  };
+
+  // CSS Custom Properties für dynamische Werte
+  const cssVariables = {
+    '--web-console-height': typeof height === 'number' ? `${height}px` : height,
+    '--web-console-width': typeof width === 'number' ? `${width}px` : width,
+  } as React.CSSProperties;
 
   if (error) {
     return (
-      <div style={getTerminalStyle()} className={className}>
-        <div style={{ padding: '8px', textAlign: 'center', color: '#f85149' }}>
+      <div className={getTerminalClassName()} ref={terminalRef}>
+        <div className="web-console__error">
           Error initializing console: {error.message}
         </div>
       </div>
@@ -264,29 +228,31 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
 
   if (isLoading) {
     return (
-      <div style={getTerminalStyle()} className={className}>
-        <div style={{ padding: '8px', textAlign: 'center' }}>
-          Loading Web Console...
-        </div>
+      <div className={getTerminalClassName()} ref={terminalRef}>
+        <div className="web-console__loading">Loading Web Console...</div>
       </div>
     );
   }
 
   return (
-    <div style={getTerminalStyle()} className={className} onClick={focusInput}>
-      <div style={getOutputStyle()} ref={outputRef}>
+    <div
+      className={getTerminalClassName()}
+      ref={terminalRef}
+      onClick={focusInput}
+    >
+      <div className="web-console__output" ref={outputRef}>
         {output.map((line) => (
-          <div key={line.id} style={getLineStyle(line.type)}>
+          <div key={line.id} className={getLineClassName(line.type)}>
             {line.text}
           </div>
         ))}
       </div>
-      <div style={getInputLineStyle()}>
-        <span style={getPromptStyle()}>{prompt}</span>
+      <div className="web-console__input-line">
+        <span className="web-console__prompt">{prompt}</span>
         <input
           ref={inputRef}
           type="text"
-          style={getInputStyle()}
+          className="web-console__input"
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}

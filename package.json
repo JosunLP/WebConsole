@@ -28,10 +28,10 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.dev.json",
-    "build:prod": "tsc",
-    "build:watch": "tsc -p tsconfig.dev.json --watch",
-    "dev": "tsc -p tsconfig.dev.json --watch",
+    "build": "vite build",
+    "build:dev": "tsc -p tsconfig.dev.json",
+    "build:watch": "vite build --watch",
+    "dev": "vite build --watch",
     "serve": "node scripts/serve.js",
     "start": "npm run build && npm run serve",
     "dev:full": "concurrently \"npm run build:watch\" \"npm run serve\"",
@@ -40,7 +40,7 @@
     "demo": "npm run build && npm run serve",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
-    "prepublishOnly": "npm run build:prod",
+    "prepublishOnly": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "examples": "npm run serve"
@@ -70,8 +70,10 @@
     "http-server": "^14.1.1",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
+    "sass": "^1.89.2",
     "storybook": "^9.0.17",
     "typescript": "^5.8.3",
+    "vite": "^7.0.5",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {

@@ -1,0 +1,70 @@
+// Web Console Element Styles
+@use 'sass:color';
+
+:host {
+  display: block;
+  width: var(--web-console-width, 100%);
+  height: var(--web-console-height, 400px);
+  font-family: $font-family;
+  background: $color-bg-primary;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+
+.terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: $spacing-md;
+  box-sizing: border-box;
+}
+
+.output {
+  flex: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: $font-size;
+  line-height: $line-height;
+  margin-bottom: $spacing-md;
+}
+
+.input-line {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid $color-border;
+  padding-top: $spacing-md;
+}
+
+.prompt {
+  color: $color-accent;
+  margin-right: $spacing-md;
+  font-weight: bold;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.line {
+  margin: 2px 0;
+
+  &.command {
+    color: color.adjust($color-accent, $lightness: 10%);
+  }
+
+  &.error {
+    color: $color-error;
+  }
+
+  &.success {
+    color: $color-success;
+  }
+}

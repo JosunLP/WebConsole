@@ -2,9 +2,10 @@
  * Native Web Component für Web-Console
  */
 
-import { kernel } from "../core/Kernel.js";
-import type { IConsole } from "../interfaces/IConsole.interface.js";
-import type { IConsoleOptions } from "../interfaces/IConsoleOptions.interface.js";
+import { kernel } from '../core/Kernel.js';
+import type { IConsole } from '../interfaces/IConsole.interface.js';
+import type { IConsoleOptions } from '../interfaces/IConsoleOptions.interface.js';
+import stylesCss from './styles/WebConsoleElement.scss?inline';
 
 export class WebConsoleElement extends HTMLElement {
   private _console: IConsole | null = null;
@@ -14,11 +15,11 @@ export class WebConsoleElement extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 
   static get observedAttributes() {
-    return ["theme", "prompt", "width", "height", "cwd", "mode"];
+    return ['theme', 'prompt', 'width', 'height', 'cwd', 'mode'];
   }
 
   connectedCallback() {
@@ -39,80 +40,8 @@ export class WebConsoleElement extends HTMLElement {
   }
 
   private render() {
-    const style = `
-      <style>
-        :host {
-          display: block;
-          width: 100%;
-          height: 400px;
-          font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-          background: #1e1e1e;
-          color: #ffffff;
-          border: 1px solid #444;
-          border-radius: 4px;
-          overflow: hidden;
-        }
-
-        .terminal {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          padding: 8px;
-          box-sizing: border-box;
-        }
-
-        .output {
-          flex: 1;
-          overflow-y: auto;
-          white-space: pre-wrap;
-          word-break: break-word;
-          font-size: 14px;
-          line-height: 1.4;
-          margin-bottom: 8px;
-        }
-
-        .input-line {
-          display: flex;
-          align-items: center;
-          border-top: 1px solid #444;
-          padding-top: 8px;
-        }
-
-        .prompt {
-          color: #569cd6;
-          margin-right: 8px;
-          font-weight: bold;
-        }
-
-        .input {
-          flex: 1;
-          background: transparent;
-          border: none;
-          color: inherit;
-          font: inherit;
-          outline: none;
-        }
-
-        .line {
-          margin: 2px 0;
-        }
-
-        .command {
-          color: #9cdcfe;
-        }
-
-        .error {
-          color: #f85149;
-        }
-
-        .success {
-          color: #7ee787;
-        }
-      </style>
-    `;
-
     const template = `
-      ${style}
+      <style>${stylesCss}</style>
       <div class="terminal">
         <div class="output" id="output"></div>
         <div class="input-line">
@@ -124,49 +53,49 @@ export class WebConsoleElement extends HTMLElement {
 
     this.shadowRoot!.innerHTML = template;
 
-    this._terminal = this.shadowRoot!.querySelector(".terminal");
-    this._output = this.shadowRoot!.querySelector("#output");
-    this._input = this.shadowRoot!.querySelector("#input");
+    this._terminal = this.shadowRoot!.querySelector('.terminal');
+    this._output = this.shadowRoot!.querySelector('#output');
+    this._input = this.shadowRoot!.querySelector('#input');
 
     this.setupEventListeners();
   }
 
   private setupEventListeners() {
     if (this._input) {
-      this._input.addEventListener("keydown", this.handleKeyDown.bind(this));
+      this._input.addEventListener('keydown', this.handleKeyDown.bind(this));
     }
   }
 
   private async handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       const input = (event.target as HTMLInputElement).value.trim();
       if (input && this._console) {
-        this.addToOutput(`$ ${input}`, "command");
+        this.addToOutput(`$ ${input}`, 'command');
 
         try {
           const result = await this._console.execute(input);
 
           if (result.stdout.length > 0) {
             const output = new TextDecoder().decode(result.stdout);
-            this.addToOutput(output, "success");
+            this.addToOutput(output, 'success');
           }
 
           if (result.stderr.length > 0) {
             const error = new TextDecoder().decode(result.stderr);
-            this.addToOutput(error, "error");
+            this.addToOutput(error, 'error');
           }
         } catch (error) {
-          this.addToOutput(`Error: ${error}`, "error");
+          this.addToOutput(`Error: ${error}`, 'error');
         }
 
-        (event.target as HTMLInputElement).value = "";
+        (event.target as HTMLInputElement).value = '';
       }
     }
   }
 
-  private addToOutput(text: string, className: string = "") {
+  private addToOutput(text: string, className: string = '') {
     if (this._output) {
-      const line = document.createElement("div");
+      const line = document.createElement('div');
       line.className = `line ${className}`;
       line.textContent = text;
       this._output.appendChild(line);
@@ -183,41 +112,41 @@ export class WebConsoleElement extends HTMLElement {
 
       // Erstelle Console-Instanz
       const options: Partial<IConsoleOptions> = {
-        prompt: this.getAttribute("prompt") || "$ ",
-        cwd: "/home/user",
+        prompt: this.getAttribute('prompt') || '$ ',
+        cwd: '/home/user',
         env: new Map([
-          ["PATH", "/usr/bin:/bin"],
-          ["HOME", "/home/user"],
-          ["USER", "user"],
+          ['PATH', '/usr/bin:/bin'],
+          ['HOME', '/home/user'],
+          ['USER', 'user'],
         ]),
       };
 
       this._console = await kernel.createConsole(options);
 
       // Willkommensnachricht
-      this.addToOutput("Welcome to Web Console!", "success");
-      this.addToOutput('Type "help" for available commands.', "");
+      this.addToOutput('Welcome to Web Console!', 'success');
+      this.addToOutput('Type "help" for available commands.', '');
     } catch (error) {
-      console.error("Failed to initialize Web Console:", error);
-      this.addToOutput(`Initialization failed: ${error}`, "error");
+      console.error('Failed to initialize Web Console:', error);
+      this.addToOutput(`Initialization failed: ${error}`, 'error');
     }
   }
 
   private updateAttribute(name: string, value: string) {
     switch (name) {
-      case "prompt":
-        const promptElement = this.shadowRoot!.querySelector("#prompt");
+      case 'prompt':
+        const promptElement = this.shadowRoot!.querySelector('#prompt');
         if (promptElement) {
-          promptElement.textContent = value || "$ ";
+          promptElement.textContent = value || '$ ';
         }
         break;
-      case "width":
+      case 'width':
         this.style.width = value;
         break;
-      case "height":
+      case 'height':
         this.style.height = value;
         break;
-      case "theme":
+      case 'theme':
         // TODO: Theme-Wechsel implementieren
         break;
     }
@@ -228,21 +157,21 @@ export class WebConsoleElement extends HTMLElement {
     if (this._console) {
       return await this._console.execute(command);
     }
-    throw new Error("Console not initialized");
+    throw new Error('Console not initialized');
   }
 
   public clear() {
     if (this._output) {
-      this._output.innerHTML = "";
+      this._output.innerHTML = '';
     }
   }
 
   public setPrompt(prompt: string) {
-    this.setAttribute("prompt", prompt);
+    this.setAttribute('prompt', prompt);
   }
 }
 
 // Registriere Custom Element
-if (!customElements.get("web-console")) {
-  customElements.define("web-console", WebConsoleElement);
+if (!customElements.get('web-console')) {
+  customElements.define('web-console', WebConsoleElement);
 }
