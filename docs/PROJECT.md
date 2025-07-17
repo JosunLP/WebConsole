@@ -197,6 +197,56 @@ Web-Console/
 
 ---
 
+## 10. Aktueller Stand & ToDos (Stand: Juli 2025)
+
+### Implementiert
+
+- **Core-Architektur:** Kernel, VFS, StateManager, EventEmitter, CommandRegistry
+- **WebComponent:** `<web-console>` als native Komponente
+- **Test-Infrastruktur:** Storybook mit interaktiven Demos und Core-Tests
+- **Built-in Commands:** echo, help, clear, test (weitere in Planung)
+- **Parser/Lexer:** Grundfunktionalität, aber noch ohne Pipes/Redirections
+
+### Teilweise implementiert
+
+- **React-Component:** Vorhanden, aber Build/JSX-Probleme
+- **Command-Parser:** Unterstützt einfache Befehle, keine komplexen Shell-Features
+
+### Geplant/Nächste Schritte
+
+1. Command-Parser vervollständigen (Pipes, Variablen, Chaining)
+2. Built-in Commands erweitern (ls, cd, pwd, cat, mkdir, rm, cp, mv)
+3. Theme-System (CSS-Custom-Properties, Theme-Manager)
+4. VFS-Extensions (Mounts, Permissions, Symlinks)
+5. Plugin-System (Dynamic Command-Loading)
+6. Build-Optimierung (Rollup, Tree-Shaking)
+7. Unit-Tests (Vitest)
+
+### Testen & Entwicklung
+
+- **Storybook starten:**
+
+  ```bash
+  npm run storybook
+  ```
+
+- **Tests ausführen:**
+
+  ```bash
+  npm run test
+  ```
+
+- **Legacy HTML-Tests:**
+
+  ```bash
+  npm run serve
+  npm run test:legacy
+  ```
+
+Weitere Details und aktuellen Status siehe auch [STATUS_CURRENT.md].
+
+---
+
 ## 11. Lizenz & Community
 
 - MIT-Lizenz
