@@ -24,7 +24,7 @@ export const CommandRegistryEvents = {
   COMMAND_REGISTERED: 'command:registered',
   COMMAND_UNREGISTERED: 'command:unregistered',
   ALIAS_CREATED: 'alias:created',
-  ALIAS_REMOVED: 'alias:removed'
+  ALIAS_REMOVED: 'alias:removed',
 } as const;
 
 /**
@@ -33,6 +33,14 @@ export const CommandRegistryEvents = {
 export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   private readonly commands = new Map<string, ICommandHandler>();
   private readonly aliases = new Map<string, string>();
+
+  /**
+   * Registry initialisieren und Built-in Commands registrieren
+   */
+  async initialize(): Promise<void> {
+    // Built-in Commands werden lazy geladen wenn sie aufgerufen werden
+    // Hier könnten wir die Registry für Standard-Commands vorbereiten
+  }
 
   /**
    * Command-Handler registrieren
@@ -45,7 +53,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
     this.commands.set(handler.name, handler);
     this.emit(CommandRegistryEvents.COMMAND_REGISTERED, {
       name: handler.name,
-      type: handler.type
+      type: handler.type,
     });
   }
 
@@ -61,7 +69,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
     this.commands.delete(name);
     this.emit(CommandRegistryEvents.COMMAND_UNREGISTERED, {
       name,
-      type: handler.type
+      type: handler.type,
     });
   }
 
@@ -94,7 +102,9 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    */
   alias(alias: string, command: string): void {
     if (this.commands.has(alias)) {
-      throw new Error(`Cannot create alias '${alias}': command with same name exists`);
+      throw new Error(
+        `Cannot create alias '${alias}': command with same name exists`
+      );
     }
 
     if (!this.commands.has(command)) {
@@ -127,13 +137,19 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Commands nach Typ filtern
    */
   getByType(type: CommandType): ICommandHandler[] {
-    return Array.from(this.commands.values()).filter(cmd => cmd.type === type);
+    return Array.from(this.commands.values()).filter(
+      (cmd) => cmd.type === type
+    );
   }
 
   /**
    * Command-Details abrufen
    */
-  getDetails(name: string): { handler: ICommandHandler; isAlias: boolean; originalName?: string } | undefined {
+  getDetails(
+    name: string
+  ):
+    | { handler: ICommandHandler; isAlias: boolean; originalName?: string }
+    | undefined {
     const isAlias = this.aliases.has(name);
     const resolvedName = isAlias ? this.aliases.get(name)! : name;
     const handler = this.commands.get(resolvedName);
@@ -146,12 +162,12 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
       return {
         handler,
         isAlias: true,
-        originalName: resolvedName
+        originalName: resolvedName,
       };
     } else {
       return {
         handler,
-        isAlias: false
+        isAlias: false,
       };
     }
   }
@@ -215,7 +231,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
     return {
       totalCommands: this.commands.size,
       totalAliases: this.aliases.size,
-      commandsByType
+      commandsByType,
     };
   }
 
@@ -269,10 +285,10 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
         name,
         type: handler.type,
         description: handler.description,
-        usage: handler.usage
+        usage: handler.usage,
       })),
       aliases: Object.fromEntries(this.aliases),
-      stats: this.getStats()
+      stats: this.getStats(),
     };
   }
 }

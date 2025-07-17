@@ -8,6 +8,8 @@ export enum ExitCode {
   ERROR = 1,
   /** Allgemeiner Fehler (Alias für ERROR) */
   FAILURE = 1,
+  /** Allgemeiner Fehler */
+  GENERAL_ERROR = 1,
   /** Ungültige Verwendung eines Shell-Builtins */
   MISUSE = 2,
   /** Befehl nicht gefunden */
@@ -15,5 +17,5 @@ export enum ExitCode {
   /** Ungültiges Argument für Exit */
   INVALID_EXIT_ARGUMENT = 128,
   /** Befehl durch Signal beendet */
-  TERMINATED_BY_SIGNAL = 130
+  TERMINATED_BY_SIGNAL = 130,
 }

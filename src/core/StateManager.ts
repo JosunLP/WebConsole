@@ -22,7 +22,7 @@ interface StateEntry {
 export const StateEvents = {
   CHANGED: 'state:changed',
   PERSISTED: 'state:persisted',
-  RESTORED: 'state:restored'
+  RESTORED: 'state:restored',
 } as const;
 
 /**
@@ -62,26 +62,32 @@ export class StateManager extends EventEmitter implements IStateManager {
         config: {
           key,
           defaultValue: value,
-          persistence: PersistenceMode.VOLATILE
+          persistence: PersistenceMode.VOLATILE,
         } as StateConfig<unknown>,
-        lastModified: Date.now()
+        lastModified: Date.now(),
       });
     } else {
       // Existierenden Eintrag aktualisieren
       this.entries.set(key, {
         value,
         config,
-        lastModified: Date.now()
+        lastModified: Date.now(),
       });
     }
 
     // Event emittieren
-    this.emit(StateEvents.CHANGED, { key, value, namespace: this.namespaceName });
+    this.emit(StateEvents.CHANGED, {
+      key,
+      value,
+      namespace: this.namespaceName,
+    });
 
     // Auto-Persist bei persistent/session Modes
-    if (config?.persistence === PersistenceMode.PERSISTENT ||
-        config?.persistence === PersistenceMode.SESSION) {
-      this.persistKey(key).catch(error => {
+    if (
+      config?.persistence === PersistenceMode.PERSISTENT ||
+      config?.persistence === PersistenceMode.SESSION
+    ) {
+      this.persistKey(key).catch((error) => {
         console.error(`Failed to persist state key "${key}":`, error);
       });
     }
@@ -108,7 +114,11 @@ export class StateManager extends EventEmitter implements IStateManager {
       this.removeFromStorage(key, entry.config.persistence);
     }
 
-    this.emit(StateEvents.CHANGED, { key, value: undefined, namespace: this.namespaceName });
+    this.emit(StateEvents.CHANGED, {
+      key,
+      value: undefined,
+      namespace: this.namespaceName,
+    });
     return true;
   }
 
@@ -140,7 +150,7 @@ export class StateManager extends EventEmitter implements IStateManager {
     this.entries.set(config.key, {
       value,
       config: config as StateConfig<unknown>,
-      lastModified: existingEntry?.lastModified ?? Date.now()
+      lastModified: existingEntry?.lastModified ?? Date.now(),
     });
   }
 
@@ -220,7 +230,9 @@ export class StateManager extends EventEmitter implements IStateManager {
           break;
       }
     } catch (error) {
-      throw new Error(`Failed to persist key "${key}" to ${entry.config.persistence}: ${error}`);
+      throw new Error(
+        `Failed to persist key "${key}" to ${entry.config.persistence}: ${error}`
+      );
     }
   }
 
@@ -252,11 +264,14 @@ export class StateManager extends EventEmitter implements IStateManager {
         // Direkt den Wert setzen ohne Event zu triggern
         this.entries.set(key, {
           ...entry,
-          value
+          value,
         });
       }
     } catch (error) {
-      console.error(`Failed to restore key "${key}" from ${entry.config.persistence}:`, error);
+      console.error(
+        `Failed to restore key "${key}" from ${entry.config.persistence}:`,
+        error
+      );
       // Bei Fehler Default-Wert verwenden
     }
   }
@@ -277,7 +292,10 @@ export class StateManager extends EventEmitter implements IStateManager {
           break;
       }
     } catch (error) {
-      console.error(`Failed to remove key "${key}" from ${persistence}:`, error);
+      console.error(
+        `Failed to remove key "${key}" from ${persistence}:`,
+        error
+      );
     }
   }
 
@@ -300,12 +318,26 @@ export class StateManager extends EventEmitter implements IStateManager {
           {
             value: entry.value,
             config: entry.config,
-            lastModified: new Date(entry.lastModified).toISOString()
-          }
+            lastModified: new Date(entry.lastModified).toISOString(),
+          },
         ])
       ),
-      children: Array.from(this.children.keys())
+      children: Array.from(this.children.keys()),
     };
+  }
+
+  /**
+   * State laden (Alias für restore)
+   */
+  async load(): Promise<void> {
+    return this.restore();
+  }
+
+  /**
+   * State speichern (Alias für persist)
+   */
+  async save(): Promise<void> {
+    return this.persist();
   }
 
   /**

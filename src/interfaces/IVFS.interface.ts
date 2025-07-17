@@ -3,12 +3,12 @@
  */
 
 import {
-    EventHandler,
-    EventUnsubscriber,
-    GlobPattern,
-    MountConfig,
-    Path,
-    PermissionMask
+  EventHandler,
+  EventUnsubscriber,
+  GlobPattern,
+  MountConfig,
+  Path,
+  PermissionMask,
 } from '../types/index.js';
 
 import { IDirEntry } from './IDirEntry.interface.js';
@@ -16,6 +16,9 @@ import { IEventEmitter } from './IEventEmitter.interface.js';
 import { INode } from './INode.interface.js';
 
 export interface IVFS extends IEventEmitter {
+  // Lifecycle
+  initialize(): Promise<void>;
+
   // Path Operations
   resolve(path: Path): Path;
   join(...paths: Path[]): Path;
@@ -25,10 +28,14 @@ export interface IVFS extends IEventEmitter {
 
   // File Operations
   readFile(path: Path): Promise<Uint8Array>;
-  writeFile(path: Path, data: Uint8Array, options?: Partial<INode>): Promise<void>;
+  writeFile(
+    path: Path,
+    data: Uint8Array,
+    options?: Partial<INode>
+  ): Promise<void>;
   appendFile(path: Path, data: Uint8Array): Promise<void>;
   deleteFile(path: Path): Promise<void>;
-  exists(path: Path): Promise<boolean>;
+  exists(path: Path): boolean;
   stat(path: Path): Promise<INode>;
 
   // Directory Operations

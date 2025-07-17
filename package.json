@@ -28,8 +28,9 @@
     }
   },
   "scripts": {
-    "build": "tsc && rollup -c",
+    "build": "tsc",
     "dev": "tsc --watch",
+    "serve": "powershell -ExecutionPolicy Bypass -File start-server.ps1",
     "test": "vitest",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
@@ -55,14 +56,14 @@
     "eslint": "^8.0.0",
     "prettier": "^3.0.0",
     "rollup": "^4.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.8.3",
     "vitest": "^1.0.0"
   },
   "peerDependencies": {
     "@angular/core": ">=16.0.0",
     "react": ">=18.0.0",
-    "vue": ">=3.0.0",
-    "svelte": ">=4.0.0"
+    "svelte": ">=4.0.0",
+    "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "@angular/core": {

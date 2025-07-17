@@ -5,6 +5,9 @@
 import { ICommandHandler } from './ICommandHandler.interface.js';
 
 export interface ICommandRegistry {
+  // Lifecycle
+  initialize(): Promise<void>;
+
   register(handler: ICommandHandler): void;
   unregister(name: string): void;
   get(name: string): ICommandHandler | undefined;

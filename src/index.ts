@@ -14,5 +14,8 @@ export * from './utils/index.js';
 // Console
 export * from './console/index.js';
 
-// Themes (wird später hinzugefügt)
-// export * from './themes/index.js';
+// Components (Native Web Components)
+export * from './components/index.js';
+
+// Kernel Singleton für einfachen Zugriff
+export { kernel } from './core/Kernel.js';

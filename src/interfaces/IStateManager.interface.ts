@@ -2,9 +2,7 @@
  * State Manager Interface
  */
 
-import {
-    StateConfig
-} from '../types/index.js';
+import { StateConfig } from '../types/index.js';
 
 import { IEventEmitter } from './IEventEmitter.interface.js';
 
@@ -25,4 +23,6 @@ export interface IStateManager extends IEventEmitter {
   // Persistierung
   persist(): Promise<void>;
   restore(): Promise<void>;
+  load(): Promise<void>;
+  save(): Promise<void>;
 }

@@ -27,7 +27,10 @@ export class EventEmitter implements IEventEmitter {
       this.listeners.set(event, new Set());
     }
 
-    const listener: EventListener = { handler: handler as EventHandler<unknown>, once: false };
+    const listener: EventListener = {
+      handler: handler as EventHandler<unknown>,
+      once: false,
+    };
     this.listeners.get(event)!.add(listener);
 
     // Unsubscriber zurückgeben
@@ -39,12 +42,18 @@ export class EventEmitter implements IEventEmitter {
   /**
    * Event-Listener für einmalige Ausführung registrieren
    */
-  once<T = unknown>(event: string, handler: EventHandler<T>): EventUnsubscriber {
+  once<T = unknown>(
+    event: string,
+    handler: EventHandler<T>
+  ): EventUnsubscriber {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
 
-    const listener: EventListener = { handler: handler as EventHandler<unknown>, once: true };
+    const listener: EventListener = {
+      handler: handler as EventHandler<unknown>,
+      once: true,
+    };
     this.listeners.get(event)!.add(listener);
 
     return () => {
@@ -70,7 +79,7 @@ export class EventEmitter implements IEventEmitter {
   /**
    * Event emittieren
    */
-  emit<T = unknown>(event: string, data: T): void {
+  emit<T = unknown>(event: string, data?: T): void {
     const eventListeners = this.listeners.get(event);
     if (!eventListeners) return;
 
@@ -131,7 +140,7 @@ export class EventEmitter implements IEventEmitter {
     const eventListeners = this.listeners.get(event);
     if (!eventListeners) return [];
 
-    return Array.from(eventListeners).map(listener => listener.handler);
+    return Array.from(eventListeners).map((listener) => listener.handler);
   }
 
   /**

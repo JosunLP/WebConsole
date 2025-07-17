@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Console Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f0f0f0;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+
+      web-console {
+        display: block;
+        width: 100%;
+        height: 400px;
+        margin: 20px 0;
+      }
+
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        background: #e7f3ff;
+        border: 1px solid #b3d9ff;
+      }
+
+      .controls {
+        margin: 20px 0;
+      }
+
+      .controls button {
+        margin: 5px;
+        padding: 8px 16px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .controls button:hover {
+        background: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🖥️ Web Console Test</h1>
+
+      <div class="status" id="status">Status: Initialisiere...</div>
+
+      <web-console prompt="test:~$ " height="400px"> </web-console>
+
+      <div class="controls">
+        <button onclick="testCommand('echo Hello World!')">Echo Test</button>
+        <button onclick="testCommand('help')">Help</button>
+        <button onclick="clearConsole()">Clear</button>
+        <button onclick="testMultipleCommands()">Multiple Commands</button>
+      </div>
+
+      <div class="status">
+        <strong>Verfügbare Test-Befehle:</strong><br />
+        • <code>echo [text]</code> - Text ausgeben<br />
+        • <code>help</code> - Hilfe anzeigen<br />
+        • <code>clear</code> - Console leeren<br />
+        • <code>test</code> - System-Test<br />
+      </div>
+    </div>
+
+    <script type="module">
+      // Import der Web Console
+      import './dist/components/WebConsoleElement.js';
+
+      // Status-Element
+      const statusEl = document.getElementById('status');
+
+      function updateStatus(message) {
+        statusEl.textContent = `Status: ${message}`;
+      }
+
+      // Global functions für Test-Buttons
+      window.testCommand = async function (command) {
+        const console = document.querySelector('web-console');
+        if (console) {
+          try {
+            updateStatus(`Executing: ${command}`);
+            const result = await console.executeCommand(command);
+            updateStatus(`Command executed: ${command}`);
+            console.log('Command result:', result);
+          } catch (error) {
+            updateStatus(`Error: ${error.message}`);
+            console.error('Command failed:', error);
+          }
+        } else {
+          updateStatus('Console not found');
+        }
+      };
+
+      window.clearConsole = function () {
+        const console = document.querySelector('web-console');
+        if (console) {
+          console.clear();
+          updateStatus('Console cleared');
+        }
+      };
+
+      window.testMultipleCommands = async function () {
+        const commands = [
+          'echo Starting test sequence...',
+          'echo Command 1 executed',
+          'echo Command 2 executed',
+          'echo Test sequence complete!',
+        ];
+
+        for (const cmd of commands) {
+          await testCommand(cmd);
+          // Kleine Pause zwischen Befehlen
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+      };
+
+      // Event-Listener für Console-Events
+      document.addEventListener('DOMContentLoaded', () => {
+        const console = document.querySelector('web-console');
+
+        if (console) {
+          // Warte auf Console-Initialisierung
+          const checkReady = () => {
+            if (console.shadowRoot) {
+              updateStatus('Web Console bereit!');
+            } else {
+              setTimeout(checkReady, 100);
+            }
+          };
+
+          checkReady();
+
+          // Fokus-Handler
+          console.addEventListener('click', () => {
+            updateStatus('Console fokussiert');
+          });
+        } else {
+          updateStatus('Fehler: Web Console nicht gefunden');
+        }
+      });
+
+      // Error-Handler
+      window.addEventListener('error', (event) => {
+        updateStatus(`JavaScript Error: ${event.message}`);
+        console.error('Global error:', event);
+      });
+
+      // Unhandled Promise Rejection Handler
+      window.addEventListener('unhandledrejection', (event) => {
+        updateStatus(`Promise Error: ${event.reason}`);
+        console.error('Unhandled promise rejection:', event.reason);
+      });
+
+      console.log('Test-Seite geladen. Web Console wird initialisiert...');
+    </script>
+  </body>
+</html>

@@ -2,11 +2,7 @@
  * Event-bezogene Typdefinitionen
  */
 
-import {
-    ConsoleEvent,
-    KernelEvent,
-    VFSEvent
-} from '../enums/index.js';
+import { ConsoleEvent, KernelEvent, VFSEvent } from '../enums/index.js';
 import { CommandArgs, CommandResult } from './command.type.js';
 import { MountConfig } from './config.type.js';
 import { ID, InodeNumber, Path, Timestamp } from './primitive.type.js';
@@ -48,7 +44,7 @@ export interface EventData {
   [VFSEvent.MOUNT_REMOVED]: { path: Path };
 
   [KernelEvent.STARTED]: { timestamp: Timestamp };
-  [KernelEvent.SHUTTING_DOWN]: { timestamp: Timestamp };
+  [KernelEvent.SHUTDOWN]: { timestamp: Timestamp };
   [KernelEvent.ERROR]: { error: Error; timestamp: Timestamp };
 }
 

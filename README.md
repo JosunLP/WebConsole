@@ -1,6 +1,59 @@
-# Web-Console
+# WebConsole
 
-Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen.
+Eine modulare Browser-basierte Console-Bibliothek mit virtuellem Dateisystem und Framework-Support.
+
+## 🚀 Schnellstart
+
+### 1. Build erstellen
+
+```bash
+npm install
+npm run build
+```
+
+### 2. Test-Seite öffnen
+
+```bash
+# HTTP-Server starten (für ES Module)
+python -m http.server 8000
+# oder
+npx http-server .
+
+# test.html im Browser öffnen
+http://localhost:8000/test.html
+```
+
+### 3. Web Component verwenden
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module" src="./dist/components/WebConsoleElement.js"></script>
+  </head>
+  <body>
+    <web-console prompt="$ " height="300px"></web-console>
+  </body>
+</html>
+```
+
+## 🎯 API-Verwendung
+
+### JavaScript API
+
+```javascript
+import { Kernel } from './dist/index.js';
+
+// Kernel starten
+await Kernel.getInstance().start();
+
+// Console erstellen
+const console = await Kernel.getInstance().createConsole('main');
+
+// Befehl ausführen
+const result = await console.execute('echo Hello World!');
+console.log(result.output);
+```
 
 ## 🚀 Vision
 
@@ -19,13 +72,13 @@ Web-Console ermöglicht es Entwicklern, in Sekundenschnelle eine Windows-Termina
 
 ### Core-Module
 
-| Modul | Verantwortung | Singleton | Persistenz |
-|-------|---------------|-----------|------------|
-| **Kernel** | Zentrale Event- und Lebenszyklus-Steuerung | ✅ | ❌ |
-| **VFS** | Virtuelles Dateisystem | ✅ | ✅ |
-| **Console** | Parser, Lexer, Executor | ❌ | ❌ |
-| **ThemeManager** | Design-System, CSS-Tokens | ✅ | ✅ |
-| **StateManager** | Hierarchische State-Verwaltung | ❌ | Optional |
+| Modul            | Verantwortung                              | Singleton | Persistenz |
+| ---------------- | ------------------------------------------ | --------- | ---------- |
+| **Kernel**       | Zentrale Event- und Lebenszyklus-Steuerung | ✅        | ❌         |
+| **VFS**          | Virtuelles Dateisystem                     | ✅        | ✅         |
+| **Console**      | Parser, Lexer, Executor                    | ❌        | ❌         |
+| **ThemeManager** | Design-System, CSS-Tokens                  | ✅        | ✅         |
+| **StateManager** | Hierarchische State-Verwaltung             | ❌        | Optional   |
 
 ### Verzeichnis-Struktur
 
@@ -70,21 +123,21 @@ npm install web-console svelte
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <script type="module">
-        import { WebConsole } from 'web-console';
+      import { WebConsole } from 'web-console';
 
-        const console = new WebConsole({
-            theme: 'windows-terminal',
-            workingDirectory: '/home/user'
-        });
+      const console = new WebConsole({
+        theme: 'windows-terminal',
+        workingDirectory: '/home/user',
+      });
 
-        document.body.appendChild(console.element);
+      document.body.appendChild(console.element);
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <web-console theme="windows-terminal"></web-console>
-</body>
+  </body>
 </html>
 ```
 
@@ -94,13 +147,13 @@ npm install web-console svelte
 import { WebConsole } from 'web-console/react';
 
 function App() {
-    return (
-        <WebConsole
-            theme="monokai"
-            workingDirectory="/home/user"
-            onCommand={(cmd) => console.log('Command:', cmd)}
-        />
-    );
+  return (
+    <WebConsole
+      theme="monokai"
+      workingDirectory="/home/user"
+      onCommand={(cmd) => console.log('Command:', cmd)}
+    />
+  );
 }
 ```
 
@@ -111,8 +164,8 @@ function App() {
 import { WebConsoleModule } from 'web-console/angular';
 
 @NgModule({
-    imports: [WebConsoleModule],
-    // ...
+  imports: [WebConsoleModule],
+  // ...
 })
 export class AppModule {}
 ```
@@ -120,9 +173,10 @@ export class AppModule {}
 ```html
 <!-- app.component.html -->
 <web-console
-    theme="solarized"
-    [workingDirectory]="'/home/user'"
-    (command)="onCommand($event)">
+  theme="solarized"
+  [workingDirectory]="'/home/user'"
+  (command)="onCommand($event)"
+>
 </web-console>
 ```
 
@@ -140,13 +194,13 @@ export class AppModule {}
 import { ThemeManager } from 'web-console';
 
 const customTheme = {
-    name: 'my-theme',
-    mode: 'dark',
-    tokens: {
-        '--console-bg': '#1a1a1a',
-        '--console-fg': '#ffffff',
-        '--console-accent': '#00ff00'
-    }
+  name: 'my-theme',
+  mode: 'dark',
+  tokens: {
+    '--console-bg': '#1a1a1a',
+    '--console-fg': '#ffffff',
+    '--console-accent': '#00ff00',
+  },
 };
 
 ThemeManager.register(customTheme);
@@ -172,14 +226,14 @@ const jsFiles = await VFS.glob('**/*.js');
 
 ## ⚡ Built-in Commands
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `ls` | Verzeichnis-Inhalt mit Farbcodes |
-| `cat` | Datei-Ausgabe mit Syntax-Highlighting |
-| `cd` | Arbeitsverzeichnis wechseln |
-| `export` | Umgebungsvariablen setzen |
-| `theme` | Theme zur Laufzeit ändern |
-| `alias` | Kommando-Verknüpfungen |
+| Befehl   | Beschreibung                          |
+| -------- | ------------------------------------- |
+| `ls`     | Verzeichnis-Inhalt mit Farbcodes      |
+| `cat`    | Datei-Ausgabe mit Syntax-Highlighting |
+| `cd`     | Arbeitsverzeichnis wechseln           |
+| `export` | Umgebungsvariablen setzen             |
+| `theme`  | Theme zur Laufzeit ändern             |
+| `alias`  | Kommando-Verknüpfungen                |
 
 ### Eigene Commands registrieren
 
@@ -187,13 +241,13 @@ const jsFiles = await VFS.glob('**/*.js');
 import { CommandRegistry } from 'web-console';
 
 CommandRegistry.register({
-    name: 'hello',
-    description: 'Greet the user',
-    async execute(context) {
-        const name = context.args[0] || 'World';
-        context.stdout.write(`Hello, ${name}!\n`);
-        return ExitCode.SUCCESS;
-    }
+  name: 'hello',
+  description: 'Greet the user',
+  async execute(context) {
+    const name = context.args[0] || 'World';
+    context.stdout.write(`Hello, ${name}!\n`);
+    return ExitCode.SUCCESS;
+  },
 });
 ```
 
@@ -209,8 +263,8 @@ await Kernel.start();
 
 // Console erstellen
 const console = await Kernel.createConsole({
-    workingDirectory: '/home/user',
-    prompt: '$ '
+  workingDirectory: '/home/user',
+  prompt: '$ ',
 });
 
 // Befehl ausführen
@@ -226,9 +280,9 @@ const state = new StateManager('myApp');
 
 // Persistente Konfiguration
 state.configure({
-    key: 'userPrefs',
-    defaultValue: { theme: 'dark' },
-    persistence: PersistenceMode.PERSISTENT
+  key: 'userPrefs',
+  defaultValue: { theme: 'dark' },
+  persistence: PersistenceMode.PERSISTENT,
 });
 
 // Werte setzen/abrufen

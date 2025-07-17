@@ -52,7 +52,7 @@ export function deepClone<T>(obj: T): T {
   }
 
   if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as unknown as T;
+    return obj.map((item) => deepClone(item)) as unknown as T;
   }
 
   if (typeof obj === 'object') {
@@ -75,7 +75,7 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: number | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return (...args: Parameters<T>) => {
     if (timeout) {
@@ -124,7 +124,7 @@ export async function retry<T>(
     maxAttempts = 3,
     baseDelay = 1000,
     maxDelay = 10000,
-    backoffFactor = 2
+    backoffFactor = 2,
   } = options;
 
   let lastError: Error;
@@ -155,7 +155,7 @@ export async function retry<T>(
  * Sleep-Funktion
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -163,8 +163,8 @@ export function sleep(ms: number): Promise<void> {
  */
 export function generateId(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -262,7 +262,7 @@ export function normalizePath(path: Path): Path {
     throw new Error(`Invalid path: ${path}`);
   }
 
-  const parts = path.split('/').filter(part => part.length > 0);
+  const parts = path.split('/').filter((part) => part.length > 0);
   const normalized: string[] = [];
 
   for (const part of parts) {
@@ -321,6 +321,6 @@ export function withTimeout<T>(
     promise,
     new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
-    })
+    }),
   ]);
 }
