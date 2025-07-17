@@ -1,11 +1,12 @@
 /**
- * React-Komponente für Web-Console
+ * React-Komponente für Web-Console mit verbesserter Implementation
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { IConsole } from '../../interfaces/IConsole.interface.js';
 import type { IConsoleOptions } from '../../interfaces/IConsoleOptions.interface.js';
 import type { CommandResult } from '../../types/index.js';
+import { useCommandHistory, useConsole, useTheme } from './hooks.js';
 
 export interface WebConsoleProps {
   prompt?: string;
@@ -30,73 +31,38 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
   prompt = '$ ',
   width = '100%',
   height = 400,
-  theme = 'dark',
+  theme = 'default',
   onCommand,
   onReady,
   className = '',
   style = {},
+  consoleOptions = {},
 }) => {
-  const [console, setConsole] = useState<IConsole | null>(null);
   const [output, setOutput] = useState<OutputLine[]>([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // Initialisierung
+  // Hooks
+  const { console, isLoading, error, executeCommand } =
+    useConsole(consoleOptions);
+  const { setTheme: changeTheme, currentTheme } = useTheme();
+  const { addCommand, getPreviousCommand, getNextCommand } =
+    useCommandHistory();
+
+  // Theme-Änderung
   useEffect(() => {
-    let mounted = true;
+    if (theme && changeTheme) {
+      changeTheme(theme);
+    }
+  }, [theme, changeTheme]);
 
-    const initialize = async () => {
-      try {
-        // Starte Kernel falls noch nicht gestartet
-        if (!kernel.isStarted) {
-          await kernel.start();
-        }
-
-        // Erstelle Console-Instanz
-        const options: Partial<IConsoleOptions> = {
-          prompt,
-          cwd: '/home/user',
-          env: new Map([
-            ['PATH', '/usr/bin:/bin'],
-            ['HOME', '/home/user'],
-            ['USER', 'user'],
-          ]),
-        };
-
-        const consoleInstance = await kernel.createConsole(options);
-
-        if (mounted) {
-          setConsole(consoleInstance);
-          setIsLoading(false);
-
-          // Willkommensnachricht
-          addOutputLine('Welcome to Web Console!', 'output');
-          addOutputLine('Type "help" for available commands.', 'output');
-
-          if (onReady) {
-            onReady(consoleInstance);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to initialize Web Console:', error);
-        if (mounted) {
-          addOutputLine(`Initialization failed: ${error}`, 'error');
-          setIsLoading(false);
-        }
-      }
-    };
-
-    initialize();
-
-    return () => {
-      mounted = false;
-      if (console) {
-        console.destroy();
-      }
-    };
-  }, [prompt, onReady]);
+  // Console Ready Event
+  useEffect(() => {
+    if (console && onReady) {
+      onReady(console);
+    }
+  }, [console, onReady]);
 
   // Auto-scroll
   useEffect(() => {
@@ -104,6 +70,13 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [output]);
+
+  // Focus input
+  useEffect(() => {
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isLoading]);
 
   const addOutputLine = useCallback(
     (text: string, type: OutputLine['type']) => {
@@ -120,34 +93,68 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
 
   const handleKeyDown = useCallback(
     async (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter' && console && input.trim()) {
+      if (event.key === 'Enter' && input.trim()) {
         const command = input.trim();
         addOutputLine(`${prompt}${command}`, 'command');
+        addCommand(command);
 
         try {
-          const result = await console.execute(command);
+          const result = await executeCommand(command);
 
-          if (result.stdout.length > 0) {
-            const output = new TextDecoder().decode(result.stdout);
-            addOutputLine(output, 'output');
-          }
+          if (result) {
+            if (result.stdout.length > 0) {
+              const outputText = new TextDecoder().decode(result.stdout);
+              addOutputLine(outputText, 'output');
+            }
 
-          if (result.stderr.length > 0) {
-            const error = new TextDecoder().decode(result.stderr);
-            addOutputLine(error, 'error');
-          }
+            if (result.stderr.length > 0) {
+              const errorText = new TextDecoder().decode(result.stderr);
+              addOutputLine(errorText, 'error');
+            }
 
-          if (onCommand) {
-            onCommand(command, result);
+            if (onCommand) {
+              onCommand(command, result);
+            }
           }
-        } catch (error) {
-          addOutputLine(`Error: ${error}`, 'error');
+        } catch (err) {
+          addOutputLine(`Error: ${err}`, 'error');
         }
 
         setInput('');
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevCommand = getPreviousCommand();
+        if (prevCommand) {
+          setInput(prevCommand);
+        }
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextCommand = getNextCommand();
+        if (nextCommand !== null) {
+          setInput(nextCommand);
+        }
+      } else if (event.key === 'Tab') {
+        event.preventDefault();
+        // TODO: Implement tab completion
+      } else if (event.ctrlKey && event.key === 'l') {
+        event.preventDefault();
+        setOutput([]);
+      } else if (event.ctrlKey && event.key === 'c') {
+        event.preventDefault();
+        addOutputLine('^C', 'command');
+        setInput('');
       }
     },
-    [console, input, prompt, addOutputLine, onCommand]
+    [
+      input,
+      prompt,
+      addOutputLine,
+      addCommand,
+      executeCommand,
+      onCommand,
+      getPreviousCommand,
+      getNextCommand,
+    ]
   );
 
   const handleInputChange = useCallback(
@@ -157,60 +164,62 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
     []
   );
 
-  // Fokus auf Input
   const focusInput = useCallback(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
 
-  const terminalStyle: React.CSSProperties = {
-    width,
-    height,
-    fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
-    background: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-    color: theme === 'dark' ? '#ffffff' : '#000000',
-    border: '1px solid #444',
-    borderRadius: '4px',
-    overflow: 'hidden',
+  // CSS-in-JS Styles mit Theme-Integration
+  const getTerminalStyle = (): React.CSSProperties => ({
+    fontFamily:
+      currentTheme?.tokens['font-family'] ||
+      "'Consolas', 'Monaco', 'Courier New', monospace",
+    fontSize: currentTheme?.tokens['font-size'] || '14px',
+    lineHeight: currentTheme?.tokens['line-height'] || '1.4',
+    backgroundColor: currentTheme?.tokens['color-bg-primary'] || '#1e1e1e',
+    color: currentTheme?.tokens['color-text-primary'] || '#cccccc',
+    border: `1px solid ${currentTheme?.tokens['color-border'] || '#3e3e42'}`,
+    borderRadius: currentTheme?.tokens['border-radius'] || '4px',
     display: 'flex',
     flexDirection: 'column',
+    height: typeof height === 'number' ? `${height}px` : height,
+    width: typeof width === 'number' ? `${width}px` : width,
+    overflow: 'hidden',
+    padding: currentTheme?.tokens['spacing-md'] || '8px',
+    boxSizing: 'border-box',
     ...style,
-  };
+  });
 
-  const outputStyle: React.CSSProperties = {
+  const getOutputStyle = (): React.CSSProperties => ({
     flex: 1,
     overflowY: 'auto',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-word',
-    fontSize: '14px',
-    lineHeight: 1.4,
-    padding: '8px',
-    margin: 0,
-  };
+    marginBottom: currentTheme?.tokens['spacing-md'] || '8px',
+  });
 
-  const inputLineStyle: React.CSSProperties = {
+  const getInputLineStyle = (): React.CSSProperties => ({
     display: 'flex',
     alignItems: 'center',
-    borderTop: '1px solid #444',
-    padding: '8px',
-    gap: '8px',
-  };
+    borderTop: `1px solid ${currentTheme?.tokens['color-border'] || '#3e3e42'}`,
+    paddingTop: currentTheme?.tokens['spacing-md'] || '8px',
+  });
 
-  const promptStyle: React.CSSProperties = {
-    color: theme === 'dark' ? '#569cd6' : '#0066cc',
+  const getPromptStyle = (): React.CSSProperties => ({
+    color: currentTheme?.tokens['color-accent'] || '#569cd6',
+    marginRight: currentTheme?.tokens['spacing-md'] || '8px',
     fontWeight: 'bold',
-    flexShrink: 0,
-  };
+  });
 
-  const inputStyle: React.CSSProperties = {
+  const getInputStyle = (): React.CSSProperties => ({
     flex: 1,
     background: 'transparent',
     border: 'none',
     color: 'inherit',
     font: 'inherit',
     outline: 'none',
-  };
+  });
 
   const getLineStyle = (type: OutputLine['type']): React.CSSProperties => {
     const base: React.CSSProperties = {
@@ -219,19 +228,43 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
 
     switch (type) {
       case 'command':
-        return { ...base, color: theme === 'dark' ? '#9cdcfe' : '#0066cc' };
+        return {
+          ...base,
+          color: currentTheme?.tokens['color-text-secondary'] || '#9cdcfe',
+        };
       case 'error':
-        return { ...base, color: theme === 'dark' ? '#f85149' : '#d73a49' };
+        return {
+          ...base,
+          color: currentTheme?.tokens['color-error'] || '#f85149',
+        };
       case 'output':
-        return { ...base, color: theme === 'dark' ? '#7ee787' : '#28a745' };
+        return {
+          ...base,
+          color: currentTheme?.tokens['color-success'] || '#7ee787',
+        };
+      case 'info':
+        return {
+          ...base,
+          color: currentTheme?.tokens['color-warning'] || '#f9c74f',
+        };
       default:
         return base;
     }
   };
 
+  if (error) {
+    return (
+      <div style={getTerminalStyle()} className={className}>
+        <div style={{ padding: '8px', textAlign: 'center', color: '#f85149' }}>
+          Error initializing console: {error.message}
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
-      <div style={terminalStyle} className={className}>
+      <div style={getTerminalStyle()} className={className}>
         <div style={{ padding: '8px', textAlign: 'center' }}>
           Loading Web Console...
         </div>
@@ -240,26 +273,28 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
   }
 
   return (
-    <div style={terminalStyle} className={className} onClick={focusInput}>
-      <div style={outputStyle} ref={outputRef}>
+    <div style={getTerminalStyle()} className={className} onClick={focusInput}>
+      <div style={getOutputStyle()} ref={outputRef}>
         {output.map((line) => (
           <div key={line.id} style={getLineStyle(line.type)}>
             {line.text}
           </div>
         ))}
       </div>
-      <div style={inputLineStyle}>
-        <span style={promptStyle}>{prompt}</span>
+      <div style={getInputLineStyle()}>
+        <span style={getPromptStyle()}>{prompt}</span>
         <input
           ref={inputRef}
           type="text"
-          style={inputStyle}
+          style={getInputStyle()}
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           autoComplete="off"
           spellCheck={false}
           disabled={!console}
+          placeholder="Enter command..."
+          aria-label="Command input"
         />
       </div>
     </div>
