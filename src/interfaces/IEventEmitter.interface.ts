@@ -2,7 +2,7 @@
  * Event-Emitter Interface
  */
 
-import { EventHandler, EventUnsubscriber } from '../types/index.js';
+import { EventHandler, EventUnsubscriber } from "../types/index.js";
 
 export interface IEventEmitter {
   on<T = unknown>(event: string, handler: EventHandler<T>): EventUnsubscriber;

@@ -7,5 +7,5 @@ export enum Permission {
   /** Schreiben (2) */
   WRITE = 0b010,
   /** Ausführen (1) */
-  EXECUTE = 0b001
+  EXECUTE = 0b001,
 }

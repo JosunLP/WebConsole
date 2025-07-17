@@ -9,15 +9,15 @@ import {
   MountConfig,
   Path,
   PermissionMask,
-} from '../types/index.js';
+} from "../types/index.js";
 
-import { FileType, VFSEvent } from '../enums/index.js';
+import { FileType, VFSEvent } from "../enums/index.js";
 
-import { IDirEntry, INode, IVFS, IVFSProvider } from '../interfaces/index.js';
+import { IDirEntry, INode, IVFS, IVFSProvider } from "../interfaces/index.js";
 
-import { EventHandler } from '../types/index.js';
+import { EventHandler } from "../types/index.js";
 
-import { EventEmitter } from './EventEmitter.js';
+import { EventEmitter } from "./EventEmitter.js";
 
 /**
  * Mount-Point Information
@@ -71,29 +71,29 @@ export class VFS extends EventEmitter implements IVFS {
    * Pfad auflösen (normalisieren)
    */
   resolve(path: Path): Path {
-    if (!path.startsWith('/')) {
-      throw new Error('Only absolute paths are supported');
+    if (!path.startsWith("/")) {
+      throw new Error("Only absolute paths are supported");
     }
 
-    const parts = path.split('/').filter((part) => part.length > 0);
+    const parts = path.split("/").filter((part) => part.length > 0);
     const resolved: string[] = [];
 
     for (const part of parts) {
-      if (part === '..') {
+      if (part === "..") {
         resolved.pop();
-      } else if (part !== '.') {
+      } else if (part !== ".") {
         resolved.push(part);
       }
     }
 
-    return '/' + resolved.join('/');
+    return "/" + resolved.join("/");
   }
 
   /**
    * Pfade zusammenfügen
    */
   join(...paths: Path[]): Path {
-    const joined = paths.join('/');
+    const joined = paths.join("/");
     return this.resolve(joined);
   }
 
@@ -102,8 +102,8 @@ export class VFS extends EventEmitter implements IVFS {
    */
   dirname(path: Path): Path {
     const resolved = this.resolve(path);
-    const lastSlash = resolved.lastIndexOf('/');
-    if (lastSlash === 0) return '/';
+    const lastSlash = resolved.lastIndexOf("/");
+    if (lastSlash === 0) return "/";
     return resolved.substring(0, lastSlash);
   }
 
@@ -112,7 +112,7 @@ export class VFS extends EventEmitter implements IVFS {
    */
   basename(path: Path, ext?: string): string {
     const resolved = this.resolve(path);
-    const lastSlash = resolved.lastIndexOf('/');
+    const lastSlash = resolved.lastIndexOf("/");
     let basename = resolved.substring(lastSlash + 1);
 
     if (ext && basename.endsWith(ext)) {
@@ -127,8 +127,8 @@ export class VFS extends EventEmitter implements IVFS {
    */
   extname(path: Path): string {
     const basename = this.basename(path);
-    const lastDot = basename.lastIndexOf('.');
-    return lastDot > 0 ? basename.substring(lastDot) : '';
+    const lastDot = basename.lastIndexOf(".");
+    return lastDot > 0 ? basename.substring(lastDot) : "";
   }
 
   // === FILE OPERATIONS ===
@@ -156,7 +156,7 @@ export class VFS extends EventEmitter implements IVFS {
   async writeFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>
+    options?: Partial<INode>,
   ): Promise<void> {
     try {
       const resolution = await this.resolvePath(path);
@@ -186,7 +186,7 @@ export class VFS extends EventEmitter implements IVFS {
       combined.set(data, existingData.length);
       await this.writeFile(path, combined);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('File not found')) {
+      if (error instanceof Error && error.message.includes("File not found")) {
         // Datei existiert nicht, neu erstellen
         await this.writeFile(path, data);
       } else {
@@ -328,7 +328,7 @@ export class VFS extends EventEmitter implements IVFS {
     // Symlink-Inode erstellen
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.SYMLINK,
-      0o777
+      0o777,
     );
 
     // Target-Pfad als "Datei-Inhalt" speichern
@@ -353,7 +353,7 @@ export class VFS extends EventEmitter implements IVFS {
       throw new Error(`Not a symbolic link: ${path}`);
     }
 
-    return inode.target || '';
+    return inode.target || "";
   }
 
   // === MOUNT OPERATIONS ===
@@ -401,7 +401,7 @@ export class VFS extends EventEmitter implements IVFS {
     // Vereinfachte Implementation - lauscht auf alle VFS-Events
     // und filtert nach Pfad
     const wrappedHandler = (data: any) => {
-      if (data.path === path || data.path.startsWith(path + '/')) {
+      if (data.path === path || data.path.startsWith(path + "/")) {
         handler(data);
       }
     };
@@ -424,7 +424,7 @@ export class VFS extends EventEmitter implements IVFS {
   /**
    * Glob-Pattern matching
    */
-  async glob(pattern: GlobPattern, cwd = '/'): Promise<Path[]> {
+  async glob(pattern: GlobPattern, cwd = "/"): Promise<Path[]> {
     // Vereinfachte Glob-Implementation
     // Würde in echter Implementation minimatch oder ähnliche Bibliothek verwenden
     const results: Path[] = [];
@@ -436,8 +436,8 @@ export class VFS extends EventEmitter implements IVFS {
           const fullPath = this.join(dir, entry.name);
 
           // Einfacher * Wildcard-Support
-          if (pattern.includes('*')) {
-            const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+          if (pattern.includes("*")) {
+            const regex = new RegExp(pattern.replace(/\*/g, ".*"));
             if (regex.test(fullPath)) {
               results.push(fullPath);
             }
@@ -473,7 +473,7 @@ export class VFS extends EventEmitter implements IVFS {
     const inode = await this.getInode(resolution.inode);
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
-      { permissions }
+      { permissions },
     );
 
     this.inodeCache.set(resolution.inode, updatedInode);
@@ -495,7 +495,7 @@ export class VFS extends EventEmitter implements IVFS {
 
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
-      updates
+      updates,
     );
 
     this.inodeCache.set(resolution.inode, updatedInode);
@@ -514,7 +514,7 @@ export class VFS extends EventEmitter implements IVFS {
 
     // Mount-Point finden
     let bestMatch: MountPoint | undefined;
-    let bestMatchPath = '';
+    let bestMatchPath = "";
 
     for (const [mountPath, mountPoint] of this.mountPoints) {
       if (
@@ -530,7 +530,7 @@ export class VFS extends EventEmitter implements IVFS {
       throw new Error(`No mount point found for path: ${path}`);
     }
 
-    const relativePath = resolvedPath.substring(bestMatchPath.length) || '/';
+    const relativePath = resolvedPath.substring(bestMatchPath.length) || "/";
 
     return {
       mountPoint: bestMatch,
@@ -557,13 +557,13 @@ export class VFS extends EventEmitter implements IVFS {
   private async createFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>
+    options?: Partial<INode>,
   ): Promise<INode> {
     const resolution = await this.resolvePath(path);
 
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.FILE,
-      options?.permissions || 0o644
+      options?.permissions || 0o644,
     );
 
     await resolution.mountPoint.provider.writeFile(inode.inode, data);
@@ -579,13 +579,13 @@ export class VFS extends EventEmitter implements IVFS {
    */
   private async createDirectory(
     path: Path,
-    permissions: PermissionMask
+    permissions: PermissionMask,
   ): Promise<INode> {
     const resolution = await this.resolvePath(path);
 
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.DIRECTORY,
-      permissions
+      permissions,
     );
 
     this.pathCache.set(path, inode.inode);
@@ -599,7 +599,7 @@ export class VFS extends EventEmitter implements IVFS {
    */
   private async loadProvider(
     name: string,
-    options: Record<string, unknown>
+    options: Record<string, unknown>,
   ): Promise<IVFSProvider> {
     // Hier würde die Provider-Registry verwendet
     // Vorerst Dummy-Implementation

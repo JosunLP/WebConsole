@@ -3,9 +3,9 @@
  */
 export enum ThemeMode {
   /** Helles Theme */
-  LIGHT = 'light',
+  LIGHT = "light",
   /** Dunkles Theme */
-  DARK = 'dark',
+  DARK = "dark",
   /** System-Theme folgen */
-  AUTO = 'auto'
+  AUTO = "auto",
 }

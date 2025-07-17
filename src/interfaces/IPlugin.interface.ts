@@ -2,7 +2,7 @@
  * Plugin Interface
  */
 
-import { IKernel } from './IKernel.interface.js';
+import { IKernel } from "./IKernel.interface.js";
 
 export interface IPlugin {
   readonly name: string;

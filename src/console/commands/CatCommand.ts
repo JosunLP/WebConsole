@@ -2,17 +2,13 @@
  * cat - Display file contents
  */
 
-import { ExitCode, VfsError, VfsItemType } from '../../enums/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode, VfsError, VfsItemType } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class CatCommand extends BaseCommand {
   constructor() {
-    super(
-      'cat',
-      'Display file contents',
-      'cat [OPTION]... [FILE]...'
-    );
+    super("cat", "Display file contents", "cat [OPTION]... [FILE]...");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -24,16 +20,19 @@ export class CatCommand extends BaseCommand {
     const { flags, positional } = this.parseArgs(context);
 
     // Options
-    const showLineNumbers = flags.has('n') || flags.has('number');
-    const showNonBlank = flags.has('b') || flags.has('number-nonblank');
-    const showEnds = flags.has('E') || flags.has('show-ends');
-    const showTabs = flags.has('T') || flags.has('show-tabs');
-    const showAll = flags.has('A') || flags.has('show-all');
-    const squeezeBlank = flags.has('s') || flags.has('squeeze-blank');
+    const showLineNumbers = flags.has("n") || flags.has("number");
+    const showNonBlank = flags.has("b") || flags.has("number-nonblank");
+    const showEnds = flags.has("E") || flags.has("show-ends");
+    const showTabs = flags.has("T") || flags.has("show-tabs");
+    const showAll = flags.has("A") || flags.has("show-all");
+    const squeezeBlank = flags.has("s") || flags.has("squeeze-blank");
 
     // If no files specified, read from stdin (not implemented in this version)
     if (positional.length === 0) {
-      await this.writeToStderr(context, 'cat: reading from stdin not implemented\n');
+      await this.writeToStderr(
+        context,
+        "cat: reading from stdin not implemented\n",
+      );
       return ExitCode.FAILURE;
     }
 
@@ -46,7 +45,7 @@ export class CatCommand extends BaseCommand {
         showEnds,
         showTabs,
         showAll,
-        squeezeBlank
+        squeezeBlank,
       });
 
       if (result !== ExitCode.SUCCESS) {
@@ -67,7 +66,7 @@ export class CatCommand extends BaseCommand {
       showTabs: boolean;
       showAll: boolean;
       squeezeBlank: boolean;
-    }
+    },
   ): Promise<ExitCode> {
     try {
       // Resolve path
@@ -89,7 +88,6 @@ export class CatCommand extends BaseCommand {
 
       await this.writeToStdout(context, processedContent);
       return ExitCode.SUCCESS;
-
     } catch (error: any) {
       let errorMessage: string;
 
@@ -112,15 +110,18 @@ export class CatCommand extends BaseCommand {
     }
   }
 
-  private processContent(content: string, options: {
-    showLineNumbers: boolean;
-    showNonBlank: boolean;
-    showEnds: boolean;
-    showTabs: boolean;
-    showAll: boolean;
-    squeezeBlank: boolean;
-  }): string {
-    let lines = content.split('\n');
+  private processContent(
+    content: string,
+    options: {
+      showLineNumbers: boolean;
+      showNonBlank: boolean;
+      showEnds: boolean;
+      showTabs: boolean;
+      showAll: boolean;
+      squeezeBlank: boolean;
+    },
+  ): string {
+    let lines = content.split("\n");
 
     // Squeeze blank lines
     if (options.squeezeBlank) {
@@ -134,7 +135,7 @@ export class CatCommand extends BaseCommand {
 
       // Show tabs as ^I
       if (options.showTabs || options.showAll) {
-        processedLine = processedLine.replace(/\t/g, '^I');
+        processedLine = processedLine.replace(/\t/g, "^I");
       }
 
       // Show other non-printing characters
@@ -144,19 +145,19 @@ export class CatCommand extends BaseCommand {
 
       // Show line ends as $
       if (options.showEnds || options.showAll) {
-        processedLine += '$';
+        processedLine += "$";
       }
 
       // Add line numbers
       if (options.showLineNumbers || options.showNonBlank) {
-        const isBlank = line.trim() === '';
+        const isBlank = line.trim() === "";
 
         if (options.showNonBlank && isBlank) {
           // Don't number blank lines
-          processedLine = '     \t' + processedLine;
+          processedLine = "     \t" + processedLine;
         } else {
-          const numberStr = lineNumber.toString().padStart(6, ' ');
-          processedLine = numberStr + '\t' + processedLine;
+          const numberStr = lineNumber.toString().padStart(6, " ");
+          processedLine = numberStr + "\t" + processedLine;
           lineNumber++;
         }
       }
@@ -164,7 +165,7 @@ export class CatCommand extends BaseCommand {
       return processedLine;
     });
 
-    return processedLines.join('\n');
+    return processedLines.join("\n");
   }
 
   private squeezeBlankLines(lines: string[]): string[] {
@@ -172,7 +173,7 @@ export class CatCommand extends BaseCommand {
     let prevWasBlank = false;
 
     for (const line of lines) {
-      const isBlank = line.trim() === '';
+      const isBlank = line.trim() === "";
 
       if (isBlank && prevWasBlank) {
         // Skip consecutive blank lines
@@ -188,45 +189,45 @@ export class CatCommand extends BaseCommand {
 
   private showNonPrintingChars(line: string): string {
     return line
-      .split('')
-      .map(char => {
+      .split("")
+      .map((char) => {
         const code = char.charCodeAt(0);
 
         // Control characters (0-31, except tab)
-        if (code >= 0 && code <= 31 && char !== '\t') {
-          return '^' + String.fromCharCode(code + 64);
+        if (code >= 0 && code <= 31 && char !== "\t") {
+          return "^" + String.fromCharCode(code + 64);
         }
 
         // DEL (127)
         if (code === 127) {
-          return '^?';
+          return "^?";
         }
 
         // High bit characters (128-255)
         if (code >= 128 && code <= 255) {
-          return 'M-' + String.fromCharCode(code - 128);
+          return "M-" + String.fromCharCode(code - 128);
         }
 
         return char;
       })
-      .join('');
+      .join("");
   }
 
   /**
    * Utility method for syntax highlighting (basic implementation)
    */
   private applySyntaxHighlighting(content: string, fileName: string): string {
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName.split(".").pop()?.toLowerCase();
 
     switch (extension) {
-      case 'js':
-      case 'ts':
+      case "js":
+      case "ts":
         return this.highlightJavaScript(content);
-      case 'json':
+      case "json":
         return this.highlightJson(content);
-      case 'css':
+      case "css":
         return this.highlightCss(content);
-      case 'html':
+      case "html":
         return this.highlightHtml(content);
       default:
         return content;
@@ -236,34 +237,39 @@ export class CatCommand extends BaseCommand {
   private highlightJavaScript(content: string): string {
     // Basic JavaScript syntax highlighting with ANSI codes
     return content
-      .replace(/\b(function|const|let|var|if|else|for|while|return|class|import|export)\b/g,
-               '\x1b[35m$1\x1b[0m') // Purple for keywords
-      .replace(/\/\/.*$/gm, '\x1b[32m$&\x1b[0m') // Green for comments
-      .replace(/"[^"]*"/g, '\x1b[33m$&\x1b[0m') // Yellow for strings
-      .replace(/'[^']*'/g, '\x1b[33m$&\x1b[0m'); // Yellow for strings
+      .replace(
+        /\b(function|const|let|var|if|else|for|while|return|class|import|export)\b/g,
+        "\x1b[35m$1\x1b[0m",
+      ) // Purple for keywords
+      .replace(/\/\/.*$/gm, "\x1b[32m$&\x1b[0m") // Green for comments
+      .replace(/"[^"]*"/g, "\x1b[33m$&\x1b[0m") // Yellow for strings
+      .replace(/'[^']*'/g, "\x1b[33m$&\x1b[0m"); // Yellow for strings
   }
 
   private highlightJson(content: string): string {
     return content
-      .replace(/"[^"]*":/g, '\x1b[36m$&\x1b[0m') // Cyan for keys
-      .replace(/:\s*"[^"]*"/g, match =>
-               match.replace(/"[^"]*"$/, '\x1b[33m$&\x1b[0m')) // Yellow for string values
-      .replace(/:\s*(true|false|null)/g,
-               match => match.replace(/(true|false|null)/, '\x1b[35m$1\x1b[0m')); // Purple for literals
+      .replace(/"[^"]*":/g, "\x1b[36m$&\x1b[0m") // Cyan for keys
+      .replace(/:\s*"[^"]*"/g, (match) =>
+        match.replace(/"[^"]*"$/, "\x1b[33m$&\x1b[0m"),
+      ) // Yellow for string values
+      .replace(/:\s*(true|false|null)/g, (match) =>
+        match.replace(/(true|false|null)/, "\x1b[35m$1\x1b[0m"),
+      ); // Purple for literals
   }
 
   private highlightCss(content: string): string {
     return content
-      .replace(/[.#]?[a-zA-Z-]+(?=\s*{)/g, '\x1b[34m$&\x1b[0m') // Blue for selectors
-      .replace(/[a-zA-Z-]+(?=\s*:)/g, '\x1b[36m$&\x1b[0m') // Cyan for properties
-      .replace(/:\s*[^;{}]+/g, match =>
-               match.replace(/:\s*(.+)/, ': \x1b[33m$1\x1b[0m')); // Yellow for values
+      .replace(/[.#]?[a-zA-Z-]+(?=\s*{)/g, "\x1b[34m$&\x1b[0m") // Blue for selectors
+      .replace(/[a-zA-Z-]+(?=\s*:)/g, "\x1b[36m$&\x1b[0m") // Cyan for properties
+      .replace(/:\s*[^;{}]+/g, (match) =>
+        match.replace(/:\s*(.+)/, ": \x1b[33m$1\x1b[0m"),
+      ); // Yellow for values
   }
 
   private highlightHtml(content: string): string {
     return content
-      .replace(/<[^>]+>/g, '\x1b[34m$&\x1b[0m') // Blue for tags
-      .replace(/\s+\w+=/g, '\x1b[36m$&\x1b[0m') // Cyan for attributes
-      .replace(/"[^"]*"/g, '\x1b[33m$&\x1b[0m'); // Yellow for attribute values
+      .replace(/<[^>]+>/g, "\x1b[34m$&\x1b[0m") // Blue for tags
+      .replace(/\s+\w+=/g, "\x1b[36m$&\x1b[0m") // Cyan for attributes
+      .replace(/"[^"]*"/g, "\x1b[33m$&\x1b[0m"); // Yellow for attribute values
   }
 }

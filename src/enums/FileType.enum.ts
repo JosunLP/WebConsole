@@ -3,17 +3,17 @@
  */
 export enum FileType {
   /** Reguläre Datei */
-  FILE = 'file',
+  FILE = "file",
   /** Verzeichnis */
-  DIRECTORY = 'directory',
+  DIRECTORY = "directory",
   /** Symbolischer Link */
-  SYMLINK = 'symlink',
+  SYMLINK = "symlink",
   /** Hard Link */
-  HARDLINK = 'hardlink',
+  HARDLINK = "hardlink",
   /** Block Device */
-  BLOCK_DEVICE = 'block',
+  BLOCK_DEVICE = "block",
   /** Character Device */
-  CHAR_DEVICE = 'char',
+  CHAR_DEVICE = "char",
   /** Named Pipe */
-  FIFO = 'fifo'
+  FIFO = "fifo",
 }

@@ -2,9 +2,9 @@
  * State Manager Interface
  */
 
-import { StateConfig } from '../types/index.js';
+import { StateConfig } from "../types/index.js";
 
-import { IEventEmitter } from './IEventEmitter.interface.js';
+import { IEventEmitter } from "./IEventEmitter.interface.js";
 
 export interface IStateManager extends IEventEmitter {
   get<T>(key: string): T | undefined;

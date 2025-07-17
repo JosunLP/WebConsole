@@ -2,7 +2,7 @@
  * Console-Erstellungsoptionen
  */
 
-import { Environment, ID, Path } from '../types/index.js';
+import { Environment, ID, Path } from "../types/index.js";
 
 export interface IConsoleOptions {
   readonly id: ID;

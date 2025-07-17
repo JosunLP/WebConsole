@@ -2,17 +2,13 @@
  * clear - Clear the terminal screen
  */
 
-import { ExitCode } from '../../enums/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class ClearCommand extends BaseCommand {
   constructor() {
-    super(
-      'clear',
-      'Clear the terminal screen',
-      'clear'
-    );
+    super("clear", "Clear the terminal screen", "clear");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -22,7 +18,7 @@ export class ClearCommand extends BaseCommand {
     }
 
     // Send clear screen ANSI escape sequence
-    await this.writeToStdout(context, '\x1b[2J\x1b[H');
+    await this.writeToStdout(context, "\x1b[2J\x1b[H");
 
     return ExitCode.SUCCESS;
   }
@@ -32,13 +28,13 @@ export class ClearCommand extends BaseCommand {
    */
   static async clearScreen(context: CommandContext): Promise<void> {
     const command = new ClearCommand();
-    await command.writeToStdout(context, '\x1b[2J\x1b[H');
+    await command.writeToStdout(context, "\x1b[2J\x1b[H");
   }
 
   /**
    * Get ANSI clear screen sequence
    */
   static getClearSequence(): string {
-    return '\x1b[2J\x1b[H';
+    return "\x1b[2J\x1b[H";
   }
 }

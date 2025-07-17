@@ -2,17 +2,13 @@
  * export - Set environment variables
  */
 
-import { ExitCode } from '../../enums/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class ExportCommand extends BaseCommand {
   constructor() {
-    super(
-      'export',
-      'Set environment variables',
-      'export [name[=value] ...]'
-    );
+    super("export", "Set environment variables", "export [name[=value] ...]");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -24,7 +20,7 @@ export class ExportCommand extends BaseCommand {
     const { flags, positional } = this.parseArgs(context);
 
     // -p: display all environment variables in a format that can be reused as input
-    const printAll = flags.has('p');
+    const printAll = flags.has("p");
 
     // If no arguments, print all environment variables
     if (positional.length === 0 || printAll) {
@@ -43,7 +39,10 @@ export class ExportCommand extends BaseCommand {
     return ExitCode.SUCCESS;
   }
 
-  private async processExportArgument(context: CommandContext, arg: string): Promise<ExitCode> {
+  private async processExportArgument(
+    context: CommandContext,
+    arg: string,
+  ): Promise<ExitCode> {
     // Check if it's an assignment (name=value)
     const assignmentMatch = arg.match(/^([a-zA-Z_][a-zA-Z0-9_]*)=(.*)$/);
 
@@ -61,13 +60,16 @@ export class ExportCommand extends BaseCommand {
     if (nameMatch) {
       // Export existing variable or set to empty if not exists
       const name = nameMatch[1]!;
-      const currentValue = this.getEnvironmentVariable(context, name) || '';
+      const currentValue = this.getEnvironmentVariable(context, name) || "";
       await this.setEnvironmentVariable(context, name, currentValue);
       return ExitCode.SUCCESS;
     }
 
     // Invalid variable name
-    await this.writeToStderr(context, `export: \`${arg}': not a valid identifier\n`);
+    await this.writeToStderr(
+      context,
+      `export: \`${arg}': not a valid identifier\n`,
+    );
     return ExitCode.FAILURE;
   }
 
@@ -87,21 +89,25 @@ export class ExportCommand extends BaseCommand {
 
   private escapeValue(value: string): string {
     return value
-      .replace(/\\/g, '\\\\')   // Escape backslashes
-      .replace(/"/g, '\\"')     // Escape double quotes
-      .replace(/\$/g, '\\$')    // Escape dollar signs
-      .replace(/`/g, '\\`')     // Escape backticks
-      .replace(/\n/g, '\\n')    // Escape newlines
-      .replace(/\r/g, '\\r')    // Escape carriage returns
-      .replace(/\t/g, '\\t');   // Escape tabs
+      .replace(/\\/g, "\\\\") // Escape backslashes
+      .replace(/"/g, '\\"') // Escape double quotes
+      .replace(/\$/g, "\\$") // Escape dollar signs
+      .replace(/`/g, "\\`") // Escape backticks
+      .replace(/\n/g, "\\n") // Escape newlines
+      .replace(/\r/g, "\\r") // Escape carriage returns
+      .replace(/\t/g, "\\t"); // Escape tabs
   }
 
-  private async setEnvironmentVariable(context: CommandContext, name: string, value: string): Promise<void> {
+  private async setEnvironmentVariable(
+    context: CommandContext,
+    name: string,
+    value: string,
+  ): Promise<void> {
     // In a real implementation, this would update the environment in the state manager
     // For now, we'll just update the context environment (which might be read-only)
     try {
       // Try to update the environment through the state manager
-      if (context.state && typeof context.state.setEnvironment === 'function') {
+      if (context.state && typeof context.state.setEnvironment === "function") {
         const currentEnv = context.environment;
         const newEnv = { ...currentEnv, [name]: value };
         context.state.setEnvironment(newEnv);
@@ -111,11 +117,17 @@ export class ExportCommand extends BaseCommand {
       }
     } catch (error) {
       // If we can't modify the environment, at least log the attempt
-      await this.writeToStderr(context, `export: warning: cannot modify environment\n`);
+      await this.writeToStderr(
+        context,
+        `export: warning: cannot modify environment\n`,
+      );
     }
   }
 
-  private getEnvironmentVariable(context: CommandContext, name: string): string | undefined {
+  private getEnvironmentVariable(
+    context: CommandContext,
+    name: string,
+  ): string | undefined {
     return context.environment[name];
   }
 
@@ -129,7 +141,11 @@ export class ExportCommand extends BaseCommand {
   /**
    * Utility method to set a single environment variable
    */
-  static async setVariable(context: CommandContext, name: string, value: string): Promise<boolean> {
+  static async setVariable(
+    context: CommandContext,
+    name: string,
+    value: string,
+  ): Promise<boolean> {
     const command = new ExportCommand();
     try {
       await command.setEnvironmentVariable(context, name, value);
@@ -142,9 +158,12 @@ export class ExportCommand extends BaseCommand {
   /**
    * Utility method to unset an environment variable
    */
-  static async unsetVariable(context: CommandContext, name: string): Promise<boolean> {
+  static async unsetVariable(
+    context: CommandContext,
+    name: string,
+  ): Promise<boolean> {
     try {
-      if (context.state && typeof context.state.setEnvironment === 'function') {
+      if (context.state && typeof context.state.setEnvironment === "function") {
         const currentEnv = context.environment;
         const newEnv = { ...currentEnv };
         delete newEnv[name];

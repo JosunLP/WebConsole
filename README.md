@@ -24,21 +24,6 @@ npm run storybook  # Startet auf http://localhost:6006
 - 📱 Component Tests in verschiedenen Konfigurationen
 - 📚 Live-Dokumentation mit Code-Beispielen
 
-### 3. Alternative: Lokaler HTTP-Server
-
-```bash
-# Einfach:
-npm run serve
-
-# Oder manuell:
-python -m http.server 8000
-# oder
-npx http-server .
-
-# test.html im Browser öffnen
-http://localhost:8000/test.html
-```
-
 ### 3. Web Component verwenden
 
 ```html

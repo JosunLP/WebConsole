@@ -3,30 +3,29 @@
  * Zerlegt Eingabe-Strings in Tokens
  */
 
-
 /**
  * Token-Typen
  */
 export enum TokenType {
-  WORD = 'WORD',
-  STRING = 'STRING',
-  PIPE = 'PIPE',
-  REDIRECT_OUT = 'REDIRECT_OUT',
-  REDIRECT_APPEND = 'REDIRECT_APPEND',
-  REDIRECT_IN = 'REDIRECT_IN',
-  REDIRECT_ERR = 'REDIRECT_ERR',
-  REDIRECT_ERR_APPEND = 'REDIRECT_ERR_APPEND',
-  BACKGROUND = 'BACKGROUND',
-  SEMICOLON = 'SEMICOLON',
-  AND = 'AND',
-  OR = 'OR',
-  SUBSHELL_START = 'SUBSHELL_START',
-  SUBSHELL_END = 'SUBSHELL_END',
-  VARIABLE = 'VARIABLE',
-  ASSIGNMENT = 'ASSIGNMENT',
-  WHITESPACE = 'WHITESPACE',
-  NEWLINE = 'NEWLINE',
-  EOF = 'EOF'
+  WORD = "WORD",
+  STRING = "STRING",
+  PIPE = "PIPE",
+  REDIRECT_OUT = "REDIRECT_OUT",
+  REDIRECT_APPEND = "REDIRECT_APPEND",
+  REDIRECT_IN = "REDIRECT_IN",
+  REDIRECT_ERR = "REDIRECT_ERR",
+  REDIRECT_ERR_APPEND = "REDIRECT_ERR_APPEND",
+  BACKGROUND = "BACKGROUND",
+  SEMICOLON = "SEMICOLON",
+  AND = "AND",
+  OR = "OR",
+  SUBSHELL_START = "SUBSHELL_START",
+  SUBSHELL_END = "SUBSHELL_END",
+  VARIABLE = "VARIABLE",
+  ASSIGNMENT = "ASSIGNMENT",
+  WHITESPACE = "WHITESPACE",
+  NEWLINE = "NEWLINE",
+  EOF = "EOF",
 }
 
 /**
@@ -63,7 +62,7 @@ export class Lexer {
       position: 0,
       line: 1,
       column: 1,
-      current: input[0] || ''
+      current: input[0] || "",
     };
   }
 
@@ -83,10 +82,10 @@ export class Lexer {
     // EOF-Token hinzufügen
     tokens.push({
       type: TokenType.EOF,
-      value: '',
+      value: "",
       position: this.state.position,
       line: this.state.line,
-      column: this.state.column
+      column: this.state.column,
     });
 
     return tokens;
@@ -107,20 +106,20 @@ export class Lexer {
     const column = this.state.column;
 
     // Kommentare überspringen
-    if (this.current() === '#') {
+    if (this.current() === "#") {
       this.skipComment();
       return this.nextToken();
     }
 
     // Newline
-    if (this.current() === '\n') {
+    if (this.current() === "\n") {
       this.advance();
       return {
         type: TokenType.NEWLINE,
-        value: '\n',
+        value: "\n",
         position,
         line,
-        column
+        column,
       };
     }
 
@@ -130,147 +129,147 @@ export class Lexer {
     }
 
     // Pipe
-    if (this.current() === '|') {
-      if (this.peek() === '|') {
+    if (this.current() === "|") {
+      if (this.peek() === "|") {
         this.advance();
         this.advance();
         return {
           type: TokenType.OR,
-          value: '||',
+          value: "||",
           position,
           line,
-          column
+          column,
         };
       }
       this.advance();
       return {
         type: TokenType.PIPE,
-        value: '|',
+        value: "|",
         position,
         line,
-        column
+        column,
       };
     }
 
     // Redirections
-    if (this.current() === '>') {
-      if (this.peek() === '>') {
+    if (this.current() === ">") {
+      if (this.peek() === ">") {
         this.advance();
         this.advance();
         return {
           type: TokenType.REDIRECT_APPEND,
-          value: '>>',
+          value: ">>",
           position,
           line,
-          column
+          column,
         };
       }
       this.advance();
       return {
         type: TokenType.REDIRECT_OUT,
-        value: '>',
+        value: ">",
         position,
         line,
-        column
+        column,
       };
     }
 
-    if (this.current() === '<') {
+    if (this.current() === "<") {
       this.advance();
       return {
         type: TokenType.REDIRECT_IN,
-        value: '<',
+        value: "<",
         position,
         line,
-        column
+        column,
       };
     }
 
     // Error Redirection (2>, 2>>)
-    if (this.current() === '2') {
-      if (this.peek() === '>') {
+    if (this.current() === "2") {
+      if (this.peek() === ">") {
         this.advance(); // 2
         this.advance(); // >
-        if (this.current() === '>') {
+        if (this.current() === ">") {
           this.advance(); // zweites >
           return {
             type: TokenType.REDIRECT_ERR_APPEND,
-            value: '2>>',
+            value: "2>>",
             position,
             line,
-            column
+            column,
           };
         }
         return {
           type: TokenType.REDIRECT_ERR,
-          value: '2>',
+          value: "2>",
           position,
           line,
-          column
+          column,
         };
       }
     }
 
     // Background
-    if (this.current() === '&') {
-      if (this.peek() === '&') {
+    if (this.current() === "&") {
+      if (this.peek() === "&") {
         this.advance();
         this.advance();
         return {
           type: TokenType.AND,
-          value: '&&',
+          value: "&&",
           position,
           line,
-          column
+          column,
         };
       }
       this.advance();
       return {
         type: TokenType.BACKGROUND,
-        value: '&',
+        value: "&",
         position,
         line,
-        column
+        column,
       };
     }
 
     // Semicolon
-    if (this.current() === ';') {
+    if (this.current() === ";") {
       this.advance();
       return {
         type: TokenType.SEMICOLON,
-        value: ';',
+        value: ";",
         position,
         line,
-        column
+        column,
       };
     }
 
     // Subshell
-    if (this.current() === '(') {
+    if (this.current() === "(") {
       this.advance();
       return {
         type: TokenType.SUBSHELL_START,
-        value: '(',
+        value: "(",
         position,
         line,
-        column
+        column,
       };
     }
 
-    if (this.current() === ')') {
+    if (this.current() === ")") {
       this.advance();
       return {
         type: TokenType.SUBSHELL_END,
-        value: ')',
+        value: ")",
         position,
         line,
-        column
+        column,
       };
     }
 
     // Variable oder Assignment
-    if (this.current() === '$') {
+    if (this.current() === "$") {
       return this.readVariable(position, line, column);
     }
 
@@ -285,9 +284,9 @@ export class Lexer {
     const quote = this.current();
     this.advance(); // Öffnendes Anführungszeichen überspringen
 
-    let value = '';
+    let value = "";
     while (!this.isAtEnd() && this.current() !== quote) {
-      if (this.current() === '\\' && this.peek() === quote) {
+      if (this.current() === "\\" && this.peek() === quote) {
         this.advance(); // Escape-Zeichen überspringen
         value += this.current();
         this.advance();
@@ -306,7 +305,7 @@ export class Lexer {
       value,
       position,
       line,
-      column
+      column,
     };
   }
 
@@ -316,19 +315,19 @@ export class Lexer {
   private readVariable(position: number, line: number, column: number): Token {
     this.advance(); // $ überspringen
 
-    let value = '$';
+    let value = "$";
 
     // Geschweifte Klammern für ${VAR}
-    if (this.current() === '{') {
+    if (this.current() === "{") {
       value += this.current();
       this.advance();
 
-      while (!this.isAtEnd() && this.current() !== '}') {
+      while (!this.isAtEnd() && this.current() !== "}") {
         value += this.current();
         this.advance();
       }
 
-      if (this.current() === '}') {
+      if (this.current() === "}") {
         value += this.current();
         this.advance();
       }
@@ -345,7 +344,7 @@ export class Lexer {
       value,
       position,
       line,
-      column
+      column,
     };
   }
 
@@ -353,13 +352,17 @@ export class Lexer {
    * Word-Token lesen
    */
   private readWord(position: number, line: number, column: number): Token {
-    let value = '';
+    let value = "";
 
     while (!this.isAtEnd() && !this.isDelimiter(this.current())) {
       // Assignment erkennen (VAR=value)
-      if (this.current() === '=' && value.length > 0 && this.isValidVariableName(value)) {
+      if (
+        this.current() === "=" &&
+        value.length > 0 &&
+        this.isValidVariableName(value)
+      ) {
         // Assignment-Token erstellen
-        const assignmentValue = value + '=';
+        const assignmentValue = value + "=";
         this.advance(); // = überspringen
 
         // Wert lesen
@@ -373,7 +376,7 @@ export class Lexer {
           value: assignmentValue,
           position,
           line,
-          column
+          column,
         };
       }
 
@@ -386,7 +389,7 @@ export class Lexer {
       value,
       position,
       line,
-      column
+      column,
     };
   }
 
@@ -394,7 +397,11 @@ export class Lexer {
    * Whitespace überspringen
    */
   private skipWhitespace(): void {
-    while (!this.isAtEnd() && this.isWhitespace(this.current()) && this.current() !== '\n') {
+    while (
+      !this.isAtEnd() &&
+      this.isWhitespace(this.current()) &&
+      this.current() !== "\n"
+    ) {
       this.advance();
     }
   }
@@ -403,7 +410,7 @@ export class Lexer {
    * Kommentar überspringen
    */
   private skipComment(): void {
-    while (!this.isAtEnd() && this.current() !== '\n') {
+    while (!this.isAtEnd() && this.current() !== "\n") {
       this.advance();
     }
   }
@@ -412,7 +419,7 @@ export class Lexer {
    * Nächstes Zeichen im Input
    */
   private advance(): void {
-    if (this.state.current === '\n') {
+    if (this.state.current === "\n") {
       this.state.line++;
       this.state.column = 1;
     } else {
@@ -420,7 +427,7 @@ export class Lexer {
     }
 
     this.state.position++;
-    this.state.current = this.state.input[this.state.position] || '';
+    this.state.current = this.state.input[this.state.position] || "";
   }
 
   /**
@@ -434,7 +441,7 @@ export class Lexer {
    * Nächstes Zeichen (ohne zu konsumieren)
    */
   private peek(): string {
-    return this.state.input[this.state.position + 1] || '';
+    return this.state.input[this.state.position + 1] || "";
   }
 
   /**
@@ -448,23 +455,25 @@ export class Lexer {
    * Prüft ob Zeichen ein Delimiter ist
    */
   private isDelimiter(char: string): boolean {
-    return this.isWhitespace(char) ||
-           char === '|' ||
-           char === '>' ||
-           char === '<' ||
-           char === '&' ||
-           char === ';' ||
-           char === '(' ||
-           char === ')' ||
-           char === '\n' ||
-           char === '#';
+    return (
+      this.isWhitespace(char) ||
+      char === "|" ||
+      char === ">" ||
+      char === "<" ||
+      char === "&" ||
+      char === ";" ||
+      char === "(" ||
+      char === ")" ||
+      char === "\n" ||
+      char === "#"
+    );
   }
 
   /**
    * Prüft ob Zeichen Whitespace ist
    */
   private isWhitespace(char: string): boolean {
-    return char === ' ' || char === '\t' || char === '\r';
+    return char === " " || char === "\t" || char === "\r";
   }
 
   /**

@@ -2,16 +2,16 @@
  * alias - Create command aliases
  */
 
-import { ExitCode } from '../../enums/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class AliasCommand extends BaseCommand {
   constructor() {
     super(
-      'alias',
-      'Create and manage command aliases',
-      'alias [-p] [name[=value] ...]'
+      "alias",
+      "Create and manage command aliases",
+      "alias [-p] [name[=value] ...]",
     );
   }
 
@@ -24,7 +24,7 @@ export class AliasCommand extends BaseCommand {
     const { flags, positional } = this.parseArgs(context);
 
     // -p: display aliases in a format that can be reused as input
-    const printAll = flags.has('p');
+    const printAll = flags.has("p");
 
     // If no arguments, print all aliases
     if (positional.length === 0 || printAll) {
@@ -43,7 +43,10 @@ export class AliasCommand extends BaseCommand {
     return ExitCode.SUCCESS;
   }
 
-  private async processAliasArgument(context: CommandContext, arg: string): Promise<ExitCode> {
+  private async processAliasArgument(
+    context: CommandContext,
+    arg: string,
+  ): Promise<ExitCode> {
     // Check if it's an assignment (name=value)
     const assignmentMatch = arg.match(/^([a-zA-Z_][a-zA-Z0-9_-]*)=(.*)$/);
 
@@ -67,7 +70,10 @@ export class AliasCommand extends BaseCommand {
       const value = this.getAlias(context, name);
 
       if (value !== undefined) {
-        await this.writeToStdout(context, `alias ${name}='${this.escapeValue(value)}'\n`);
+        await this.writeToStdout(
+          context,
+          `alias ${name}='${this.escapeValue(value)}'\n`,
+        );
       } else {
         await this.writeToStderr(context, `alias: ${name}: not found\n`);
         return ExitCode.FAILURE;
@@ -86,7 +92,7 @@ export class AliasCommand extends BaseCommand {
     const sorted = Object.keys(aliases).sort();
 
     if (sorted.length === 0) {
-      await this.writeToStdout(context, 'No aliases defined.\n');
+      await this.writeToStdout(context, "No aliases defined.\n");
       return;
     }
 
@@ -101,8 +107,10 @@ export class AliasCommand extends BaseCommand {
 
   private cleanQuotes(value: string): string {
     // Remove surrounding single or double quotes
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       return value.slice(1, -1);
     }
     return value;
@@ -110,17 +118,21 @@ export class AliasCommand extends BaseCommand {
 
   private escapeValue(value: string): string {
     return value
-      .replace(/\\/g, '\\\\')   // Escape backslashes
-      .replace(/'/g, "\\'")     // Escape single quotes
-      .replace(/\n/g, '\\n')    // Escape newlines
-      .replace(/\r/g, '\\r')    // Escape carriage returns
-      .replace(/\t/g, '\\t');   // Escape tabs
+      .replace(/\\/g, "\\\\") // Escape backslashes
+      .replace(/'/g, "\\'") // Escape single quotes
+      .replace(/\n/g, "\\n") // Escape newlines
+      .replace(/\r/g, "\\r") // Escape carriage returns
+      .replace(/\t/g, "\\t"); // Escape tabs
   }
 
-  private async setAlias(context: CommandContext, name: string, value: string): Promise<void> {
+  private async setAlias(
+    context: CommandContext,
+    name: string,
+    value: string,
+  ): Promise<void> {
     try {
       // Set alias in state manager
-      if (context.state && typeof context.state.set === 'function') {
+      if (context.state && typeof context.state.set === "function") {
         const aliasKey = `console.aliases.${name}`;
         context.state.set(aliasKey, value);
       } else {
@@ -138,7 +150,7 @@ export class AliasCommand extends BaseCommand {
   private getAlias(context: CommandContext, name: string): string | undefined {
     try {
       // Get alias from state manager
-      if (context.state && typeof context.state.get === 'function') {
+      if (context.state && typeof context.state.get === "function") {
         const aliasKey = `console.aliases.${name}`;
         return context.state.get(aliasKey);
       } else {
@@ -153,8 +165,8 @@ export class AliasCommand extends BaseCommand {
   private getAllAliases(context: CommandContext): Record<string, string> {
     try {
       // Get all aliases from state manager
-      if (context.state && typeof context.state.get === 'function') {
-        const aliases = context.state.get('console.aliases', {});
+      if (context.state && typeof context.state.get === "function") {
+        const aliases = context.state.get("console.aliases", {});
         return aliases || {};
       } else {
         // Fallback: use global aliases object
@@ -165,9 +177,12 @@ export class AliasCommand extends BaseCommand {
     }
   }
 
-  private async removeAlias(context: CommandContext, name: string): Promise<boolean> {
+  private async removeAlias(
+    context: CommandContext,
+    name: string,
+  ): Promise<boolean> {
     try {
-      if (context.state && typeof context.state.delete === 'function') {
+      if (context.state && typeof context.state.delete === "function") {
         const aliasKey = `console.aliases.${name}`;
         return context.state.delete(aliasKey);
       } else {
@@ -204,7 +219,10 @@ export class AliasCommand extends BaseCommand {
     if (aliasValue) {
       // Replace the alias with its value
       const remainingArgs = parts.slice(1);
-      return aliasValue + (remainingArgs.length > 0 ? ' ' + remainingArgs.join(' ') : '');
+      return (
+        aliasValue +
+        (remainingArgs.length > 0 ? " " + remainingArgs.join(" ") : "")
+      );
     }
 
     return command;
@@ -229,7 +247,11 @@ export class AliasCommand extends BaseCommand {
   /**
    * Set an alias programmatically
    */
-  static async setAlias(context: CommandContext, name: string, value: string): Promise<boolean> {
+  static async setAlias(
+    context: CommandContext,
+    name: string,
+    value: string,
+  ): Promise<boolean> {
     const aliasCommand = new AliasCommand();
     try {
       await aliasCommand.setAlias(context, name, value);
@@ -242,7 +264,10 @@ export class AliasCommand extends BaseCommand {
   /**
    * Remove an alias
    */
-  static async removeAlias(context: CommandContext, name: string): Promise<boolean> {
+  static async removeAlias(
+    context: CommandContext,
+    name: string,
+  ): Promise<boolean> {
     const aliasCommand = new AliasCommand();
     return await aliasCommand.removeAlias(context, name);
   }
@@ -257,7 +282,9 @@ export class AliasCommand extends BaseCommand {
   /**
    * Parse alias assignment from string
    */
-  static parseAliasAssignment(str: string): { name: string; value: string } | null {
+  static parseAliasAssignment(
+    str: string,
+  ): { name: string; value: string } | null {
     const match = str.match(/^([a-zA-Z_][a-zA-Z0-9_-]*)=(.*)$/);
     return match ? { name: match[1]!, value: match[2]! } : null;
   }
@@ -267,22 +294,22 @@ export class AliasCommand extends BaseCommand {
    */
   static getCommonAliases(): Record<string, string> {
     return {
-      'll': 'ls -la',
-      'la': 'ls -la',
-      'l': 'ls -CF',
-      'cls': 'clear',
-      'md': 'mkdir',
-      'rd': 'rmdir',
-      'del': 'rm',
-      'copy': 'cp',
-      'move': 'mv',
-      'type': 'cat',
-      'dir': 'ls',
-      'cd..': 'cd ..',
-      'cd-': 'cd -',
-      'grep': 'grep --color=auto',
-      'fgrep': 'fgrep --color=auto',
-      'egrep': 'egrep --color=auto'
+      ll: "ls -la",
+      la: "ls -la",
+      l: "ls -CF",
+      cls: "clear",
+      md: "mkdir",
+      rd: "rmdir",
+      del: "rm",
+      copy: "cp",
+      move: "mv",
+      type: "cat",
+      dir: "ls",
+      "cd..": "cd ..",
+      "cd-": "cd -",
+      grep: "grep --color=auto",
+      fgrep: "fgrep --color=auto",
+      egrep: "egrep --color=auto",
     };
   }
 }

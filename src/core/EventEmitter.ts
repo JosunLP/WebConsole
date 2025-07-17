@@ -2,8 +2,8 @@
  * Event-Emitter Implementierung für das Web-Console-System
  */
 
-import { IEventEmitter } from '../interfaces/index.js';
-import { EventHandler, EventUnsubscriber } from '../types/index.js';
+import { IEventEmitter } from "../interfaces/index.js";
+import { EventHandler, EventUnsubscriber } from "../types/index.js";
 
 /**
  * Interne Event-Listener-Struktur
@@ -44,7 +44,7 @@ export class EventEmitter implements IEventEmitter {
    */
   once<T = unknown>(
     event: string,
-    handler: EventHandler<T>
+    handler: EventHandler<T>,
   ): EventUnsubscriber {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());

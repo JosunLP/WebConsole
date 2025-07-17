@@ -2,8 +2,8 @@
  * Theme Manager Interface
  */
 
-import { IEventEmitter } from './IEventEmitter.interface.js';
-import { ITheme } from './ITheme.interface.js';
+import { IEventEmitter } from "./IEventEmitter.interface.js";
+import { ITheme } from "./ITheme.interface.js";
 
 export interface IThemeManager extends IEventEmitter {
   getCurrentTheme(): ITheme;

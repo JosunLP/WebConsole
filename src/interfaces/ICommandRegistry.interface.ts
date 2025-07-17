@@ -2,7 +2,7 @@
  * Command Registry Interface
  */
 
-import { ICommandHandler } from './ICommandHandler.interface.js';
+import { ICommandHandler } from "./ICommandHandler.interface.js";
 
 export interface ICommandRegistry {
   // Lifecycle

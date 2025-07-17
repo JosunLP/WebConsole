@@ -2,8 +2,8 @@
  * Kommando-bezogene Typdefinitionen
  */
 
-import { ExitCode, RedirectionType } from '../enums/index.js';
-import { Environment, Path } from './primitive.type.js';
+import { ExitCode, RedirectionType } from "../enums/index.js";
+import { Environment, Path } from "./primitive.type.js";
 
 /**
  * Befehlsargumente

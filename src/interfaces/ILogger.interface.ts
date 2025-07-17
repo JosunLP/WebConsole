@@ -2,7 +2,7 @@
  * Logger Interface
  */
 
-import { LogLevel } from '../enums/index.js';
+import { LogLevel } from "../enums/index.js";
 
 export interface ILogger {
   debug(message: string, ...args: unknown[]): void;

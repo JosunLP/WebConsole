@@ -2,18 +2,14 @@
  * ls - List directory contents
  */
 
-import { ExitCode, FileType } from '../../enums/index.js';
-import { IDirEntry, INode, IVFS } from '../../interfaces/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode, FileType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFS } from "../../interfaces/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class LsCommand extends BaseCommand {
   constructor(private vfs: IVFS) {
-    super(
-      'ls',
-      'List directory contents',
-      'ls [OPTION]... [FILE]...'
-    );
+    super("ls", "List directory contents", "ls [OPTION]... [FILE]...");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -25,15 +21,15 @@ export class LsCommand extends BaseCommand {
     const { flags, positional } = this.parseArgs(context);
 
     // Flags
-    const longFormat = flags.has('l');
-    const showAll = flags.has('a');
-    const showAlmostAll = flags.has('A');
-    const humanReadable = flags.has('h');
-    const sortByTime = flags.has('t');
-    const reverseSort = flags.has('r');
+    const longFormat = flags.has("l");
+    const showAll = flags.has("a");
+    const showAlmostAll = flags.has("A");
+    const humanReadable = flags.has("h");
+    const sortByTime = flags.has("t");
+    const reverseSort = flags.has("r");
 
     // Paths to list (default: current directory)
-    const paths = positional.length > 0 ? positional : ['.'];
+    const paths = positional.length > 0 ? positional : ["."];
 
     try {
       for (let i = 0; i < paths.length; i++) {
@@ -43,7 +39,7 @@ export class LsCommand extends BaseCommand {
         const path = this.resolvePath(context, pathArg);
 
         if (paths.length > 1) {
-          if (i > 0) await this.writeToStdout(context, '\n');
+          if (i > 0) await this.writeToStdout(context, "\n");
           await this.writeToStdout(context, `${path}:\n`);
         }
 
@@ -53,11 +49,11 @@ export class LsCommand extends BaseCommand {
           showAlmostAll,
           humanReadable,
           sortByTime,
-          reverseSort
+          reverseSort,
         });
 
         if (i < paths.length - 1) {
-          await this.writeToStdout(context, '\n');
+          await this.writeToStdout(context, "\n");
         }
       }
 
@@ -77,7 +73,7 @@ export class LsCommand extends BaseCommand {
       humanReadable: boolean;
       sortByTime: boolean;
       reverseSort: boolean;
-    }
+    },
   ): Promise<void> {
     try {
       // Check if path exists and is accessible
@@ -86,7 +82,12 @@ export class LsCommand extends BaseCommand {
       if (pathStat.type === FileType.FILE) {
         // Single file
         if (options.longFormat) {
-          await this.outputLongFormat(context, path, pathStat, options.humanReadable);
+          await this.outputLongFormat(
+            context,
+            path,
+            pathStat,
+            options.humanReadable,
+          );
         } else {
           await this.writeToStdout(context, `${this.vfs.basename(path)}\n`);
         }
@@ -102,11 +103,11 @@ export class LsCommand extends BaseCommand {
 
       // Filter hidden files
       if (!options.showAll) {
-        entries = entries.filter(entry => {
+        entries = entries.filter((entry) => {
           if (options.showAlmostAll) {
-            return entry.name !== '.' && entry.name !== '..';
+            return entry.name !== "." && entry.name !== "..";
           } else {
-            return !entry.name.startsWith('.');
+            return !entry.name.startsWith(".");
           }
         });
       }
@@ -126,15 +127,22 @@ export class LsCommand extends BaseCommand {
       }
 
       // Sort entries
-      this.sortEntries(entriesWithStats, options.sortByTime, options.reverseSort);
+      this.sortEntries(
+        entriesWithStats,
+        options.sortByTime,
+        options.reverseSort,
+      );
 
       // Output
       if (options.longFormat) {
-        await this.outputLongFormatList(context, entriesWithStats, options.humanReadable);
+        await this.outputLongFormatList(
+          context,
+          entriesWithStats,
+          options.humanReadable,
+        );
       } else {
         await this.outputShortFormatList(context, entriesWithStats);
       }
-
     } catch (error) {
       throw new Error(`cannot access '${path}': ${error}`);
     }
@@ -143,7 +151,7 @@ export class LsCommand extends BaseCommand {
   private sortEntries(
     entries: Array<{ entry: IDirEntry; stat: INode }>,
     sortByTime: boolean,
-    reverse: boolean
+    reverse: boolean,
   ): void {
     entries.sort((a, b) => {
       let comparison: number;
@@ -160,7 +168,7 @@ export class LsCommand extends BaseCommand {
 
   private async outputShortFormatList(
     context: CommandContext,
-    entries: Array<{ entry: IDirEntry; stat: INode }>
+    entries: Array<{ entry: IDirEntry; stat: INode }>,
   ): Promise<void> {
     const names = entries.map(({ entry, stat }) => {
       let name = entry.name;
@@ -185,19 +193,19 @@ export class LsCommand extends BaseCommand {
     });
 
     // Simple column output (could be improved with proper column formatting)
-    const output = names.join('  ') + '\n';
+    const output = names.join("  ") + "\n";
     await this.writeToStdout(context, output);
   }
 
   private async outputLongFormatList(
     context: CommandContext,
     entries: Array<{ entry: IDirEntry; stat: INode }>,
-    humanReadable: boolean
+    humanReadable: boolean,
   ): Promise<void> {
-    let output = '';
+    let output = "";
 
     for (const { entry, stat } of entries) {
-      output += await this.formatLongEntry(entry, stat, humanReadable) + '\n';
+      output += (await this.formatLongEntry(entry, stat, humanReadable)) + "\n";
     }
 
     await this.writeToStdout(context, output);
@@ -207,40 +215,40 @@ export class LsCommand extends BaseCommand {
     context: CommandContext,
     path: string,
     stat: INode,
-    humanReadable: boolean
+    humanReadable: boolean,
   ): Promise<void> {
     const entry: IDirEntry = {
       name: this.vfs.basename(path),
       inode: stat.inode,
-      type: stat.type
+      type: stat.type,
     };
 
     const formatted = await this.formatLongEntry(entry, stat, humanReadable);
-    await this.writeToStdout(context, formatted + '\n');
+    await this.writeToStdout(context, formatted + "\n");
   }
 
   private async formatLongEntry(
     entry: IDirEntry,
     stat: INode,
-    humanReadable: boolean
+    humanReadable: boolean,
   ): Promise<string> {
     // File type indicator
-    let typeChar = '-';
+    let typeChar = "-";
     switch (stat.type) {
       case FileType.DIRECTORY:
-        typeChar = 'd';
+        typeChar = "d";
         break;
       case FileType.SYMLINK:
-        typeChar = 'l';
+        typeChar = "l";
         break;
       case FileType.BLOCK_DEVICE:
-        typeChar = 'b';
+        typeChar = "b";
         break;
       case FileType.CHAR_DEVICE:
-        typeChar = 'c';
+        typeChar = "c";
         break;
       case FileType.FIFO:
-        typeChar = 'p';
+        typeChar = "p";
         break;
     }
 

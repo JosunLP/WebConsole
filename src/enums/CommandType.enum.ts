@@ -3,11 +3,11 @@
  */
 export enum CommandType {
   /** Built-in Befehl */
-  BUILTIN = 'builtin',
+  BUILTIN = "builtin",
   /** Externer Befehl */
-  EXTERNAL = 'external',
+  EXTERNAL = "external",
   /** Alias */
-  ALIAS = 'alias',
+  ALIAS = "alias",
   /** Funktion */
-  FUNCTION = 'function'
+  FUNCTION = "function",
 }

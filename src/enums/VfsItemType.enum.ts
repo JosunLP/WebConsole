@@ -3,9 +3,9 @@
  */
 export enum VfsItemType {
   /** Reguläre Datei */
-  FILE = 'file',
+  FILE = "file",
   /** Verzeichnis */
-  DIRECTORY = 'directory',
+  DIRECTORY = "directory",
   /** Symbolischer Link */
-  SYMLINK = 'symlink'
+  SYMLINK = "symlink",
 }

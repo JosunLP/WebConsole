@@ -2,29 +2,29 @@
  * Command Registry für die Verwaltung von Built-in und Custom Commands
  */
 
-import { EventEmitter } from '../core/EventEmitter.js';
-import { CommandType } from '../enums/index.js';
-import { ICommandHandler, ICommandRegistry } from '../interfaces/index.js';
+import { EventEmitter } from "../core/EventEmitter.js";
+import { CommandType } from "../enums/index.js";
+import { ICommandHandler, ICommandRegistry } from "../interfaces/index.js";
 
 // Import all built-in commands
-import { AliasCommand } from '../console/commands/AliasCommand.js';
-import { CatCommand } from '../console/commands/CatCommand.js';
-import { CdCommand } from '../console/commands/CdCommand.js';
-import { ClearCommand } from '../console/commands/ClearCommand.js';
-import { EchoCommand } from '../console/commands/EchoCommand.js';
-import { ExportCommand } from '../console/commands/ExportCommand.js';
-import { LsCommand } from '../console/commands/LsCommand.js';
-import { PwdCommand } from '../console/commands/PwdCommand.js';
-import { ThemeCommand } from '../console/commands/ThemeCommand.js';
+import { AliasCommand } from "../console/commands/AliasCommand.js";
+import { CatCommand } from "../console/commands/CatCommand.js";
+import { CdCommand } from "../console/commands/CdCommand.js";
+import { ClearCommand } from "../console/commands/ClearCommand.js";
+import { EchoCommand } from "../console/commands/EchoCommand.js";
+import { ExportCommand } from "../console/commands/ExportCommand.js";
+import { LsCommand } from "../console/commands/LsCommand.js";
+import { PwdCommand } from "../console/commands/PwdCommand.js";
+import { ThemeCommand } from "../console/commands/ThemeCommand.js";
 
 /**
  * Command Registry Events
  */
 export const CommandRegistryEvents = {
-  COMMAND_REGISTERED: 'command:registered',
-  COMMAND_UNREGISTERED: 'command:unregistered',
-  ALIAS_CREATED: 'alias:created',
-  ALIAS_REMOVED: 'alias:removed',
+  COMMAND_REGISTERED: "command:registered",
+  COMMAND_UNREGISTERED: "command:unregistered",
+  ALIAS_CREATED: "alias:created",
+  ALIAS_REMOVED: "alias:removed",
 } as const;
 
 /**
@@ -103,7 +103,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   alias(alias: string, command: string): void {
     if (this.commands.has(alias)) {
       throw new Error(
-        `Cannot create alias '${alias}': command with same name exists`
+        `Cannot create alias '${alias}': command with same name exists`,
       );
     }
 
@@ -138,7 +138,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    */
   getByType(type: CommandType): ICommandHandler[] {
     return Array.from(this.commands.values()).filter(
-      (cmd) => cmd.type === type
+      (cmd) => cmd.type === type,
     );
   }
 
@@ -146,7 +146,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Command-Details abrufen
    */
   getDetails(
-    name: string
+    name: string,
   ):
     | { handler: ICommandHandler; isAlias: boolean; originalName?: string }
     | undefined {

@@ -3,7 +3,6 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { kernel } from '../../core/Kernel.js';
 import type { IConsole } from '../../interfaces/IConsole.interface.js';
 import type { IConsoleOptions } from '../../interfaces/IConsoleOptions.interface.js';
 import type { CommandResult } from '../../types/index.js';
@@ -17,12 +16,13 @@ export interface WebConsoleProps {
   onReady?: (console: IConsole) => void;
   className?: string;
   style?: React.CSSProperties;
+  consoleOptions?: Partial<IConsoleOptions>;
 }
 
 interface OutputLine {
   id: string;
   text: string;
-  type: 'command' | 'output' | 'error';
+  type: 'command' | 'output' | 'error' | 'info';
   timestamp: Date;
 }
 

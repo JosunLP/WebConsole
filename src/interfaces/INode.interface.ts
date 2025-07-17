@@ -3,15 +3,15 @@
  */
 
 import {
-    BlockAddress,
-    InodeNumber,
-    MimeType,
-    Path,
-    PermissionMask,
-    Timestamp
-} from '../types/index.js';
+  BlockAddress,
+  InodeNumber,
+  MimeType,
+  Path,
+  PermissionMask,
+  Timestamp,
+} from "../types/index.js";
 
-import { FileType } from '../enums/index.js';
+import { FileType } from "../enums/index.js";
 
 export interface INode {
   readonly inode: InodeNumber;

@@ -2,10 +2,10 @@
  * Event-bezogene Typdefinitionen
  */
 
-import { ConsoleEvent, KernelEvent, VFSEvent } from '../enums/index.js';
-import { CommandArgs, CommandResult } from './command.type.js';
-import { MountConfig } from './config.type.js';
-import { ID, InodeNumber, Path, Timestamp } from './primitive.type.js';
+import { ConsoleEvent, KernelEvent, VFSEvent } from "../enums/index.js";
+import { CommandArgs, CommandResult } from "./command.type.js";
+import { MountConfig } from "./config.type.js";
+import { ID, InodeNumber, Path, Timestamp } from "./primitive.type.js";
 
 /**
  * Event-Handler generisch

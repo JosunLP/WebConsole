@@ -2,8 +2,8 @@
  * Konfigurations-bezogene Typdefinitionen
  */
 
-import { PersistenceMode } from '../enums/index.js';
-import { Path } from './primitive.type.js';
+import { PersistenceMode } from "../enums/index.js";
+import { Path } from "./primitive.type.js";
 
 /**
  * Mount-Point Konfiguration

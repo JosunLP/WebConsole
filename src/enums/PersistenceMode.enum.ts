@@ -3,9 +3,9 @@
  */
 export enum PersistenceMode {
   /** Nur im RAM, nicht persistent */
-  VOLATILE = 'volatile',
+  VOLATILE = "volatile",
   /** SessionStorage - persistiert für die Session */
-  SESSION = 'session',
+  SESSION = "session",
   /** LocalStorage - dauerhaft persistent */
-  PERSISTENT = 'persistent'
+  PERSISTENT = "persistent",
 }

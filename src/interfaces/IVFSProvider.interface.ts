@@ -2,10 +2,10 @@
  * VFS-Provider Interface
  */
 
-import { FileType } from '../enums/index.js';
-import { InodeNumber, PermissionMask } from '../types/index.js';
-import { IDirEntry } from './IDirEntry.interface.js';
-import { INode } from './INode.interface.js';
+import { FileType } from "../enums/index.js";
+import { InodeNumber, PermissionMask } from "../types/index.js";
+import { IDirEntry } from "./IDirEntry.interface.js";
+import { INode } from "./INode.interface.js";
 
 export interface IVFSProvider {
   readonly name: string;

@@ -2,7 +2,7 @@
  * Utility-Funktionen für das Web-Console-System
  */
 
-import { Path } from '../types/index.js';
+import { Path } from "../types/index.js";
 
 /**
  * Prüft ob ein Wert definiert und nicht null ist
@@ -15,35 +15,35 @@ export function isDefined<T>(value: T | null | undefined): value is T {
  * Prüft ob ein Wert eine Funktion ist
  */
 export function isFunction(value: unknown): value is Function {
-  return typeof value === 'function';
+  return typeof value === "function";
 }
 
 /**
  * Prüft ob ein Wert ein String ist
  */
 export function isString(value: unknown): value is string {
-  return typeof value === 'string';
+  return typeof value === "string";
 }
 
 /**
  * Prüft ob ein Wert eine Zahl ist
  */
 export function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && !isNaN(value);
+  return typeof value === "number" && !isNaN(value);
 }
 
 /**
  * Prüft ob ein Wert ein Objekt ist (aber kein Array)
  */
 export function isObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
  * Deep-Clone eines Objekts
  */
 export function deepClone<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || typeof obj !== "object") {
     return obj;
   }
 
@@ -55,7 +55,7 @@ export function deepClone<T>(obj: T): T {
     return obj.map((item) => deepClone(item)) as unknown as T;
   }
 
-  if (typeof obj === 'object') {
+  if (typeof obj === "object") {
     const cloned = {} as Record<string, unknown>;
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -73,7 +73,7 @@ export function deepClone<T>(obj: T): T {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -93,7 +93,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
 
@@ -118,7 +118,7 @@ export async function retry<T>(
     baseDelay?: number;
     maxDelay?: number;
     backoffFactor?: number;
-  } = {}
+  } = {},
 ): Promise<T> {
   const {
     maxAttempts = 3,
@@ -141,7 +141,7 @@ export async function retry<T>(
 
       const delay = Math.min(
         baseDelay * Math.pow(backoffFactor, attempt - 1),
-        maxDelay
+        maxDelay,
       );
 
       await sleep(delay);
@@ -162,9 +162,9 @@ export function sleep(ms: number): Promise<void> {
  * UUID v4 Generator (simplified)
  */
 export function generateId(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -173,15 +173,15 @@ export function generateId(): string {
  * Formatiert Bytes in menschenlesbare Form
  */
 export function formatBytes(bytes: number, decimals = 2): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
 /**
@@ -210,7 +210,7 @@ export function formatDuration(ms: number): string {
  * Escapen von HTML-Zeichen
  */
 export function escapeHtml(text: string): string {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
 }
@@ -219,9 +219,9 @@ export function escapeHtml(text: string): string {
  * Unescapen von HTML-Zeichen
  */
 export function unescapeHtml(html: string): string {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.innerHTML = html;
-  return div.textContent || div.innerText || '';
+  return div.textContent || div.innerText || "";
 }
 
 /**
@@ -229,19 +229,19 @@ export function unescapeHtml(html: string): string {
  */
 export function stripAnsi(text: string): string {
   // eslint-disable-next-line no-control-regex
-  return text.replace(/\u001b\[[0-9;]*m/g, '');
+  return text.replace(/\u001b\[[0-9;]*m/g, "");
 }
 
 /**
  * Pfad-Validierung
  */
 export function isValidPath(path: string): boolean {
-  if (!path || typeof path !== 'string') {
+  if (!path || typeof path !== "string") {
     return false;
   }
 
   // Muss mit / beginnen
-  if (!path.startsWith('/')) {
+  if (!path.startsWith("/")) {
     return false;
   }
 
@@ -262,26 +262,26 @@ export function normalizePath(path: Path): Path {
     throw new Error(`Invalid path: ${path}`);
   }
 
-  const parts = path.split('/').filter((part) => part.length > 0);
+  const parts = path.split("/").filter((part) => part.length > 0);
   const normalized: string[] = [];
 
   for (const part of parts) {
-    if (part === '..') {
+    if (part === "..") {
       normalized.pop();
-    } else if (part !== '.') {
+    } else if (part !== ".") {
       normalized.push(part);
     }
   }
 
-  return '/' + normalized.join('/');
+  return "/" + normalized.join("/");
 }
 
 /**
  * Relative Pfade berechnen
  */
 export function relativePath(from: Path, to: Path): Path {
-  const fromParts = normalizePath(from).split('/').filter(Boolean);
-  const toParts = normalizePath(to).split('/').filter(Boolean);
+  const fromParts = normalizePath(from).split("/").filter(Boolean);
+  const toParts = normalizePath(to).split("/").filter(Boolean);
 
   // Gemeinsamen Prefix finden
   let commonLength = 0;
@@ -297,9 +297,9 @@ export function relativePath(from: Path, to: Path): Path {
   const upSteps = fromParts.length - commonLength;
   const downSteps = toParts.slice(commonLength);
 
-  const relativeParts = Array(upSteps).fill('..').concat(downSteps);
+  const relativeParts = Array(upSteps).fill("..").concat(downSteps);
 
-  return relativeParts.length === 0 ? '.' : relativeParts.join('/');
+  return relativeParts.length === 0 ? "." : relativeParts.join("/");
 }
 
 /**
@@ -315,7 +315,7 @@ export function isValidEventName(name: string): boolean {
 export function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
-  timeoutMessage = 'Operation timed out'
+  timeoutMessage = "Operation timed out",
 ): Promise<T> {
   return Promise.race([
     promise,

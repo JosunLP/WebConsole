@@ -2,8 +2,8 @@
  * Logger-Implementierung für das Web-Console-System
  */
 
-import { LogLevel } from '../enums/index.js';
-import { ILogger } from '../interfaces/index.js';
+import { LogLevel } from "../enums/index.js";
+import { ILogger } from "../interfaces/index.js";
 
 /**
  * Log-Eintrag Struktur
@@ -30,10 +30,10 @@ export class Logger implements ILogger {
     [LogLevel.DEBUG]: 0,
     [LogLevel.INFO]: 1,
     [LogLevel.WARN]: 2,
-    [LogLevel.ERROR]: 3
+    [LogLevel.ERROR]: 3,
   };
 
-  constructor(prefix = 'WebConsole', maxHistorySize = 1000) {
+  constructor(prefix = "WebConsole", maxHistorySize = 1000) {
     this.prefix = prefix;
     this.maxHistorySize = maxHistorySize;
   }
@@ -115,7 +115,7 @@ export class Logger implements ILogger {
       message,
       args,
       timestamp,
-      source: this.prefix
+      source: this.prefix,
     };
 
     // Zur History hinzufügen
@@ -150,7 +150,11 @@ export class Logger implements ILogger {
   /**
    * Zur Browser-Console schreiben
    */
-  private writeToConsole(level: LogLevel, message: string, args: unknown[]): void {
+  private writeToConsole(
+    level: LogLevel,
+    message: string,
+    args: unknown[],
+  ): void {
     switch (level) {
       case LogLevel.DEBUG:
         console.debug(message, ...args);
@@ -189,12 +193,12 @@ export class Logger implements ILogger {
    * Memory-Usage loggen (falls verfügbar)
    */
   memory(): void {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
-      this.debug('Memory usage:', {
+      this.debug("Memory usage:", {
         used: `${Math.round(memory.usedJSHeapSize / 1024 / 1024)} MB`,
         total: `${Math.round(memory.totalJSHeapSize / 1024 / 1024)} MB`,
-        limit: `${Math.round(memory.jsHeapSizeLimit / 1024 / 1024)} MB`
+        limit: `${Math.round(memory.jsHeapSizeLimit / 1024 / 1024)} MB`,
       });
     }
   }

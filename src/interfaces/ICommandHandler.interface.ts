@@ -2,15 +2,9 @@
  * Command Handler Interface
  */
 
-import {
-    CommandContext,
-    CommandResult
-} from '../types/index.js';
+import { CommandContext, CommandResult } from "../types/index.js";
 
-import {
-    CommandType,
-    ExitCode
-} from '../enums/index.js';
+import { CommandType, ExitCode } from "../enums/index.js";
 
 export interface ICommandHandler {
   readonly name: string;

@@ -3,6 +3,17 @@
  */
 
 // Native Web Components
-export { WebConsoleElement } from './WebConsoleElement.js';
+export { WebConsoleElement } from "./WebConsoleElement.js";
 
-// Framework-spezifische Komponenten werden in separaten Entry-Points exportiert
+// React
+export { WebConsole } from "./react/index.js";
+export type { WebConsoleProps } from "./react/index.js";
+
+// Angular
+export { WebConsoleComponent } from "./angular/index.js";
+
+// Vue
+export { WebConsole as VueWebConsole } from "./vue/index.js";
+
+// Svelte
+export { WebConsole as SvelteWebConsole } from "./svelte/index.js";

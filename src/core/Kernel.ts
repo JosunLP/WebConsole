@@ -2,29 +2,29 @@
  * Kernel - Zentrale Event- und Lebenszyklus-Steuerung (Singleton)
  */
 
-import { ConsoleInstance } from '../console/index.js';
-import { CommandRegistry } from './CommandRegistry.js';
-import { EventEmitter } from './EventEmitter.js';
-import { Logger } from './Logger.js';
-import { StateManager } from './StateManager.js';
-import { VFS } from './VFS.js';
+import { ConsoleInstance } from "../console/index.js";
+import { CommandRegistry } from "./CommandRegistry.js";
+import { EventEmitter } from "./EventEmitter.js";
+import { Logger } from "./Logger.js";
+import { StateManager } from "./StateManager.js";
+import { VFS } from "./VFS.js";
 
-import type { ICommandRegistry } from '../interfaces/ICommandRegistry.interface.js';
-import type { IConsole } from '../interfaces/IConsole.interface.js';
-import type { IConsoleOptions } from '../interfaces/IConsoleOptions.interface.js';
-import type { IKernel } from '../interfaces/IKernel.interface.js';
-import type { ILogger } from '../interfaces/ILogger.interface.js';
-import type { IStateManager } from '../interfaces/IStateManager.interface.js';
-import type { IThemeManager } from '../interfaces/IThemeManager.interface.js';
-import type { IVFS } from '../interfaces/IVFS.interface.js';
-import type { ID } from '../types/index.js';
+import type { ICommandRegistry } from "../interfaces/ICommandRegistry.interface.js";
+import type { IConsole } from "../interfaces/IConsole.interface.js";
+import type { IConsoleOptions } from "../interfaces/IConsoleOptions.interface.js";
+import type { IKernel } from "../interfaces/IKernel.interface.js";
+import type { ILogger } from "../interfaces/ILogger.interface.js";
+import type { IStateManager } from "../interfaces/IStateManager.interface.js";
+import type { IThemeManager } from "../interfaces/IThemeManager.interface.js";
+import type { IVFS } from "../interfaces/IVFS.interface.js";
+import type { ID } from "../types/index.js";
 
-import { KernelEvent } from '../enums/KernelEvent.enum.js';
+import { KernelEvent } from "../enums/KernelEvent.enum.js";
 
 export class Kernel extends EventEmitter implements IKernel {
   private static _instance: Kernel | null = null;
 
-  public readonly version = '0.1.0';
+  public readonly version = "0.1.0";
   private _isStarted = false;
 
   // Subsystems
@@ -41,12 +41,12 @@ export class Kernel extends EventEmitter implements IKernel {
   private constructor() {
     super();
 
-    this._logger = new Logger('Kernel');
-    this._globalState = new StateManager('global');
+    this._logger = new Logger("Kernel");
+    this._globalState = new StateManager("global");
     this._vfs = new VFS();
     this._commandRegistry = new CommandRegistry();
 
-    this._logger.info('Kernel initialized');
+    this._logger.info("Kernel initialized");
   }
 
   public static getInstance(): Kernel {
@@ -62,11 +62,11 @@ export class Kernel extends EventEmitter implements IKernel {
 
   public async start(): Promise<void> {
     if (this._isStarted) {
-      this._logger.warn('Kernel already started');
+      this._logger.warn("Kernel already started");
       return;
     }
 
-    this._logger.info('Starting kernel...');
+    this._logger.info("Starting kernel...");
 
     try {
       // Initialize VFS
@@ -78,16 +78,17 @@ export class Kernel extends EventEmitter implements IKernel {
       // Initialize command registry with built-ins
       await this._commandRegistry.initialize();
 
-      // Initialize theme manager (lazy loaded)
-      // this._themeManager = new ThemeManager();
-      // await this._themeManager.initialize();
+      // Initialize theme manager
+      const { ThemeManager } = await import("./ThemeManager.js");
+      this._themeManager = new ThemeManager();
+      this._themeManager.injectCSS();
 
       this._isStarted = true;
       this.emit(KernelEvent.STARTED);
 
-      this._logger.info('Kernel started successfully');
+      this._logger.info("Kernel started successfully");
     } catch (error) {
-      this._logger.error('Failed to start kernel:', error);
+      this._logger.error("Failed to start kernel:", error);
       this.emit(KernelEvent.ERROR, error);
       throw error;
     }
@@ -98,7 +99,7 @@ export class Kernel extends EventEmitter implements IKernel {
       return;
     }
 
-    this._logger.info('Shutting down kernel...');
+    this._logger.info("Shutting down kernel...");
 
     try {
       // Destroy all consoles
@@ -116,9 +117,9 @@ export class Kernel extends EventEmitter implements IKernel {
       this._isStarted = false;
       this.emit(KernelEvent.SHUTDOWN);
 
-      this._logger.info('Kernel shutdown complete');
+      this._logger.info("Kernel shutdown complete");
     } catch (error) {
-      this._logger.error('Error during kernel shutdown:', error);
+      this._logger.error("Error during kernel shutdown:", error);
       this.emit(KernelEvent.ERROR, error);
       throw error;
     }
@@ -131,7 +132,7 @@ export class Kernel extends EventEmitter implements IKernel {
 
   public getThemeManager(): IThemeManager {
     if (!this._themeManager) {
-      throw new Error('Theme manager not initialized');
+      throw new Error("Theme manager not initialized");
     }
     return this._themeManager;
   }
@@ -150,22 +151,22 @@ export class Kernel extends EventEmitter implements IKernel {
 
   // Console Management
   public async createConsole(
-    options: Partial<IConsoleOptions> = {}
+    options: Partial<IConsoleOptions> = {},
   ): Promise<IConsole> {
     if (!this._isStarted) {
-      throw new Error('Kernel not started');
+      throw new Error("Kernel not started");
     }
 
     const id = `console-${this._nextConsoleId++}`;
 
     const defaultOptions: IConsoleOptions = {
       id,
-      prompt: '$ ',
-      cwd: '/home/user',
+      prompt: "$ ",
+      cwd: "/home/user",
       env: new Map([
-        ['PATH', '/usr/bin:/bin'],
-        ['HOME', '/home/user'],
-        ['USER', 'user'],
+        ["PATH", "/usr/bin:/bin"],
+        ["HOME", "/home/user"],
+        ["USER", "user"],
       ]),
       history: {
         maxSize: 1000,

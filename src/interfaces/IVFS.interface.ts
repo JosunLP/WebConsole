@@ -9,11 +9,11 @@ import {
   MountConfig,
   Path,
   PermissionMask,
-} from '../types/index.js';
+} from "../types/index.js";
 
-import { IDirEntry } from './IDirEntry.interface.js';
-import { IEventEmitter } from './IEventEmitter.interface.js';
-import { INode } from './INode.interface.js';
+import { IDirEntry } from "./IDirEntry.interface.js";
+import { IEventEmitter } from "./IEventEmitter.interface.js";
+import { INode } from "./INode.interface.js";
 
 export interface IVFS extends IEventEmitter {
   // Lifecycle
@@ -31,7 +31,7 @@ export interface IVFS extends IEventEmitter {
   writeFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>
+    options?: Partial<INode>,
   ): Promise<void>;
   appendFile(path: Path, data: Uint8Array): Promise<void>;
   deleteFile(path: Path): Promise<void>;

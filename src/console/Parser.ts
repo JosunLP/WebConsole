@@ -4,15 +4,15 @@
  */
 
 import {
-    CommandArgs,
-    Environment,
-    ParsedCommand,
-    PipelineSegment,
-    Redirection
-} from '../types/index.js';
+  CommandArgs,
+  Environment,
+  ParsedCommand,
+  PipelineSegment,
+  Redirection,
+} from "../types/index.js";
 
-import { RedirectionType } from '../enums/index.js';
-import { Lexer, Token, TokenType } from './Lexer.js';
+import { RedirectionType } from "../enums/index.js";
+import { Lexer, Token, TokenType } from "./Lexer.js";
 
 /**
  * Parse-Fehler
@@ -21,10 +21,12 @@ export class ParseError extends Error {
   constructor(
     message: string,
     public readonly token: Token,
-    public readonly position: number
+    public readonly position: number,
   ) {
-    super(`Parse error at line ${token.line}, column ${token.column}: ${message}`);
-    this.name = 'ParseError';
+    super(
+      `Parse error at line ${token.line}, column ${token.column}: ${message}`,
+    );
+    this.name = "ParseError";
   }
 }
 
@@ -45,14 +47,20 @@ export class Parser {
 
   constructor(input: string) {
     const lexer = new Lexer(input);
-    const tokens = lexer.tokenize().filter(token =>
-      token.type !== TokenType.WHITESPACE
-    );
+    const tokens = lexer
+      .tokenize()
+      .filter((token) => token.type !== TokenType.WHITESPACE);
 
     this.state = {
       tokens,
       position: 0,
-      current: tokens[0] || { type: TokenType.EOF, value: '', position: 0, line: 1, column: 1 }
+      current: tokens[0] || {
+        type: TokenType.EOF,
+        value: "",
+        position: 0,
+        line: 1,
+        column: 1,
+      },
     };
   }
 
@@ -88,7 +96,7 @@ export class Parser {
     return {
       segments,
       background,
-      environment
+      environment,
     };
   }
 
@@ -112,23 +120,33 @@ export class Parser {
    * Einzelnen Befehl parsen
    */
   private parseCommand(): PipelineSegment {
-    let command = '';
+    let command = "";
     const args: CommandArgs = [];
     const redirections: Redirection[] = [];
 
     // Command-Name
-    if (this.current().type === TokenType.WORD || this.current().type === TokenType.STRING) {
+    if (
+      this.current().type === TokenType.WORD ||
+      this.current().type === TokenType.STRING
+    ) {
       command = this.current().value;
       this.advance();
     } else {
-      throw new ParseError('Expected command name', this.current(), this.state.position);
+      throw new ParseError(
+        "Expected command name",
+        this.current(),
+        this.state.position,
+      );
     }
 
     // Argumente und Redirections
     while (!this.isCommandEnd()) {
       if (this.isRedirection()) {
         redirections.push(this.parseRedirection());
-      } else if (this.current().type === TokenType.WORD || this.current().type === TokenType.STRING) {
+      } else if (
+        this.current().type === TokenType.WORD ||
+        this.current().type === TokenType.STRING
+      ) {
         args.push(this.current().value);
         this.advance();
       } else if (this.current().type === TokenType.VARIABLE) {
@@ -143,7 +161,7 @@ export class Parser {
     return {
       command,
       args,
-      redirections
+      redirections,
     };
   }
 
@@ -179,12 +197,23 @@ export class Parser {
         source = 2; // stderr
         break;
       default:
-        throw new ParseError(`Invalid redirection token: ${token.value}`, token, this.state.position);
+        throw new ParseError(
+          `Invalid redirection token: ${token.value}`,
+          token,
+          this.state.position,
+        );
     }
 
     // Target (Dateiname oder File-Descriptor)
-    if (this.current().type !== TokenType.WORD && this.current().type !== TokenType.STRING) {
-      throw new ParseError('Expected redirection target', this.current(), this.state.position);
+    if (
+      this.current().type !== TokenType.WORD &&
+      this.current().type !== TokenType.STRING
+    ) {
+      throw new ParseError(
+        "Expected redirection target",
+        this.current(),
+        this.state.position,
+      );
     }
 
     const target = this.current().value;
@@ -197,7 +226,7 @@ export class Parser {
     return {
       type,
       target: resolvedTarget,
-      source
+      source,
     };
   }
 
@@ -206,10 +235,14 @@ export class Parser {
    */
   private parseAssignment(): { key: string; value: string } {
     const assignment = this.current().value;
-    const equalIndex = assignment.indexOf('=');
+    const equalIndex = assignment.indexOf("=");
 
     if (equalIndex === -1) {
-      throw new ParseError('Invalid assignment syntax', this.current(), this.state.position);
+      throw new ParseError(
+        "Invalid assignment syntax",
+        this.current(),
+        this.state.position,
+      );
     }
 
     const key = assignment.substring(0, equalIndex);
@@ -226,10 +259,10 @@ export class Parser {
       this.state.position++;
       this.state.current = this.state.tokens[this.state.position] || {
         type: TokenType.EOF,
-        value: '',
+        value: "",
         position: 0,
         line: 1,
-        column: 1
+        column: 1,
       };
     }
   }
@@ -246,15 +279,17 @@ export class Parser {
    */
   private peek(): Token {
     if (this.state.position < this.state.tokens.length - 1) {
-      return this.state.tokens[this.state.position + 1] || {
-        type: TokenType.EOF,
-        value: '',
-        position: 0,
-        line: 1,
-        column: 1
-      };
+      return (
+        this.state.tokens[this.state.position + 1] || {
+          type: TokenType.EOF,
+          value: "",
+          position: 0,
+          line: 1,
+          column: 1,
+        }
+      );
     }
-    return { type: TokenType.EOF, value: '', position: 0, line: 1, column: 1 };
+    return { type: TokenType.EOF, value: "", position: 0, line: 1, column: 1 };
   }
 
   /**
@@ -269,11 +304,13 @@ export class Parser {
    */
   private isRedirection(): boolean {
     const type = this.current().type;
-    return type === TokenType.REDIRECT_OUT ||
-           type === TokenType.REDIRECT_APPEND ||
-           type === TokenType.REDIRECT_IN ||
-           type === TokenType.REDIRECT_ERR ||
-           type === TokenType.REDIRECT_ERR_APPEND;
+    return (
+      type === TokenType.REDIRECT_OUT ||
+      type === TokenType.REDIRECT_APPEND ||
+      type === TokenType.REDIRECT_IN ||
+      type === TokenType.REDIRECT_ERR ||
+      type === TokenType.REDIRECT_ERR_APPEND
+    );
   }
 
   /**
@@ -281,13 +318,15 @@ export class Parser {
    */
   private isCommandEnd(): boolean {
     const type = this.current().type;
-    return type === TokenType.PIPE ||
-           type === TokenType.BACKGROUND ||
-           type === TokenType.SEMICOLON ||
-           type === TokenType.AND ||
-           type === TokenType.OR ||
-           type === TokenType.NEWLINE ||
-           type === TokenType.EOF;
+    return (
+      type === TokenType.PIPE ||
+      type === TokenType.BACKGROUND ||
+      type === TokenType.SEMICOLON ||
+      type === TokenType.AND ||
+      type === TokenType.OR ||
+      type === TokenType.NEWLINE ||
+      type === TokenType.EOF
+    );
   }
 
   /**
@@ -295,7 +334,11 @@ export class Parser {
    */
   private expectEnd(): void {
     if (!this.isAtEnd() && this.current().type !== TokenType.EOF) {
-      throw new ParseError('Unexpected token at end of input', this.current(), this.state.position);
+      throw new ParseError(
+        "Unexpected token at end of input",
+        this.current(),
+        this.state.position,
+      );
     }
   }
 
@@ -307,7 +350,7 @@ export class Parser {
       throw new ParseError(
         `Expected ${expectedType}, got ${this.current().type}`,
         this.current(),
-        this.state.position
+        this.state.position,
       );
     }
     const token = this.current();
@@ -322,7 +365,7 @@ export class Parser {
     return {
       tokens: this.state.tokens,
       position: this.state.position,
-      current: this.state.current
+      current: this.state.current,
     };
   }
 }

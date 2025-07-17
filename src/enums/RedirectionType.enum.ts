@@ -3,13 +3,13 @@
  */
 export enum RedirectionType {
   /** Input Redirection < */
-  INPUT = 'input',
+  INPUT = "input",
   /** Output Redirection > */
-  OUTPUT = 'output',
+  OUTPUT = "output",
   /** Append Redirection >> */
-  APPEND = 'append',
+  APPEND = "append",
   /** Error Redirection 2> */
-  ERROR = 'error',
+  ERROR = "error",
   /** Error Append 2>> */
-  ERROR_APPEND = 'error_append'
+  ERROR_APPEND = "error_append",
 }

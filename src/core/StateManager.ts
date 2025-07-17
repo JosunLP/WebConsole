@@ -2,10 +2,10 @@
  * State Manager für hierarchische State-Verwaltung
  */
 
-import { PersistenceMode } from '../enums/index.js';
-import { IStateManager } from '../interfaces/index.js';
-import { StateConfig } from '../types/index.js';
-import { EventEmitter } from './EventEmitter.js';
+import { PersistenceMode } from "../enums/index.js";
+import { IStateManager } from "../interfaces/index.js";
+import { StateConfig } from "../types/index.js";
+import { EventEmitter } from "./EventEmitter.js";
 
 /**
  * Interne State-Entry Struktur
@@ -20,9 +20,9 @@ interface StateEntry {
  * State-Events
  */
 export const StateEvents = {
-  CHANGED: 'state:changed',
-  PERSISTED: 'state:persisted',
-  RESTORED: 'state:restored',
+  CHANGED: "state:changed",
+  PERSISTED: "state:persisted",
+  RESTORED: "state:restored",
 } as const;
 
 /**
@@ -34,7 +34,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   private readonly parent: StateManager | undefined;
   private readonly children = new Map<string, StateManager>();
 
-  constructor(namespaceName = 'root', parent?: StateManager) {
+  constructor(namespaceName = "root", parent?: StateManager) {
     super();
     this.namespaceName = namespaceName;
     this.parent = parent;
@@ -231,7 +231,7 @@ export class StateManager extends EventEmitter implements IStateManager {
       }
     } catch (error) {
       throw new Error(
-        `Failed to persist key "${key}" to ${entry.config.persistence}: ${error}`
+        `Failed to persist key "${key}" to ${entry.config.persistence}: ${error}`,
       );
     }
   }
@@ -270,7 +270,7 @@ export class StateManager extends EventEmitter implements IStateManager {
     } catch (error) {
       console.error(
         `Failed to restore key "${key}" from ${entry.config.persistence}:`,
-        error
+        error,
       );
       // Bei Fehler Default-Wert verwenden
     }
@@ -294,7 +294,7 @@ export class StateManager extends EventEmitter implements IStateManager {
     } catch (error) {
       console.error(
         `Failed to remove key "${key}" from ${persistence}:`,
-        error
+        error,
       );
     }
   }
@@ -320,7 +320,7 @@ export class StateManager extends EventEmitter implements IStateManager {
             config: entry.config,
             lastModified: new Date(entry.lastModified).toISOString(),
           },
-        ])
+        ]),
       ),
       children: Array.from(this.children.keys()),
     };

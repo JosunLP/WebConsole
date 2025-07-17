@@ -2,15 +2,10 @@
  * Console Interface (Hauptklasse)
  */
 
-import {
-    CommandResult,
-    Environment,
-    ID,
-    Path
-} from '../types/index.js';
+import { CommandResult, Environment, ID, Path } from "../types/index.js";
 
-import { IEventEmitter } from './IEventEmitter.interface.js';
-import { IStateManager } from './IStateManager.interface.js';
+import { IEventEmitter } from "./IEventEmitter.interface.js";
+import { IStateManager } from "./IStateManager.interface.js";
 
 export interface IConsole extends IEventEmitter {
   readonly id: ID;

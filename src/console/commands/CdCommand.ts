@@ -2,18 +2,14 @@
  * cd - Change directory
  */
 
-import { ExitCode, FileType } from '../../enums/index.js';
-import { IVFS } from '../../interfaces/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode, FileType } from "../../enums/index.js";
+import { IVFS } from "../../interfaces/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class CdCommand extends BaseCommand {
   constructor(private vfs: IVFS) {
-    super(
-      'cd',
-      'Change the current directory',
-      'cd [DIRECTORY]'
-    );
+    super("cd", "Change the current directory", "cd [DIRECTORY]");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -29,30 +25,34 @@ export class CdCommand extends BaseCommand {
 
     if (positional.length === 0) {
       // No argument: go to home directory
-      targetPath = this.getEnvVar(context, 'HOME', '/home/user');
+      targetPath = this.getEnvVar(context, "HOME", "/home/user");
     } else if (positional.length === 1) {
       const arg = positional[0];
       if (!arg) {
-        return await this.outputError(context, 'Invalid directory argument');
+        return await this.outputError(context, "Invalid directory argument");
       }
 
       // Handle special cases
-      if (arg === '-') {
+      if (arg === "-") {
         // Go to previous directory
-        targetPath = this.getEnvVar(context, 'OLDPWD', context.workingDirectory);
-      } else if (arg === '~') {
+        targetPath = this.getEnvVar(
+          context,
+          "OLDPWD",
+          context.workingDirectory,
+        );
+      } else if (arg === "~") {
         // Go to home directory
-        targetPath = this.getEnvVar(context, 'HOME', '/home/user');
-      } else if (arg.startsWith('~/')) {
+        targetPath = this.getEnvVar(context, "HOME", "/home/user");
+      } else if (arg.startsWith("~/")) {
         // Expand home directory
-        const homeDir = this.getEnvVar(context, 'HOME', '/home/user');
+        const homeDir = this.getEnvVar(context, "HOME", "/home/user");
         targetPath = this.vfs.join(homeDir, arg.substring(2));
       } else {
         // Regular path
         targetPath = this.resolvePath(context, arg);
       }
     } else {
-      return await this.outputError(context, 'Too many arguments');
+      return await this.outputError(context, "Too many arguments");
     }
 
     try {
@@ -63,12 +63,19 @@ export class CdCommand extends BaseCommand {
       const stat = await this.vfs.stat(targetPath);
 
       if (stat.type !== FileType.DIRECTORY) {
-        return await this.outputError(context, `${targetPath}: Not a directory`);
+        return await this.outputError(
+          context,
+          `${targetPath}: Not a directory`,
+        );
       }
 
       // Check if directory is accessible (simplified permission check)
-      if (!(stat.permissions & 0o001)) { // Execute permission needed to cd
-        return await this.outputError(context, `${targetPath}: Permission denied`);
+      if (!(stat.permissions & 0o001)) {
+        // Execute permission needed to cd
+        return await this.outputError(
+          context,
+          `${targetPath}: Permission denied`,
+        );
       }
 
       // Set OLDPWD to current directory
@@ -79,7 +86,7 @@ export class CdCommand extends BaseCommand {
       // For now, we'll emit an event or use a callback mechanism
 
       // Output the new directory (if verbose mode or when going to previous dir)
-      if (positional[0] === '-') {
+      if (positional[0] === "-") {
         await this.writeToStdout(context, `${targetPath}\n`);
       }
 
@@ -88,7 +95,6 @@ export class CdCommand extends BaseCommand {
       // For now, we'll store it in environment variables
 
       return ExitCode.SUCCESS;
-
     } catch (error) {
       return await this.outputError(context, `${targetPath}: ${error}`);
     }
@@ -100,18 +106,18 @@ export class CdCommand extends BaseCommand {
   static async changeDirectory(
     vfs: IVFS,
     currentDir: string,
-    targetDir: string
+    targetDir: string,
   ): Promise<{ success: boolean; newDir?: string; error?: string }> {
     try {
       const resolvedPath = vfs.resolve(targetDir);
       const stat = await vfs.stat(resolvedPath);
 
       if (stat.type !== FileType.DIRECTORY) {
-        return { success: false, error: 'Not a directory' };
+        return { success: false, error: "Not a directory" };
       }
 
       if (!(stat.permissions & 0o001)) {
-        return { success: false, error: 'Permission denied' };
+        return { success: false, error: "Permission denied" };
       }
 
       return { success: true, newDir: resolvedPath };
@@ -124,10 +130,10 @@ export class CdCommand extends BaseCommand {
    * Expand tilde paths
    */
   static expandTilde(path: string, homeDir: string): string {
-    if (path === '~') {
+    if (path === "~") {
       return homeDir;
     }
-    if (path.startsWith('~/')) {
+    if (path.startsWith("~/")) {
       return homeDir + path.substring(1);
     }
     return path;
@@ -138,12 +144,12 @@ export class CdCommand extends BaseCommand {
    */
   async getCompletions(
     context: CommandContext,
-    partial: string
+    partial: string,
   ): Promise<string[]> {
     try {
       const expandedPath = CdCommand.expandTilde(
         partial,
-        this.getEnvVar(context, 'HOME', '/home/user')
+        this.getEnvVar(context, "HOME", "/home/user"),
       );
 
       const resolvedPath = this.resolvePath(context, expandedPath);
@@ -153,17 +159,17 @@ export class CdCommand extends BaseCommand {
       const entries = await this.vfs.readDir(dir);
 
       return entries
-        .filter(entry =>
-          entry.type === FileType.DIRECTORY &&
-          entry.name.startsWith(prefix) &&
-          !entry.name.startsWith('.')
+        .filter(
+          (entry) =>
+            entry.type === FileType.DIRECTORY &&
+            entry.name.startsWith(prefix) &&
+            !entry.name.startsWith("."),
         )
-        .map(entry => {
+        .map((entry) => {
           const fullPath = this.vfs.join(dir, entry.name);
-          return expandedPath.endsWith('/') ? entry.name : fullPath;
+          return expandedPath.endsWith("/") ? entry.name : fullPath;
         })
         .sort();
-
     } catch {
       return [];
     }

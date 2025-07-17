@@ -2,7 +2,7 @@
  * Parser Interface
  */
 
-import { ParsedCommand } from '../types/index.js';
+import { ParsedCommand } from "../types/index.js";
 
 export interface IParser {
   parse(input: string): ParsedCommand;
