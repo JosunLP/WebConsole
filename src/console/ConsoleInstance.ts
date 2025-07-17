@@ -2,17 +2,17 @@
  * Console Instance - Einzelne Konsole mit Parser, Lexer und Executor
  */
 
-import { EventEmitter } from "../core/EventEmitter.js";
-import { StateManager } from "../core/StateManager.js";
+import { EventEmitter } from '../core/EventEmitter.js';
+import { StateManager } from '../core/StateManager.js';
 
-import type { IConsole } from "../interfaces/IConsole.interface.js";
-import type { IConsoleOptions } from "../interfaces/IConsoleOptions.interface.js";
-import type { IKernel } from "../interfaces/IKernel.interface.js";
-import type { IStateManager } from "../interfaces/IStateManager.interface.js";
-import type { CommandResult, Environment, ID, Path } from "../types/index.js";
+import type { IConsole } from '../interfaces/IConsole.interface.js';
+import type { IConsoleOptions } from '../interfaces/IConsoleOptions.interface.js';
+import type { IKernel } from '../interfaces/IKernel.interface.js';
+import type { IStateManager } from '../interfaces/IStateManager.interface.js';
+import type { CommandResult, Environment, ID, Path } from '../types/index.js';
 
-import { ConsoleEvent } from "../enums/ConsoleEvent.enum.js";
-import { ExitCode } from "../enums/ExitCode.enum.js";
+import { ConsoleEvent } from '../enums/ConsoleEvent.enum.js';
+import { ExitCode } from '../enums/ExitCode.enum.js';
 
 export class ConsoleInstance extends EventEmitter implements IConsole {
   private readonly _id: ID;
@@ -26,6 +26,8 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
   private _state: IStateManager;
 
   private _isRunning = false;
+  private _currentOutput?: Uint8Array;
+  private _currentError?: Uint8Array;
 
   constructor(options: IConsoleOptions, kernel: IKernel) {
     super();
@@ -34,9 +36,9 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     this._kernel = kernel;
     this._options = options;
 
-    this._cwd = options.cwd || options.workingDirectory || "/home/user";
+    this._cwd = options.cwd || options.workingDirectory || '/home/user';
     this._env = new Map(options.env || []);
-    this._prompt = options.prompt || "$ ";
+    this._prompt = options.prompt || '$ ';
 
     // Erstelle Console-spezifischen State
     this._state = new StateManager(`console-${this._id}`);
@@ -73,17 +75,17 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
         this._options.enablePersistence ||
         this._options.history?.persistent
       ) {
-        const savedHistory = this._state.get<string[]>("history");
+        const savedHistory = this._state.get<string[]>('history');
         if (savedHistory) {
           this._history = savedHistory;
         }
 
-        const savedCwd = this._state.get<Path>("cwd");
+        const savedCwd = this._state.get<Path>('cwd');
         if (savedCwd) {
           this._cwd = savedCwd;
         }
 
-        const savedEnv = this._state.get<Array<[string, string]>>("env");
+        const savedEnv = this._state.get<Array<[string, string]>>('env');
         if (savedEnv) {
           this._env = new Map(savedEnv);
         }
@@ -106,9 +108,9 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
         this._options.enablePersistence ||
         this._options.history?.persistent
       ) {
-        this._state.set("history", this._history);
-        this._state.set("cwd", this._cwd);
-        this._state.set("env", Array.from(this._env.entries()));
+        this._state.set('history', this._history);
+        this._state.set('cwd', this._cwd);
+        this._state.set('env', Array.from(this._env.entries()));
       }
 
       // Cleanup
@@ -144,16 +146,8 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
       // Füge zur History hinzu
       this._addToHistory(command);
 
-      // Vereinfachte Command-Ausführung für jetzt
-      const output = `Command executed: ${command}\n`;
-      const stdout = new TextEncoder().encode(output);
-
-      const result: CommandResult = {
-        exitCode: ExitCode.SUCCESS,
-        stdout,
-        stderr: new Uint8Array(),
-        executionTime: performance.now() - startTime,
-      };
+      // Parse und führe den Command aus
+      const result = await this._executeCommand(command);
 
       this.emit(ConsoleEvent.COMMAND_END, { input: command, result });
       return result;
@@ -163,8 +157,8 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
         .error(`Command execution failed: ${command}`, error);
       this.emit(ConsoleEvent.COMMAND_ERROR, { input: command, error });
 
-      const errorMsg = String(error);
-      const stderr = new TextEncoder().encode(errorMsg);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const stderr = new TextEncoder().encode(`Error: ${errorMsg}\n`);
 
       return {
         exitCode: ExitCode.GENERAL_ERROR,
@@ -195,7 +189,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
 
   public getEnvironment(key?: string): string | Environment {
     if (key) {
-      return this._env.get(key) || "";
+      return this._env.get(key) || '';
     }
     return this.environment;
   }
@@ -228,5 +222,109 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     }
 
     this.emit(ConsoleEvent.HISTORY_UPDATED, { history: this.history });
+  }
+
+  private async _executeCommand(command: string): Promise<CommandResult> {
+    const startTime = performance.now();
+
+    // Parse den Command
+    const commandParts = command.trim().split(/\s+/);
+    const commandName = commandParts[0];
+
+    if (!commandName) {
+      return {
+        exitCode: ExitCode.SUCCESS,
+        stdout: new Uint8Array(),
+        stderr: new Uint8Array(),
+        executionTime: performance.now() - startTime,
+      };
+    }
+
+    const args = commandParts.slice(1);
+
+    // Hole den Command Handler
+    const commandRegistry = this._kernel.getCommandRegistry();
+    const handler = commandRegistry.get(commandName);
+
+    if (!handler) {
+      const stderr = new TextEncoder().encode(
+        `Command not found: ${commandName}\n`
+      );
+      return {
+        exitCode: ExitCode.GENERAL_ERROR,
+        stdout: new Uint8Array(),
+        stderr,
+        executionTime: performance.now() - startTime,
+      };
+    }
+
+    // Reset output buffers
+    this._currentOutput = new Uint8Array();
+    this._currentError = new Uint8Array();
+
+    // Erstelle synchrone Streams für einfache Ausgaben
+    const context = {
+      args,
+      environment: this.environment,
+      workingDirectory: this._cwd,
+      stdin: new ReadableStream(),
+      stdout: new WritableStream({
+        write: (chunk) => {
+          const combined = new Uint8Array(
+            (this._currentOutput?.length || 0) + chunk.length
+          );
+          if (this._currentOutput) {
+            combined.set(this._currentOutput);
+            combined.set(chunk, this._currentOutput.length);
+          } else {
+            combined.set(chunk);
+          }
+          this._currentOutput = combined;
+          return Promise.resolve();
+        },
+      }),
+      stderr: new WritableStream({
+        write: (chunk) => {
+          const combined = new Uint8Array(
+            (this._currentError?.length || 0) + chunk.length
+          );
+          if (this._currentError) {
+            combined.set(this._currentError);
+            combined.set(chunk, this._currentError.length);
+          } else {
+            combined.set(chunk);
+          }
+          this._currentError = combined;
+          return Promise.resolve();
+        },
+      }),
+      vfs: this._kernel.getVFS(),
+      state: this._state,
+    };
+
+    try {
+      // Führe den Command aus
+      const exitCode = await handler.execute(context);
+
+      return {
+        exitCode,
+        stdout: this._currentOutput || new Uint8Array(),
+        stderr: this._currentError || new Uint8Array(),
+        executionTime: performance.now() - startTime,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const stderr = new TextEncoder().encode(
+        `Error executing command: ${errorMessage}\n`
+      );
+
+      return {
+        exitCode: ExitCode.GENERAL_ERROR,
+        stdout: this._currentOutput || new Uint8Array(),
+        stderr,
+        executionTime: performance.now() - startTime,
+      };
+    }
   }
 }
