@@ -2,10 +2,10 @@
 
 > Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?logo=vite)](https://vitejs.dev/)
-![Framework Agnostic](https://img.shields.io/badge/Framework-Agnostic-green)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?logo=vite&style=for-the-badge)](https://vitejs.dev/)
+![Framework Agnostic](https://img.shields.io/badge/Framework-Agnostic-green?style=for-the-badge)
 
 ## 🌟 Highlights
 
@@ -660,39 +660,9 @@ test: Tests hinzufügen/ändern
 chore: Build-System, Dependencies
 ```
 
-## 📋 Roadmap & Milestones
+### 🌟 Future Vision
 
-### 🎯 Version 0.2.0 (Current Sprint)
-
-- [x] ✅ **Core-Architektur** - Kernel, VFS, StateManager komplett
-- [x] ✅ **Basic Commands** - help, clear, echo, test funktional
-- [ ] 🔄 **Shell-Features** - Pipes, Redirections, Variable-Substitution
-- [ ] 🔄 **Complete Built-ins** - ls, cat, cd, mkdir, rm, cp, mv
-- [ ] 🔄 **Theme-System** - Hot-Reload, Custom-Themes, Animation-Support
-- [ ] 🔄 **Error-Handling** - Graceful Degradation, User-friendly Messages
-
-### 🌟 Version 0.3.0 (Next Quarter)
-
-- [ ] � **Framework-Adapter** - React, Angular, Vue, Svelte vollständig
-- [ ] � **Security-Enhancements** - WebWorker-Sandbox, Permission-System
-- [ ] ⚡ **Performance** - Virtual-Scrolling, Command-Caching, Bundle-Optimization
-- [ ] 🧪 **Testing** - 100% Test-Coverage, E2E-Tests, Performance-Benchmarks
-- [ ] 📚 **Documentation** - API-Docs, Tutorials, Best-Practices
-
-### 🚀 Version 1.0.0 (Release-Ready)
-
-- [ ] 🌐 **Plugin-Ecosystem** - NPM-Registry für Community-Commands
-- [ ] 🎨 **Advanced-Themes** - WebGL-Shaders, Animations, Custom-Rendering
-- [ ] 🔗 **Integrations** - Git, Docker, Cloud-APIs, Database-Connections
-- [ ] 📊 **Analytics** - Usage-Metrics, Performance-Monitoring
-- [ ] 🌍 **i18n** - Mehrsprachigkeit, RTL-Support
-
-### � Future Vision
-
-- **🤖 AI-Integration** - Natural Language Commands, Auto-Completion
-- **🔄 Real-time Collaboration** - Shared Terminals, Live-Editing
 - **📱 Mobile-Support** - Touch-optimierte UI, Gesture-Navigation
-- **🎮 Gamification** - Achievement-System, Command-Challenges
 
 ## 🤝 Community & Support
 
@@ -711,18 +681,12 @@ chore: Build-System, Dependencies
 - **💡 Feature-Idee?** → [Discussion starten](https://github.com/JosunLP/WebConsole/discussions)
 - **🤝 Contributing?** → [Contributing Guide](./CONTRIBUTING.md) lesen
 
-### 🏆 Contributors
-
-Ein großes Dankeschön an alle Contributors, die WebConsole möglich machen!
-
-<!-- Contributors-Liste wird automatisch generiert -->
-
 ### 📊 Stats
 
-![GitHub stars](https://img.shields.io/github/stars/JosunLP/WebConsole)
-![GitHub forks](https://img.shields.io/github/forks/JosunLP/WebConsole)
-![GitHub issues](https://img.shields.io/github/issues/JosunLP/WebConsole)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/JosunLP/WebConsole)
+![GitHub stars](https://img.shields.io/github/stars/JosunLP/WebConsole?style=for-the-badge&logo=github)
+![GitHub forks](https://img.shields.io/github/forks/JosunLP/WebConsole?style=for-the-badge&logo=github)
+![GitHub issues](https://img.shields.io/github/issues/JosunLP/WebConsole?style=for-the-badge&logo=github)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/JosunLP/WebConsole?style=for-the-badge&logo=github)
 
 ## 📄 Lizenz
 
@@ -750,28 +714,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## 🙏 Acknowledgments
-
-WebConsole wurde inspiriert von den besten Terminal-Erfahrungen:
-
-- **🪟 [Windows Terminal](https://github.com/microsoft/terminal)** - Moderne Terminal-UI und Theme-System
-- **⚡ [Hyper](https://hyper.is/)** - Elektronisch-basierte Terminal-Innovation
-- **🔥 [iTerm2](https://iterm2.com/)** - Mächtige macOS-Terminal-Features
-- **🐚 [Bash](https://www.gnu.org/software/bash/)** - Shell-Syntax und POSIX-Standards
-- **🎨 [VS Code Terminal](https://code.visualstudio.com/)** - Integrierte Developer-Experience
-
-**Besonderer Dank geht an:**
-
-- **TypeScript-Team** für excellente Developer Experience
-- **Web Standards Community** für maximale Browser-Kompatibilität
-- **Open Source Community** für Inspiration und Best-Practices
-
 ---
-
-### 🖥️ Made with ❤️ für die Developer Community
-
-_WebConsole - Bringing the power of the terminal to the web._
-
-[![Built with TypeScript](https://img.shields.io/badge/Built%20with-TypeScript-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Powered by Vite](https://img.shields.io/badge/Powered%20by-Vite-646CFF?logo=vite)](https://vitejs.dev/)
-![Framework Agnostic](https://img.shields.io/badge/Framework-Agnostic-green)
