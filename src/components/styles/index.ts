@@ -5,5 +5,5 @@
 export {
   getWebConsoleThemeStyles,
   webConsoleStyles,
-} from './WebConsole.styles.js';
-export { webConsoleElementStyles } from './WebConsoleElement.styles.js';
+} from "./WebConsole.styles.js";
+export { webConsoleElementStyles } from "./WebConsoleElement.styles.js";

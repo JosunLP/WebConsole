@@ -2,9 +2,9 @@
  * IndexedDB VFS Provider
  */
 
-import { FileType } from '../../enums/index.js';
-import { IDirEntry, INode, IVFSProvider } from '../../interfaces/index.js';
-import { InodeNumber, PermissionMask } from '../../types/index.js';
+import { FileType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
+import { InodeNumber, PermissionMask } from "../../types/index.js";
 
 interface IndexedDBEntry {
   inode: INode;
@@ -16,7 +16,7 @@ interface IndexedDBEntry {
  * IndexedDB-basierter VFS Provider für persistente Speicherung
  */
 export class IndexedDBProvider implements IVFSProvider {
-  public readonly name = 'indexedDB';
+  public readonly name = "indexedDB";
   public readonly readOnly = false;
 
   private db: IDBDatabase | null = null;
@@ -24,7 +24,7 @@ export class IndexedDBProvider implements IVFSProvider {
   private readonly dbName: string;
   private readonly version = 1;
 
-  constructor(dbName = 'WebConsoleVFS') {
+  constructor(dbName = "WebConsoleVFS") {
     this.dbName = dbName;
   }
 
@@ -42,25 +42,25 @@ export class IndexedDBProvider implements IVFSProvider {
         const db = request.result;
 
         // Store für Inodes
-        if (!db.objectStoreNames.contains('inodes')) {
-          const store = db.createObjectStore('inodes', { keyPath: 'inode' });
-          store.createIndex('type', 'inode.type');
+        if (!db.objectStoreNames.contains("inodes")) {
+          const store = db.createObjectStore("inodes", { keyPath: "inode" });
+          store.createIndex("type", "inode.type");
         }
 
         // Store für Metadaten
-        if (!db.objectStoreNames.contains('metadata')) {
-          db.createObjectStore('metadata');
+        if (!db.objectStoreNames.contains("metadata")) {
+          db.createObjectStore("metadata");
         }
       };
     });
   }
 
   async readFile(inode: InodeNumber): Promise<Uint8Array> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readonly');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readonly");
+      const store = transaction.objectStore("inodes");
       const request = store.get(inode);
 
       request.onsuccess = () => {
@@ -83,11 +83,11 @@ export class IndexedDBProvider implements IVFSProvider {
   }
 
   async writeFile(inode: InodeNumber, data: Uint8Array): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
 
       const getRequest = store.get(inode);
       getRequest.onsuccess = () => {
@@ -118,17 +118,17 @@ export class IndexedDBProvider implements IVFSProvider {
 
   async createInode(
     type: (typeof FileType)[keyof typeof FileType],
-    permissions: PermissionMask
+    permissions: PermissionMask,
   ): Promise<INode> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     const now = Date.now();
     const inode: INode = {
       inode: this.nextInode++,
       type,
       permissions,
-      owner: 'user',
-      group: 'user',
+      owner: "user",
+      group: "user",
       size: 0,
       mtime: now,
       atime: now,
@@ -146,8 +146,8 @@ export class IndexedDBProvider implements IVFSProvider {
     }
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
       const request = store.put(entry);
 
       request.onsuccess = () => resolve(inode);
@@ -156,11 +156,11 @@ export class IndexedDBProvider implements IVFSProvider {
   }
 
   async deleteInode(inode: InodeNumber): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
       const request = store.delete(inode);
 
       request.onsuccess = () => resolve();
@@ -170,13 +170,13 @@ export class IndexedDBProvider implements IVFSProvider {
 
   async updateInode(
     inode: InodeNumber,
-    updates: Partial<INode>
+    updates: Partial<INode>,
   ): Promise<INode> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
 
       const getRequest = store.get(inode);
       getRequest.onsuccess = () => {
@@ -200,11 +200,11 @@ export class IndexedDBProvider implements IVFSProvider {
   }
 
   async readDir(inode: InodeNumber): Promise<IDirEntry[]> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readonly');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readonly");
+      const store = transaction.objectStore("inodes");
       const request = store.get(inode);
 
       request.onsuccess = () => {
@@ -224,13 +224,13 @@ export class IndexedDBProvider implements IVFSProvider {
 
         // Add "." and ".." entries
         entries.push({
-          name: '.',
+          name: ".",
           type: FileType.DIRECTORY,
           inode: entry.inode.inode,
         });
 
         entries.push({
-          name: '..',
+          name: "..",
           type: FileType.DIRECTORY,
           inode: entry.inode.inode, // Simplified - should be parent inode
         });
@@ -259,11 +259,11 @@ export class IndexedDBProvider implements IVFSProvider {
   }
 
   async exists(inode: InodeNumber): Promise<boolean> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve) => {
-      const transaction = this.db!.transaction(['inodes'], 'readonly');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readonly");
+      const store = transaction.objectStore("inodes");
       const request = store.get(inode);
 
       request.onsuccess = () => resolve(!!request.result);
@@ -274,13 +274,13 @@ export class IndexedDBProvider implements IVFSProvider {
   async addChild(
     parentInode: InodeNumber,
     name: string,
-    childInode: InodeNumber
+    childInode: InodeNumber,
   ): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
 
       const getRequest = store.get(parentInode);
       getRequest.onsuccess = () => {
@@ -311,11 +311,11 @@ export class IndexedDBProvider implements IVFSProvider {
   }
 
   async removeChild(parentInode: InodeNumber, name: string): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) throw new Error("Database not initialized");
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['inodes'], 'readwrite');
-      const store = transaction.objectStore('inodes');
+      const transaction = this.db!.transaction(["inodes"], "readwrite");
+      const store = transaction.objectStore("inodes");
 
       const getRequest = store.get(parentInode);
       getRequest.onsuccess = () => {

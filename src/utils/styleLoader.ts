@@ -17,7 +17,7 @@ export async function loadStyles(path: string): Promise<string> {
     return await response.text();
   } catch (error) {
     console.warn(`Could not load styles from ${path}:`, error);
-    return '';
+    return "";
   }
 }
 
@@ -33,9 +33,9 @@ export function createStyleSheet(css: string): string {
  */
 export function applyStylesToShadowRoot(
   shadowRoot: ShadowRoot,
-  css: string
+  css: string,
 ): void {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = css;
   shadowRoot.appendChild(style);
 }

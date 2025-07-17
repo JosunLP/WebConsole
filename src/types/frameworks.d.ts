@@ -1,13 +1,13 @@
 // Type definitions for framework-specific components
 
-declare module '*.vue' {
-  import { DefineComponent } from 'vue';
+declare module "*.vue" {
+  import { DefineComponent } from "vue";
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
 
-declare module '*.svelte' {
-  import { SvelteComponent } from 'svelte';
+declare module "*.svelte" {
+  import { SvelteComponent } from "svelte";
   const component: typeof SvelteComponent;
   export default component;
 }

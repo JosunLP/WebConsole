@@ -2,17 +2,17 @@
  * Console Instance - Einzelne Konsole mit Parser, Lexer und Executor
  */
 
-import { EventEmitter } from '../core/EventEmitter.js';
-import { StateManager } from '../core/StateManager.js';
+import { EventEmitter } from "../core/EventEmitter.js";
+import { StateManager } from "../core/StateManager.js";
 
-import type { IConsole } from '../interfaces/IConsole.interface.js';
-import type { IConsoleOptions } from '../interfaces/IConsoleOptions.interface.js';
-import type { IKernel } from '../interfaces/IKernel.interface.js';
-import type { IStateManager } from '../interfaces/IStateManager.interface.js';
-import type { CommandResult, Environment, ID, Path } from '../types/index.js';
+import type { IConsole } from "../interfaces/IConsole.interface.js";
+import type { IConsoleOptions } from "../interfaces/IConsoleOptions.interface.js";
+import type { IKernel } from "../interfaces/IKernel.interface.js";
+import type { IStateManager } from "../interfaces/IStateManager.interface.js";
+import type { CommandResult, Environment, ID, Path } from "../types/index.js";
 
-import { ConsoleEvent } from '../enums/ConsoleEvent.enum.js';
-import { ExitCode } from '../enums/ExitCode.enum.js';
+import { ConsoleEvent } from "../enums/ConsoleEvent.enum.js";
+import { ExitCode } from "../enums/ExitCode.enum.js";
 
 export class ConsoleInstance extends EventEmitter implements IConsole {
   private readonly _id: ID;
@@ -36,9 +36,9 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     this._kernel = kernel;
     this._options = options;
 
-    this._cwd = options.cwd || options.workingDirectory || '/home/user';
+    this._cwd = options.cwd || options.workingDirectory || "/home/user";
     this._env = new Map(options.env || []);
-    this._prompt = options.prompt || '$ ';
+    this._prompt = options.prompt || "$ ";
 
     // Erstelle Console-spezifischen State
     this._state = new StateManager(`console-${this._id}`);
@@ -75,17 +75,17 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
         this._options.enablePersistence ||
         this._options.history?.persistent
       ) {
-        const savedHistory = this._state.get<string[]>('history');
+        const savedHistory = this._state.get<string[]>("history");
         if (savedHistory) {
           this._history = savedHistory;
         }
 
-        const savedCwd = this._state.get<Path>('cwd');
+        const savedCwd = this._state.get<Path>("cwd");
         if (savedCwd) {
           this._cwd = savedCwd;
         }
 
-        const savedEnv = this._state.get<Array<[string, string]>>('env');
+        const savedEnv = this._state.get<Array<[string, string]>>("env");
         if (savedEnv) {
           this._env = new Map(savedEnv);
         }
@@ -108,9 +108,9 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
         this._options.enablePersistence ||
         this._options.history?.persistent
       ) {
-        this._state.set('history', this._history);
-        this._state.set('cwd', this._cwd);
-        this._state.set('env', Array.from(this._env.entries()));
+        this._state.set("history", this._history);
+        this._state.set("cwd", this._cwd);
+        this._state.set("env", Array.from(this._env.entries()));
       }
 
       // Cleanup
@@ -189,7 +189,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
 
   public getEnvironment(key?: string): string | Environment {
     if (key) {
-      return this._env.get(key) || '';
+      return this._env.get(key) || "";
     }
     return this.environment;
   }
@@ -248,7 +248,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
 
     if (!handler) {
       const stderr = new TextEncoder().encode(
-        `Command not found: ${commandName}\n`
+        `Command not found: ${commandName}\n`,
       );
       return {
         exitCode: ExitCode.GENERAL_ERROR,
@@ -271,7 +271,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
       stdout: new WritableStream({
         write: (chunk) => {
           const combined = new Uint8Array(
-            (this._currentOutput?.length || 0) + chunk.length
+            (this._currentOutput?.length || 0) + chunk.length,
           );
           if (this._currentOutput) {
             combined.set(this._currentOutput);
@@ -286,7 +286,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
       stderr: new WritableStream({
         write: (chunk) => {
           const combined = new Uint8Array(
-            (this._currentError?.length || 0) + chunk.length
+            (this._currentError?.length || 0) + chunk.length,
           );
           if (this._currentError) {
             combined.set(this._currentError);
@@ -316,7 +316,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       const stderr = new TextEncoder().encode(
-        `Error executing command: ${errorMessage}\n`
+        `Error executing command: ${errorMessage}\n`,
       );
 
       return {

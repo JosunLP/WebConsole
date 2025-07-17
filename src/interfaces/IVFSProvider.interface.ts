@@ -2,10 +2,10 @@
  * VFS-Provider Interface
  */
 
-import { VfsItemType } from '../enums/index.js';
-import { InodeNumber, PermissionMask } from '../types/index.js';
-import { IDirEntry } from './IDirEntry.interface.js';
-import { INode } from './INode.interface.js';
+import { VfsItemType } from "../enums/index.js";
+import { InodeNumber, PermissionMask } from "../types/index.js";
+import { IDirEntry } from "./IDirEntry.interface.js";
+import { INode } from "./INode.interface.js";
 
 export interface IVFSProvider {
   readonly name: string;
@@ -26,7 +26,7 @@ export interface IVFSProvider {
   addChild?(
     parentInode: InodeNumber,
     name: string,
-    childInode: InodeNumber
+    childInode: InodeNumber,
   ): Promise<void>;
   removeChild?(parentInode: InodeNumber, name: string): Promise<void>;
 }

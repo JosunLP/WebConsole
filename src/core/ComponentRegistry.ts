@@ -2,13 +2,13 @@
  * Component Registry - Verwaltung von Framework-Komponenten
  */
 
-import type { IComponentRegistry } from '../interfaces/IComponentRegistry.interface.js';
-import { EventEmitter } from './EventEmitter.js';
+import type { IComponentRegistry } from "../interfaces/IComponentRegistry.interface.js";
+import { EventEmitter } from "./EventEmitter.js";
 
 export const ComponentRegistryEvents = {
-  COMPONENT_REGISTERED: 'component:registered',
-  COMPONENT_LOADED: 'component:loaded',
-  COMPONENT_UNREGISTERED: 'component:unregistered',
+  COMPONENT_REGISTERED: "component:registered",
+  COMPONENT_LOADED: "component:loaded",
+  COMPONENT_UNREGISTERED: "component:unregistered",
 } as const;
 
 export class ComponentRegistry
@@ -85,15 +85,15 @@ export class ComponentRegistry
    */
   public async registerBuiltInComponents(): Promise<void> {
     // React Component
-    this.register('react', async () => {
-      const { WebConsole } = await import('../components/react/WebConsole.js');
+    this.register("react", async () => {
+      const { WebConsole } = await import("../components/react/WebConsole.js");
       return WebConsole;
     });
 
     // Native Web Component
-    this.register('web-component', async () => {
+    this.register("web-component", async () => {
       const { WebConsoleElement } = await import(
-        '../components/WebConsoleElement.js'
+        "../components/WebConsoleElement.js"
       );
       return WebConsoleElement;
     });
@@ -110,7 +110,7 @@ export class ComponentRegistry
     const loadPromises = components.map((name) =>
       this.load(name).catch((error) => {
         console.warn(`Failed to preload component '${name}':`, error);
-      })
+      }),
     );
 
     await Promise.all(loadPromises);
@@ -120,7 +120,7 @@ export class ComponentRegistry
    * Framework-spezifischen Loader abrufen
    */
   public getFrameworkLoader(
-    framework: string
+    framework: string,
   ): (() => Promise<unknown>) | undefined {
     return this.components.get(framework);
   }

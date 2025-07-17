@@ -2,13 +2,13 @@
  * which - Locate a command
  */
 
-import { ExitCode } from '../../enums/index.js';
-import { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class WhichCommand extends BaseCommand {
   constructor() {
-    super('which', 'Locate a command', 'which [-a] command ...');
+    super("which", "Locate a command", "which [-a] command ...");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -20,10 +20,10 @@ export class WhichCommand extends BaseCommand {
     const { flags, positional } = this.parseArgs(context);
 
     // -a: show all instances of executable
-    const showAll = flags.has('a') || flags.has('all');
+    const showAll = flags.has("a") || flags.has("all");
 
     if (positional.length === 0) {
-      await this.writeToStderr(context, 'which: missing command name\n');
+      await this.writeToStderr(context, "which: missing command name\n");
       return ExitCode.FAILURE;
     }
 
@@ -48,7 +48,7 @@ export class WhichCommand extends BaseCommand {
   private async findCommand(
     context: CommandContext,
     command: string,
-    showAll: boolean
+    showAll: boolean,
   ): Promise<string[]> {
     const paths: string[] = [];
 
@@ -59,7 +59,7 @@ export class WhichCommand extends BaseCommand {
     }
 
     // Check if it's an absolute path
-    if (command.startsWith('/')) {
+    if (command.startsWith("/")) {
       if (await this.commandExists(context, command)) {
         paths.push(command);
       }
@@ -67,8 +67,8 @@ export class WhichCommand extends BaseCommand {
     }
 
     // Search in PATH
-    const pathEnv = context.environment.PATH || '';
-    const pathDirs = pathEnv.split(':');
+    const pathEnv = context.environment.PATH || "";
+    const pathDirs = pathEnv.split(":");
 
     for (const dir of pathDirs) {
       if (!dir) continue;
@@ -85,7 +85,7 @@ export class WhichCommand extends BaseCommand {
 
   private async commandExists(
     context: CommandContext,
-    path: string
+    path: string,
   ): Promise<boolean> {
     try {
       if (context.vfs) {

@@ -2,4 +2,4 @@
 export type {
   WebConsoleComponent,
   WebConsoleModule,
-} from './WebConsole.component.stub.js';
+} from "./WebConsole.component.stub.js";

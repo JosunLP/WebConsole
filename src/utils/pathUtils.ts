@@ -2,41 +2,41 @@
  * VFS Path Utilities
  */
 
-import { Path } from '../types/index.js';
+import { Path } from "../types/index.js";
 
 export class PathUtils {
   /**
    * Normalisiert einen Pfad und entfernt redundante Segmente
    */
   static normalize(path: Path): Path {
-    if (!path || path === '') {
-      return '/';
+    if (!path || path === "") {
+      return "/";
     }
 
     // Ensure absolute path
-    if (!path.startsWith('/')) {
-      throw new Error('Only absolute paths are supported');
+    if (!path.startsWith("/")) {
+      throw new Error("Only absolute paths are supported");
     }
 
-    const parts = path.split('/').filter((part) => part.length > 0);
+    const parts = path.split("/").filter((part) => part.length > 0);
     const resolved: string[] = [];
 
     for (const part of parts) {
-      if (part === '..') {
+      if (part === "..") {
         resolved.pop();
-      } else if (part !== '.') {
+      } else if (part !== ".") {
         resolved.push(part);
       }
     }
 
-    return '/' + resolved.join('/');
+    return "/" + resolved.join("/");
   }
 
   /**
    * Verbindet mehrere Pfad-Segmente
    */
   static join(...paths: string[]): Path {
-    const joined = paths.filter((p) => p).join('/');
+    const joined = paths.filter((p) => p).join("/");
     return PathUtils.normalize(joined);
   }
 
@@ -45,8 +45,8 @@ export class PathUtils {
    */
   static dirname(path: Path): Path {
     const resolved = PathUtils.normalize(path);
-    const lastSlash = resolved.lastIndexOf('/');
-    if (lastSlash === 0) return '/';
+    const lastSlash = resolved.lastIndexOf("/");
+    if (lastSlash === 0) return "/";
     return resolved.substring(0, lastSlash);
   }
 
@@ -55,7 +55,7 @@ export class PathUtils {
    */
   static basename(path: Path, ext?: string): string {
     const resolved = PathUtils.normalize(path);
-    const lastSlash = resolved.lastIndexOf('/');
+    const lastSlash = resolved.lastIndexOf("/");
     let basename = resolved.substring(lastSlash + 1);
 
     if (ext && basename.endsWith(ext)) {
@@ -70,23 +70,23 @@ export class PathUtils {
    */
   static extname(path: Path): string {
     const basename = PathUtils.basename(path);
-    const lastDot = basename.lastIndexOf('.');
-    return lastDot > 0 ? basename.substring(lastDot) : '';
+    const lastDot = basename.lastIndexOf(".");
+    return lastDot > 0 ? basename.substring(lastDot) : "";
   }
 
   /**
    * Prüft ob ein Pfad absolut ist
    */
   static isAbsolute(path: Path): boolean {
-    return path.startsWith('/');
+    return path.startsWith("/");
   }
 
   /**
    * Macht einen Pfad relativ zu einem Basispfad
    */
   static relative(from: Path, to: Path): string {
-    const fromParts = PathUtils.normalize(from).split('/').filter(Boolean);
-    const toParts = PathUtils.normalize(to).split('/').filter(Boolean);
+    const fromParts = PathUtils.normalize(from).split("/").filter(Boolean);
+    const toParts = PathUtils.normalize(to).split("/").filter(Boolean);
 
     // Find common prefix
     let commonLength = 0;
@@ -102,13 +102,13 @@ export class PathUtils {
 
     // Go up from 'from' to common ancestor
     const upSteps = fromParts.length - commonLength;
-    const upPath = '../'.repeat(upSteps);
+    const upPath = "../".repeat(upSteps);
 
     // Go down from common ancestor to 'to'
     const downParts = toParts.slice(commonLength);
-    const downPath = downParts.join('/');
+    const downPath = downParts.join("/");
 
-    return upPath + downPath || '.';
+    return upPath + downPath || ".";
   }
 
   /**
@@ -135,12 +135,12 @@ export class PathUtils {
     const normalizedParent = PathUtils.normalize(parent);
     const normalizedChild = PathUtils.normalize(child);
 
-    if (normalizedParent === '/') {
+    if (normalizedParent === "/") {
       return true; // Root is parent of everything
     }
 
     return (
-      normalizedChild.startsWith(normalizedParent + '/') ||
+      normalizedChild.startsWith(normalizedParent + "/") ||
       normalizedChild === normalizedParent
     );
   }
@@ -151,8 +151,8 @@ export class PathUtils {
   static sanitizeFilename(name: string): string {
     // Remove invalid characters
     return name
-      .replace(/[<>:"/\\|?*\x00-\x1f]/g, '_')
-      .replace(/^\.+$/, '_')
+      .replace(/[<>:"/\\|?*\x00-\x1f]/g, "_")
+      .replace(/^\.+$/, "_")
       .substring(0, 255);
   }
 
@@ -161,9 +161,9 @@ export class PathUtils {
    */
   static globToRegex(pattern: string): RegExp {
     const escaped = pattern
-      .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape special regex chars
-      .replace(/\*/g, '.*') // * becomes .*
-      .replace(/\?/g, '.'); // ? becomes .
+      .replace(/[.+^${}()|[\]\\]/g, "\\$&") // Escape special regex chars
+      .replace(/\*/g, ".*") // * becomes .*
+      .replace(/\?/g, "."); // ? becomes .
 
     return new RegExp(`^${escaped}$`);
   }
@@ -173,7 +173,7 @@ export class PathUtils {
    */
   static depth(path: Path): number {
     const normalized = PathUtils.normalize(path);
-    if (normalized === '/') return 0;
-    return normalized.split('/').filter(Boolean).length;
+    if (normalized === "/") return 0;
+    return normalized.split("/").filter(Boolean).length;
   }
 }

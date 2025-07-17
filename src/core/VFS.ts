@@ -10,15 +10,15 @@ import {
   MountConfig,
   Path,
   PermissionMask,
-} from '../types/index.js';
+} from "../types/index.js";
 
-import { FileType, VFSEvent } from '../enums/index.js';
+import { FileType, VFSEvent } from "../enums/index.js";
 
-import { IDirEntry, INode, IVFS, IVFSProvider } from '../interfaces/index.js';
+import { IDirEntry, INode, IVFS, IVFSProvider } from "../interfaces/index.js";
 
-import { EventHandler } from '../types/index.js';
+import { EventHandler } from "../types/index.js";
 
-import { EventEmitter } from './EventEmitter.js';
+import { EventEmitter } from "./EventEmitter.js";
 
 /**
  * Mount-Point Information
@@ -64,18 +64,18 @@ export class VFS extends EventEmitter implements IVFS {
   private async initializeRoot(): Promise<void> {
     // Default LocalStorage Provider für Root-Filesystem
     const { LocalStorageProvider } = await import(
-      './providers/LocalStorageProvider.js'
+      "./providers/LocalStorageProvider.js"
     );
-    const rootProvider = new LocalStorageProvider('web-console-root');
+    const rootProvider = new LocalStorageProvider("web-console-root");
 
     const config: MountConfig = {
-      path: '/',
-      provider: 'localStorage',
-      options: { storageKey: 'web-console-root' },
+      path: "/",
+      provider: "localStorage",
+      options: { storageKey: "web-console-root" },
       readOnly: false,
     };
 
-    this.mountPoints.set('/', { config, provider: rootProvider });
+    this.mountPoints.set("/", { config, provider: rootProvider });
 
     // Standard-Verzeichnisse erstellen falls nicht vorhanden
     await this.ensureStandardDirectories();
@@ -86,13 +86,13 @@ export class VFS extends EventEmitter implements IVFS {
    */
   private async ensureStandardDirectories(): Promise<void> {
     const standardDirs = [
-      '/home',
-      '/home/user',
-      '/usr',
-      '/usr/bin',
-      '/etc',
-      '/tmp',
-      '/var',
+      "/home",
+      "/home/user",
+      "/usr",
+      "/usr/bin",
+      "/etc",
+      "/tmp",
+      "/var",
     ];
 
     for (const dir of standardDirs) {
@@ -125,11 +125,11 @@ Features:
 `;
 
     try {
-      await this.stat('/home/user/README.txt');
+      await this.stat("/home/user/README.txt");
     } catch {
       await this.writeFile(
-        '/home/user/README.txt',
-        new TextEncoder().encode(welcomeContent)
+        "/home/user/README.txt",
+        new TextEncoder().encode(welcomeContent),
       );
     }
   }
@@ -140,29 +140,29 @@ Features:
    * Pfad auflösen (normalisieren)
    */
   resolve(path: Path): Path {
-    if (!path.startsWith('/')) {
-      throw new Error('Only absolute paths are supported');
+    if (!path.startsWith("/")) {
+      throw new Error("Only absolute paths are supported");
     }
 
-    const parts = path.split('/').filter((part) => part.length > 0);
+    const parts = path.split("/").filter((part) => part.length > 0);
     const resolved: string[] = [];
 
     for (const part of parts) {
-      if (part === '..') {
+      if (part === "..") {
         resolved.pop();
-      } else if (part !== '.') {
+      } else if (part !== ".") {
         resolved.push(part);
       }
     }
 
-    return '/' + resolved.join('/');
+    return "/" + resolved.join("/");
   }
 
   /**
    * Pfade zusammenfügen
    */
   join(...paths: Path[]): Path {
-    const joined = paths.join('/');
+    const joined = paths.join("/");
     return this.resolve(joined);
   }
 
@@ -171,8 +171,8 @@ Features:
    */
   dirname(path: Path): Path {
     const resolved = this.resolve(path);
-    const lastSlash = resolved.lastIndexOf('/');
-    if (lastSlash === 0) return '/';
+    const lastSlash = resolved.lastIndexOf("/");
+    if (lastSlash === 0) return "/";
     return resolved.substring(0, lastSlash);
   }
 
@@ -181,7 +181,7 @@ Features:
    */
   basename(path: Path, ext?: string): string {
     const resolved = this.resolve(path);
-    const lastSlash = resolved.lastIndexOf('/');
+    const lastSlash = resolved.lastIndexOf("/");
     let basename = resolved.substring(lastSlash + 1);
 
     if (ext && basename.endsWith(ext)) {
@@ -196,8 +196,8 @@ Features:
    */
   extname(path: Path): string {
     const normalized = this.resolve(path);
-    const parts = normalized.split('.');
-    return parts.length > 1 ? `.${parts[parts.length - 1]}` : '';
+    const parts = normalized.split(".");
+    return parts.length > 1 ? `.${parts[parts.length - 1]}` : "";
   }
 
   // === FILE OPERATIONS ===
@@ -225,7 +225,7 @@ Features:
   async writeFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>
+    options?: Partial<INode>,
   ): Promise<void> {
     try {
       const resolution = await this.resolvePath(path);
@@ -255,7 +255,7 @@ Features:
       combined.set(data, existingData.length);
       await this.writeFile(path, combined);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('File not found')) {
+      if (error instanceof Error && error.message.includes("File not found")) {
         // Datei existiert nicht, neu erstellen
         await this.writeFile(path, data);
       } else {
@@ -300,8 +300,8 @@ Features:
       }
 
       // Versuche den Pfad zu resolven durch Parent-Verzeichnisse
-      const segments = normalizedPath.split('/').filter(Boolean);
-      let currentPath = '/';
+      const segments = normalizedPath.split("/").filter(Boolean);
+      let currentPath = "/";
 
       // Root-Verzeichnis existiert immer
       if (segments.length === 0) {
@@ -315,7 +315,7 @@ Features:
         }
 
         const nextPath =
-          currentPath === '/' ? `/${segment}` : `${currentPath}/${segment}`;
+          currentPath === "/" ? `/${segment}` : `${currentPath}/${segment}`;
         if (!this.pathCache.has(nextPath)) {
           return false;
         }
@@ -347,7 +347,7 @@ Features:
    */
   async mkdir(
     path: Path,
-    options?: { recursive?: boolean; mode?: PermissionMask }
+    options?: { recursive?: boolean; mode?: PermissionMask },
   ): Promise<void> {
     const normalizedPath = this.resolve(path);
 
@@ -554,7 +554,7 @@ Features:
     const targetData = new TextEncoder().encode(normalizedTarget);
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.SYMLINK,
-      0o777
+      0o777,
     );
 
     await resolution.mountPoint.provider.writeFile(inode.inode, targetData);
@@ -585,7 +585,7 @@ Features:
     }
 
     const targetData = await resolution.mountPoint.provider.readFile(
-      resolution.inode
+      resolution.inode,
     );
     return new TextDecoder().decode(targetData);
   }
@@ -635,7 +635,7 @@ Features:
     // Vereinfachte Implementation - lauscht auf alle VFS-Events
     // und filtert nach Pfad
     const wrappedHandler = (data: any) => {
-      if (data.path === path || data.path.startsWith(path + '/')) {
+      if (data.path === path || data.path.startsWith(path + "/")) {
         handler(data);
       }
     };
@@ -658,7 +658,7 @@ Features:
   /**
    * Glob-Pattern matching
    */
-  async glob(pattern: GlobPattern, cwd = '/'): Promise<Path[]> {
+  async glob(pattern: GlobPattern, cwd = "/"): Promise<Path[]> {
     // Vereinfachte Glob-Implementation
     // Würde in echter Implementation minimatch oder ähnliche Bibliothek verwenden
     const results: Path[] = [];
@@ -670,8 +670,8 @@ Features:
           const fullPath = this.join(dir, entry.name);
 
           // Einfacher * Wildcard-Support
-          if (pattern.includes('*')) {
-            const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+          if (pattern.includes("*")) {
+            const regex = new RegExp(pattern.replace(/\*/g, ".*"));
             if (regex.test(fullPath)) {
               results.push(fullPath);
             }
@@ -707,7 +707,7 @@ Features:
     const inode = await this.getInode(resolution.inode);
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
-      { permissions }
+      { permissions },
     );
 
     this.inodeCache.set(resolution.inode, updatedInode);
@@ -729,7 +729,7 @@ Features:
 
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
-      updates
+      updates,
     );
 
     this.inodeCache.set(resolution.inode, updatedInode);
@@ -748,7 +748,7 @@ Features:
 
     // Mount-Point finden
     let bestMatch: MountPoint | undefined;
-    let bestMatchPath = '';
+    let bestMatchPath = "";
 
     for (const [mountPath, mountPoint] of this.mountPoints) {
       if (
@@ -764,7 +764,7 @@ Features:
       throw new Error(`No mount point found for path: ${path}`);
     }
 
-    const relativePath = resolvedPath.substring(bestMatchPath.length) || '/';
+    const relativePath = resolvedPath.substring(bestMatchPath.length) || "/";
 
     return {
       mountPoint: bestMatch,
@@ -803,7 +803,7 @@ Features:
   private async createFile(
     path: Path,
     data: Uint8Array,
-    options?: Partial<INode>
+    options?: Partial<INode>,
   ): Promise<INode> {
     const normalizedPath = this.resolve(path);
     const parentPath = this.dirname(normalizedPath);
@@ -826,7 +826,7 @@ Features:
     // Erstelle Inode über Provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.FILE,
-      0o644
+      0o644,
     );
 
     // Schreibe Daten
@@ -843,7 +843,7 @@ Features:
    */
   private async createDirectory(
     path: Path,
-    mode?: PermissionMask
+    mode?: PermissionMask,
   ): Promise<INode> {
     const normalizedPath = this.resolve(path);
     const parentPath = this.dirname(normalizedPath);
@@ -868,7 +868,7 @@ Features:
     // Erstelle Inode über Provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.DIRECTORY,
-      mode || 0o755
+      mode || 0o755,
     );
 
     this.inodeCache.set(createdInode.inode, createdInode);
@@ -882,24 +882,24 @@ Features:
    */
   private async loadProvider(
     name: string,
-    options: Record<string, unknown>
+    options: Record<string, unknown>,
   ): Promise<IVFSProvider> {
     switch (name) {
-      case 'localStorage': {
+      case "localStorage": {
         const { LocalStorageProvider } = await import(
-          './providers/LocalStorageProvider.js'
+          "./providers/LocalStorageProvider.js"
         );
         return new LocalStorageProvider(options.storageKey as string);
       }
-      case 'memory': {
+      case "memory": {
         const { MemoryProvider } = await import(
-          './providers/MemoryProvider.js'
+          "./providers/MemoryProvider.js"
         );
         return new MemoryProvider();
       }
-      case 'indexedDB': {
+      case "indexedDB": {
         const { IndexedDBProvider } = await import(
-          './providers/IndexedDBProvider.js'
+          "./providers/IndexedDBProvider.js"
         );
         const provider = new IndexedDBProvider(options.dbName as string);
         await provider.initialize();

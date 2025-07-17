@@ -71,7 +71,7 @@ console.log(result.output);
 
 Web-Console ermöglicht es Entwicklern, in Sekundenschnelle eine Windows-Terminal-ähnliche Console in jede Web-Anwendung zu integrieren – **ohne Backend, ohne Build-Schritte, ohne externe Abhängigkeiten**.
 
-## ✨ Features
+## ✨ Key Features
 
 - 🔧 **Modulare Architektur** - Kernel, VFS, StateManager, Parser
 - 🗂️ **Virtuelles Dateisystem** - POSIX-ähnlich mit localStorage-Backend

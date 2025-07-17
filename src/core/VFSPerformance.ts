@@ -70,37 +70,37 @@ export class VFSPerformanceMonitor {
   }
 
   getReport(): string {
-    const report: string[] = ['VFS Performance Report:', ''];
+    const report: string[] = ["VFS Performance Report:", ""];
 
     // Operation counts
-    report.push('Operation Counts:');
+    report.push("Operation Counts:");
     for (const [op, count] of this.metrics.operationCounts) {
       report.push(`  ${op}: ${count}`);
     }
-    report.push('');
+    report.push("");
 
     // Average times
-    report.push('Average Operation Times (ms):');
+    report.push("Average Operation Times (ms):");
     for (const [op, times] of this.metrics.operationTimes) {
       const avg = times.reduce((a, b) => a + b, 0) / times.length;
       report.push(`  ${op}: ${avg.toFixed(2)}`);
     }
-    report.push('');
+    report.push("");
 
     // Cache statistics
     const totalCache = this.metrics.cacheHits + this.metrics.cacheMisses;
     const hitRate =
       totalCache > 0 ? (this.metrics.cacheHits / totalCache) * 100 : 0;
 
-    report.push('Cache Statistics:');
+    report.push("Cache Statistics:");
     report.push(`  Hits: ${this.metrics.cacheHits}`);
     report.push(`  Misses: ${this.metrics.cacheMisses}`);
     report.push(`  Hit Rate: ${hitRate.toFixed(1)}%`);
-    report.push('');
+    report.push("");
 
     report.push(`Total Operations: ${this.metrics.totalOperations}`);
 
-    return report.join('\n');
+    return report.join("\n");
   }
 
   reset(): void {

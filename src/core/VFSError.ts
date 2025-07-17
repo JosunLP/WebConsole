@@ -2,17 +2,17 @@
  * VFS Error Handling Utilities
  */
 
-import { VfsError } from '../enums/index.js';
+import { VfsError } from "../enums/index.js";
 
 export class VFSException extends Error {
   constructor(
     public readonly code: VfsError,
     message: string,
     public readonly path?: string,
-    public readonly errno?: number
+    public readonly errno?: number,
   ) {
     super(message);
-    this.name = 'VFSException';
+    this.name = "VFSException";
   }
 
   static notFound(path: string): VFSException {
@@ -20,7 +20,7 @@ export class VFSException extends Error {
       VfsError.NOT_FOUND,
       `No such file or directory: ${path}`,
       path,
-      -2
+      -2,
     );
   }
 
@@ -29,7 +29,7 @@ export class VFSException extends Error {
       VfsError.ACCESS_DENIED,
       `Permission denied: ${path}`,
       path,
-      -13
+      -13,
     );
   }
 
@@ -38,7 +38,7 @@ export class VFSException extends Error {
       VfsError.IS_DIRECTORY,
       `Is a directory: ${path}`,
       path,
-      -21
+      -21,
     );
   }
 
@@ -47,7 +47,7 @@ export class VFSException extends Error {
       VfsError.NOT_A_FILE,
       `Not a file: ${path}`,
       path,
-      -20
+      -20,
     );
   }
 
@@ -56,7 +56,7 @@ export class VFSException extends Error {
       VfsError.FILE_EXISTS,
       `File exists: ${path}`,
       path,
-      -17
+      -17,
     );
   }
 
@@ -65,7 +65,7 @@ export class VFSException extends Error {
       VfsError.NOT_EMPTY,
       `Directory not empty: ${path}`,
       path,
-      -39
+      -39,
     );
   }
 
@@ -74,16 +74,16 @@ export class VFSException extends Error {
       VfsError.INVALID_PATH,
       `Invalid path: ${path}`,
       path,
-      -22
+      -22,
     );
   }
 
   static noSpace(): VFSException {
     return new VFSException(
       VfsError.NO_SPACE,
-      'No space left on device',
+      "No space left on device",
       undefined,
-      -28
+      -28,
     );
   }
 }
@@ -106,19 +106,19 @@ export class VFSErrorHandler {
     throw new VFSException(
       VfsError.INVALID_PATH,
       `Unknown error during ${operation}: ${error.message}`,
-      path
+      path,
     );
   }
 
   static wrapAsync<T extends any[], R>(
     fn: (...args: T) => Promise<R>,
-    operation: string
+    operation: string,
   ) {
     return async (...args: T): Promise<R> => {
       try {
         return await fn(...args);
       } catch (error) {
-        const path = args.find((arg) => typeof arg === 'string');
+        const path = args.find((arg) => typeof arg === "string");
         VFSErrorHandler.handleError(error, operation, path);
       }
     };

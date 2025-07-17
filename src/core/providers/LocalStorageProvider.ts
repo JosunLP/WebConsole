@@ -3,9 +3,9 @@
  * Implementiert ein virtuelles Dateisystem basierend auf localStorage
  */
 
-import { FileType, Permission, VfsItemType } from '../../enums/index.js';
-import { IDirEntry, INode, IVFSProvider } from '../../interfaces/index.js';
-import type { InodeNumber } from '../../types/index.js';
+import { FileType, Permission, VfsItemType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
+import type { InodeNumber } from "../../types/index.js";
 
 interface StorageEntry {
   inode: INode;
@@ -14,14 +14,14 @@ interface StorageEntry {
 }
 
 export class LocalStorageProvider implements IVFSProvider {
-  public readonly name = 'localStorage';
+  public readonly name = "localStorage";
   public readonly readOnly = false;
 
   private readonly storageKey: string;
   private storage = new Map<InodeNumber, StorageEntry>();
   private nextInode = 1;
 
-  constructor(storageKey = 'web-console-vfs') {
+  constructor(storageKey = "web-console-vfs") {
     this.storageKey = storageKey;
     this.loadFromStorage();
   }
@@ -52,8 +52,8 @@ export class LocalStorageProvider implements IVFSProvider {
       inode: this.nextInode++,
       type,
       permissions: permissions as Permission,
-      owner: 'user',
-      group: 'users',
+      owner: "user",
+      group: "users",
       size: 0,
       atime: Date.now(),
       mtime: Date.now(),
@@ -93,7 +93,7 @@ export class LocalStorageProvider implements IVFSProvider {
 
   async updateInode(
     inode: InodeNumber,
-    updates: Partial<INode>
+    updates: Partial<INode>,
   ): Promise<INode> {
     const entry = this.storage.get(inode);
     if (!entry) {
@@ -140,7 +140,7 @@ export class LocalStorageProvider implements IVFSProvider {
   async addDirEntry(
     dirInode: InodeNumber,
     name: string,
-    childInode: InodeNumber
+    childInode: InodeNumber,
   ): Promise<void> {
     const entry = this.storage.get(dirInode);
     if (!entry || entry.inode.type !== FileType.DIRECTORY || !entry.children) {
@@ -179,7 +179,7 @@ export class LocalStorageProvider implements IVFSProvider {
    */
   async findInode(
     dirInode: InodeNumber,
-    name: string
+    name: string,
   ): Promise<InodeNumber | undefined> {
     const entry = this.storage.get(dirInode);
     if (!entry || entry.inode.type !== FileType.DIRECTORY || !entry.children) {
@@ -232,14 +232,14 @@ export class LocalStorageProvider implements IVFSProvider {
                 Object.entries((entryData as any).children).map(([k, v]) => [
                   k,
                   Number(v),
-                ])
+                ]),
               )
             : new Map(),
         };
         this.storage.set(inode, entry);
       }
     } catch (error) {
-      console.warn('Failed to load VFS from localStorage:', error);
+      console.warn("Failed to load VFS from localStorage:", error);
       this.initializeEmpty();
     }
   }
@@ -263,7 +263,7 @@ export class LocalStorageProvider implements IVFSProvider {
 
       localStorage.setItem(this.storageKey, JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to save VFS to localStorage:', error);
+      console.error("Failed to save VFS to localStorage:", error);
     }
   }
 
@@ -279,7 +279,7 @@ export class LocalStorageProvider implements IVFSProvider {
   async addChild(
     parentInode: InodeNumber,
     name: string,
-    childInode: InodeNumber
+    childInode: InodeNumber,
   ): Promise<void> {
     await this.addDirEntry(parentInode, name, childInode);
   }

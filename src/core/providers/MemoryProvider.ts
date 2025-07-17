@@ -3,13 +3,13 @@
  * Implementiert ein rein im Speicher basiertes virtuelles Dateisystem
  */
 
-import { FileType, Permission, VfsItemType } from '../../enums/index.js';
-import { IDirEntry, INode, IVFSProvider } from '../../interfaces/index.js';
+import { FileType, Permission, VfsItemType } from "../../enums/index.js";
+import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
 import type {
   InodeNumber,
   PermissionMask,
   Timestamp,
-} from '../../types/index.js';
+} from "../../types/index.js";
 
 interface MemoryEntry {
   inode: INode;
@@ -17,14 +17,14 @@ interface MemoryEntry {
   children?: Map<string, InodeNumber>;
 }
 
-interface MutableINode extends Omit<INode, 'size' | 'modified' | 'accessed'> {
+interface MutableINode extends Omit<INode, "size" | "modified" | "accessed"> {
   size: number;
   modified: Timestamp;
   accessed: Timestamp;
 }
 
 export class MemoryProvider implements IVFSProvider {
-  public readonly name = 'memory';
+  public readonly name = "memory";
   public readonly readOnly = false;
 
   private storage = new Map<InodeNumber, MemoryEntry>();
@@ -64,15 +64,15 @@ export class MemoryProvider implements IVFSProvider {
 
   async createInode(
     type: VfsItemType,
-    permissions: PermissionMask
+    permissions: PermissionMask,
   ): Promise<INode> {
     const now = Date.now();
     const inode: INode = {
       inode: this.nextInode++,
       type,
       permissions: permissions as Permission,
-      owner: 'user',
-      group: 'user',
+      owner: "user",
+      group: "user",
       size: 0,
       mtime: now,
       atime: now,
@@ -113,7 +113,7 @@ export class MemoryProvider implements IVFSProvider {
 
   async updateInode(
     inode: InodeNumber,
-    updates: Partial<INode>
+    updates: Partial<INode>,
   ): Promise<INode> {
     const entry = this.storage.get(inode);
     if (!entry) {
@@ -165,7 +165,7 @@ export class MemoryProvider implements IVFSProvider {
   async addChild(
     parentInode: InodeNumber,
     name: string,
-    childInode: InodeNumber
+    childInode: InodeNumber,
   ): Promise<void> {
     const parentEntry = this.storage.get(parentInode);
     if (!parentEntry || parentEntry.inode.type !== FileType.DIRECTORY) {
@@ -198,7 +198,7 @@ export class MemoryProvider implements IVFSProvider {
    */
   async findChild(
     parentInode: InodeNumber,
-    name: string
+    name: string,
   ): Promise<InodeNumber | undefined> {
     const parentEntry = this.storage.get(parentInode);
     if (!parentEntry || parentEntry.inode.type !== FileType.DIRECTORY) {
@@ -234,8 +234,8 @@ export class MemoryProvider implements IVFSProvider {
       inode: this.nextInode++,
       type: VfsItemType.DIRECTORY,
       permissions: 0o755 as Permission,
-      owner: 'root',
-      group: 'root',
+      owner: "root",
+      group: "root",
       size: 0,
       mtime: now,
       atime: now,

@@ -14,8 +14,8 @@ export interface WebConsoleModule {
 }
 
 // Runtime warning for missing Angular dependency
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   console.warn(
-    'Angular WebConsole component requires @angular/core to be installed'
+    "Angular WebConsole component requires @angular/core to be installed",
   );
 }

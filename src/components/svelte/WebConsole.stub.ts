@@ -6,9 +6,9 @@
 // Stub component for Svelte
 export class WebConsole {
   constructor(options: any) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       console.warn(
-        'Svelte WebConsole component requires svelte to be installed'
+        "Svelte WebConsole component requires svelte to be installed",
       );
     }
   }
