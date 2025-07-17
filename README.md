@@ -1,4 +1,4 @@
-# �️ WebConsole
+# 🖥️ WebConsole
 
 > Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen
 
