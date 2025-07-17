@@ -31,7 +31,7 @@ export const StateEvents = {
 export class StateManager extends EventEmitter implements IStateManager {
   private readonly entries = new Map<string, StateEntry>();
   private readonly namespaceName: string;
-  private readonly parent?: StateManager;
+  private readonly parent: StateManager | undefined;
   private readonly children = new Map<string, StateManager>();
 
   constructor(namespaceName = 'root', parent?: StateManager) {
