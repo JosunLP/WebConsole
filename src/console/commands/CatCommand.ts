@@ -92,21 +92,33 @@ export class CatCommand extends BaseCommand {
 
       await this.writeToStdout(context, processedContent);
       return ExitCode.SUCCESS;
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage: string;
 
-      switch (error.code) {
-        case VfsError.NOT_FOUND:
-          errorMessage = `cat: ${filePath}: No such file or directory\n`;
-          break;
-        case VfsError.ACCESS_DENIED:
-          errorMessage = `cat: ${filePath}: Permission denied\n`;
-          break;
-        case VfsError.IS_DIRECTORY:
-          errorMessage = `cat: ${filePath}: Is a directory\n`;
-          break;
-        default:
-          errorMessage = `cat: ${filePath}: ${error.message}\n`;
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        "message" in error
+      ) {
+        const vfsError = error as { code: unknown; message: unknown };
+        switch (vfsError.code) {
+          case VfsError.NOT_FOUND:
+            errorMessage = `cat: ${filePath}: No such file or directory\n`;
+            break;
+          case VfsError.ACCESS_DENIED:
+            errorMessage = `cat: ${filePath}: Permission denied\n`;
+            break;
+          case VfsError.IS_DIRECTORY:
+            errorMessage = `cat: ${filePath}: Is a directory\n`;
+            break;
+          default:
+            errorMessage = `cat: ${filePath}: ${String(vfsError.message)}\n`;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = `cat: ${filePath}: ${error.message}\n`;
+      } else {
+        errorMessage = `cat: ${filePath}: An unknown error occurred\n`;
       }
 
       await this.writeToStderr(context, errorMessage);
@@ -134,7 +146,7 @@ export class CatCommand extends BaseCommand {
 
     // Process each line
     let lineNumber = 1;
-    const processedLines = lines.map((line, _index) => {
+    const processedLines = lines.map((line) => {
       let processedLine = line;
 
       // Show tabs as ^I
