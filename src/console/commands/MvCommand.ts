@@ -1,6 +1,6 @@
-import { ExitCode } from '../../enums/ExitCode.enum.js';
-import type { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/ExitCode.enum.js";
+import type { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 /**
  * mv - Move/rename files and directories
@@ -12,9 +12,9 @@ import { BaseCommand } from '../BaseCommand.js';
 export class MvCommand extends BaseCommand {
   constructor() {
     super(
-      'mv',
-      'Move/rename files and directories',
-      'mv source... destination'
+      "mv",
+      "Move/rename files and directories",
+      "mv source... destination",
     );
   }
 
@@ -22,21 +22,21 @@ export class MvCommand extends BaseCommand {
     const args = context.args.slice(1); // Remove command name
 
     if (args.length < 2) {
-      await this.writeToStderr(context, 'mv: missing file operand\n');
+      await this.writeToStderr(context, "mv: missing file operand\n");
       await this.writeToStderr(
         context,
-        "Try 'mv --help' for more information.\n"
+        "Try 'mv --help' for more information.\n",
       );
       return ExitCode.FAILURE;
     }
 
-    const verbose = args.includes('-v');
-    const fileArgs = args.filter((arg) => !arg.startsWith('-'));
+    const verbose = args.includes("-v");
+    const fileArgs = args.filter((arg) => !arg.startsWith("-"));
 
     if (fileArgs.length < 2) {
       await this.writeToStderr(
         context,
-        'mv: missing destination file operand\n'
+        "mv: missing destination file operand\n",
       );
       return ExitCode.FAILURE;
     }
@@ -47,7 +47,7 @@ export class MvCommand extends BaseCommand {
     if (!destination) {
       await this.writeToStderr(
         context,
-        'mv: missing destination file operand\n'
+        "mv: missing destination file operand\n",
       );
       return ExitCode.FAILURE;
     }
@@ -69,7 +69,7 @@ export class MvCommand extends BaseCommand {
         if (!destStat || !destStat.isDirectory()) {
           await this.writeToStderr(
             context,
-            `mv: target '${destination}' is not a directory\n`
+            `mv: target '${destination}' is not a directory\n`,
           );
           return ExitCode.FAILURE;
         }
@@ -89,7 +89,7 @@ export class MvCommand extends BaseCommand {
           } catch (error) {
             await this.writeToStderr(
               context,
-              `mv: cannot stat '${source}': No such file or directory\n`
+              `mv: cannot stat '${source}': No such file or directory\n`,
             );
             hasErrors = true;
             continue;
@@ -97,16 +97,16 @@ export class MvCommand extends BaseCommand {
 
           // If destination is a directory, move into it
           if (destStat && destStat.isDirectory()) {
-            const sourceName = sourcePath.split('/').pop();
+            const sourceName = sourcePath.split("/").pop();
             finalDestPath =
-              destPath === '/' ? `/${sourceName}` : `${destPath}/${sourceName}`;
+              destPath === "/" ? `/${sourceName}` : `${destPath}/${sourceName}`;
           }
 
           // Check if trying to move to same location
           if (sourcePath === finalDestPath) {
             await this.writeToStderr(
               context,
-              `mv: '${source}' and '${finalDestPath}' are the same file\n`
+              `mv: '${source}' and '${finalDestPath}' are the same file\n`,
             );
             hasErrors = true;
             continue;
@@ -119,7 +119,7 @@ export class MvCommand extends BaseCommand {
               sourcePath,
               finalDestPath,
               verbose,
-              context
+              context,
             );
           } else {
             await this.moveFile(
@@ -127,7 +127,7 @@ export class MvCommand extends BaseCommand {
               sourcePath,
               finalDestPath,
               verbose,
-              context
+              context,
             );
           }
         } catch (error) {
@@ -135,7 +135,7 @@ export class MvCommand extends BaseCommand {
             error instanceof Error ? error.message : String(error);
           await this.writeToStderr(
             context,
-            `mv: cannot move '${source}': ${message}\n`
+            `mv: cannot move '${source}': ${message}\n`,
           );
           hasErrors = true;
         }
@@ -154,7 +154,7 @@ export class MvCommand extends BaseCommand {
     sourcePath: string,
     destPath: string,
     verbose: boolean,
-    context: CommandContext
+    context: CommandContext,
   ): Promise<void> {
     // Read source file
     const content = await vfs.readFile(sourcePath);
@@ -175,7 +175,7 @@ export class MvCommand extends BaseCommand {
     sourcePath: string,
     destPath: string,
     verbose: boolean,
-    context: CommandContext
+    context: CommandContext,
   ): Promise<void> {
     // Copy directory recursively
     await this.copyDirectoryRecursive(
@@ -183,7 +183,7 @@ export class MvCommand extends BaseCommand {
       sourcePath,
       destPath,
       verbose,
-      context
+      context,
     );
 
     // Remove source directory
@@ -195,7 +195,7 @@ export class MvCommand extends BaseCommand {
     sourcePath: string,
     destPath: string,
     verbose: boolean,
-    context: CommandContext
+    context: CommandContext,
   ): Promise<void> {
     // Create destination directory
     await vfs.createDirectory(destPath);
@@ -209,9 +209,9 @@ export class MvCommand extends BaseCommand {
 
     for (const entry of entries) {
       const sourceEntryPath =
-        sourcePath === '/' ? `/${entry.name}` : `${sourcePath}/${entry.name}`;
+        sourcePath === "/" ? `/${entry.name}` : `${sourcePath}/${entry.name}`;
       const destEntryPath =
-        destPath === '/' ? `/${entry.name}` : `${destPath}/${entry.name}`;
+        destPath === "/" ? `/${entry.name}` : `${destPath}/${entry.name}`;
 
       if (entry.isDirectory()) {
         await this.copyDirectoryRecursive(
@@ -219,7 +219,7 @@ export class MvCommand extends BaseCommand {
           sourceEntryPath,
           destEntryPath,
           verbose,
-          context
+          context,
         );
       } else {
         const content = await vfs.readFile(sourceEntryPath);
@@ -230,14 +230,14 @@ export class MvCommand extends BaseCommand {
 
   private async removeDirectoryRecursive(
     vfs: any,
-    dirPath: string
+    dirPath: string,
   ): Promise<void> {
     const entries = await vfs.readDir(dirPath);
 
     // Remove all entries first
     for (const entry of entries) {
       const entryPath =
-        dirPath === '/' ? `/${entry.name}` : `${dirPath}/${entry.name}`;
+        dirPath === "/" ? `/${entry.name}` : `${dirPath}/${entry.name}`;
 
       if (entry.isDirectory()) {
         await this.removeDirectoryRecursive(vfs, entryPath);

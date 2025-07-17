@@ -146,7 +146,34 @@ web-console {
     };
   }
 
-  private registerBuiltInThemes(): void {
+  private async registerBuiltInThemes(): Promise<void> {
+    try {
+      // Dynamisches Laden der Theme-Module
+      const { DefaultTheme } = await import("../themes/DefaultTheme.js");
+      const { DarkTheme } = await import("../themes/DarkTheme.js");
+      const { LightTheme } = await import("../themes/LightTheme.js");
+      const { MonokaiTheme } = await import("../themes/MonokaiTheme.js");
+      const { SolarizedDarkTheme } = await import(
+        "../themes/SolarizedDarkTheme.js"
+      );
+      const { WindowsTerminalTheme } = await import(
+        "../themes/WindowsTerminalTheme.js"
+      );
+
+      this.registerTheme(DefaultTheme);
+      this.registerTheme(DarkTheme);
+      this.registerTheme(LightTheme);
+      this.registerTheme(MonokaiTheme);
+      this.registerTheme(SolarizedDarkTheme);
+      this.registerTheme(WindowsTerminalTheme);
+    } catch (error) {
+      console.warn("Failed to load some themes:", error);
+      // Fallback: Registriere inline-definierte Themes
+      this.registerLegacyThemes();
+    }
+  }
+
+  private registerLegacyThemes(): void {
     // Windows Terminal Theme
     const windowsTerminal: ITheme = {
       name: "windows-terminal",

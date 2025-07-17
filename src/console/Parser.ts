@@ -359,6 +359,100 @@ export class Parser {
   }
 
   /**
+   * Environment-Variable-Substitution
+   */
+  private substituteVariables(value: string, environment: Environment): string {
+    // Einfache Variable: $VAR
+    let result = value.replace(/\$(\w+)/g, (match, varName) => {
+      return environment[varName] || "";
+    });
+
+    // Erweiterte Variable: ${VAR} oder ${VAR:-default}
+    result = result.replace(/\$\{([^}]+)\}/g, (match, expression) => {
+      if (expression.includes(":-")) {
+        const [varName, defaultValue] = expression.split(":-", 2);
+        return environment[varName] || defaultValue;
+      } else {
+        return environment[expression] || "";
+      }
+    });
+
+    return result;
+  }
+
+  /**
+   * Glob-Pattern expandieren
+   */
+  private expandGlob(pattern: string): string[] {
+    // Vereinfachte Glob-Expansion
+    if (pattern.includes("*")) {
+      // In einer echten Implementation würde hier das VFS durchsucht
+      return [pattern]; // Fallback: Pattern as-is
+    }
+    return [pattern];
+  }
+
+  /**
+   * Tilde-Expansion (~)
+   */
+  private expandTilde(path: string): string {
+    if (path.startsWith("~/")) {
+      return path.replace("~/", "/home/user/");
+    } else if (path === "~") {
+      return "/home/user";
+    }
+    return path;
+  }
+
+  /**
+   * Command-Substitution $(command) oder `command`
+   */
+  private substituteCommands(value: string): string {
+    // $(command) syntax
+    let result = value.replace(/\$\(([^)]+)\)/g, (match, command) => {
+      // In einer echten Implementation würde hier der Befehl ausgeführt
+      return `[output of: ${command}]`;
+    });
+
+    // `command` syntax (backticks)
+    result = result.replace(/`([^`]+)`/g, (match, command) => {
+      // In einer echten Implementation würde hier der Befehl ausgeführt
+      return `[output of: ${command}]`;
+    });
+
+    return result;
+  }
+
+  /**
+   * Erweiterte Argument-Verarbeitung mit allen Shell-Features
+   */
+  private processAdvancedArguments(
+    args: CommandArgs,
+    environment: Environment,
+  ): CommandArgs {
+    const processed: CommandArgs = [];
+
+    for (const arg of args) {
+      let processedArg = arg;
+
+      // 1. Tilde-Expansion
+      processedArg = this.expandTilde(processedArg);
+
+      // 2. Variable-Substitution
+      processedArg = this.substituteVariables(processedArg, environment);
+
+      // 3. Command-Substitution
+      processedArg = this.substituteCommands(processedArg);
+
+      // 4. Glob-Expansion
+      const globExpanded = this.expandGlob(processedArg);
+      processed.push(...globExpanded);
+    }
+
+    return processed;
+  }
+
+  /**
    * Debug-Information für Token-Stream
    */
   debug(): object {

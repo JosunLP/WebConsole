@@ -1,6 +1,6 @@
-import { ExitCode } from '../../enums/ExitCode.enum.js';
-import type { CommandContext } from '../../types/index.js';
-import { BaseCommand } from '../BaseCommand.js';
+import { ExitCode } from "../../enums/ExitCode.enum.js";
+import type { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 /**
  * history - Display command history
@@ -11,7 +11,7 @@ import { BaseCommand } from '../BaseCommand.js';
  */
 export class HistoryCommand extends BaseCommand {
   constructor() {
-    super('history', 'Display command history', 'history [n]');
+    super("history", "Display command history", "history [n]");
   }
 
   override async execute(context: CommandContext): Promise<ExitCode> {
@@ -28,7 +28,7 @@ export class HistoryCommand extends BaseCommand {
       if (args.length > 0) {
         const firstArg = args[0];
         if (!firstArg) {
-          await this.writeToStderr(context, 'history: invalid argument\n');
+          await this.writeToStderr(context, "history: invalid argument\n");
           return ExitCode.FAILURE;
         }
 
@@ -36,7 +36,7 @@ export class HistoryCommand extends BaseCommand {
         if (isNaN(n)) {
           await this.writeToStderr(
             context,
-            `history: ${args[0]}: numeric argument required\n`
+            `history: ${args[0]}: numeric argument required\n`,
           );
           return ExitCode.FAILURE;
         }
@@ -50,7 +50,7 @@ export class HistoryCommand extends BaseCommand {
         const command = history[i];
         await this.writeToStdout(
           context,
-          `${historyNumber.toString().padStart(5, ' ')}  ${command}\n`
+          `${historyNumber.toString().padStart(5, " ")}  ${command}\n`,
         );
       }
 
@@ -65,7 +65,7 @@ export class HistoryCommand extends BaseCommand {
   private getCommandHistory(context: CommandContext): string[] {
     // Try to get history from localStorage or session storage
     try {
-      const historyJson = localStorage.getItem('webconsole-history');
+      const historyJson = localStorage.getItem("webconsole-history");
       if (historyJson) {
         return JSON.parse(historyJson);
       }
@@ -75,20 +75,20 @@ export class HistoryCommand extends BaseCommand {
 
     // Return a sample history for demo purposes
     return [
-      'ls',
-      'cd /home',
-      'ls -la',
-      'cat README.md',
-      'mkdir test',
-      'cd test',
+      "ls",
+      "cd /home",
+      "ls -la",
+      "cat README.md",
+      "mkdir test",
+      "cd test",
       'echo "Hello World" > hello.txt',
-      'cat hello.txt',
-      'cd ..',
-      'rm -r test',
-      'theme list',
-      'theme set monokai',
-      'help',
-      'pwd',
+      "cat hello.txt",
+      "cd ..",
+      "rm -r test",
+      "theme list",
+      "theme set monokai",
+      "help",
+      "pwd",
     ];
   }
 }

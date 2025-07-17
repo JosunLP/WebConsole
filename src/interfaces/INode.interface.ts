@@ -23,6 +23,9 @@ export interface INode {
   readonly created: Timestamp;
   readonly modified: Timestamp;
   readonly accessed: Timestamp;
+  readonly mtime?: Timestamp; // Für Kompatibilität
+  readonly atime?: Timestamp; // Für Kompatibilität
+  readonly ctime?: Timestamp; // Für Kompatibilität
   readonly mimeType?: MimeType;
   readonly blocks: BlockAddress[];
   readonly linkCount: number;

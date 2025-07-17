@@ -61,8 +61,76 @@ export class VFS extends EventEmitter implements IVFS {
    * Root-Filesystem initialisieren
    */
   private async initializeRoot(): Promise<void> {
-    // Hier würde ein Default-Provider für das Root-FS initialisiert
-    // Vorerst ein einfacher Memory-Provider
+    // Default LocalStorage Provider für Root-Filesystem
+    const { LocalStorageProvider } = await import(
+      "../core/providers/LocalStorageProvider.js"
+    );
+    const rootProvider = new LocalStorageProvider("web-console-root");
+
+    const config: MountConfig = {
+      path: "/",
+      provider: "localStorage",
+      options: { storageKey: "web-console-root" },
+      readOnly: false,
+    };
+
+    this.mountPoints.set("/", { config, provider: rootProvider });
+
+    // Standard-Verzeichnisse erstellen falls nicht vorhanden
+    await this.ensureStandardDirectories();
+  }
+
+  /**
+   * Standard-Verzeichnisse erstellen
+   */
+  private async ensureStandardDirectories(): Promise<void> {
+    const standardDirs = [
+      "/home",
+      "/home/user",
+      "/usr",
+      "/usr/bin",
+      "/etc",
+      "/tmp",
+      "/var",
+    ];
+
+    for (const dir of standardDirs) {
+      try {
+        await this.stat(dir);
+      } catch {
+        // Verzeichnis existiert nicht, erstelle es
+        await this.mkdir(dir, { recursive: true });
+      }
+    }
+
+    // Standard-Dateien erstellen
+    await this.createStandardFiles();
+  }
+
+  /**
+   * Standard-Dateien erstellen
+   */
+  private async createStandardFiles(): Promise<void> {
+    const welcomeContent = `Welcome to Web Console!
+
+This is a browser-based terminal with a full virtual file system.
+Type 'help' to see available commands.
+
+Features:
+- POSIX-like file operations
+- Multiple framework integrations
+- Persistent storage
+- Theme system
+`;
+
+    try {
+      await this.stat("/home/user/README.txt");
+    } catch {
+      await this.writeFile(
+        "/home/user/README.txt",
+        new TextEncoder().encode(welcomeContent),
+      );
+    }
   }
 
   // === PATH OPERATIONS ===
@@ -126,9 +194,9 @@ export class VFS extends EventEmitter implements IVFS {
    * Datei-Erweiterung
    */
   extname(path: Path): string {
-    const basename = this.basename(path);
-    const lastDot = basename.lastIndexOf(".");
-    return lastDot > 0 ? basename.substring(lastDot) : "";
+    const normalized = this.resolve(path);
+    const parts = normalized.split(".");
+    return parts.length > 1 ? `.${parts[parts.length - 1]}` : "";
   }
 
   // === FILE OPERATIONS ===
@@ -242,17 +310,103 @@ export class VFS extends EventEmitter implements IVFS {
   // === DIRECTORY OPERATIONS ===
 
   /**
+   * Verzeichnis erstellen
+   */
+  async mkdir(
+    path: Path,
+    options?: { recursive?: boolean; mode?: PermissionMask },
+  ): Promise<void> {
+    const normalizedPath = this.resolve(path);
+
+    try {
+      await this.stat(normalizedPath);
+      throw new Error(`Directory already exists: ${path}`);
+    } catch (error) {
+      // Directory doesn't exist, continue with creation
+    }
+
+    const parentPath = this.dirname(normalizedPath);
+
+    // Recursive erstellen falls gewünscht
+    if (options?.recursive && parentPath !== normalizedPath) {
+      try {
+        await this.stat(parentPath);
+      } catch {
+        await this.mkdir(parentPath, { recursive: true });
+      }
+    }
+
+    // Erstelle Verzeichnis über Provider
+    const resolution = await this.resolvePath(parentPath);
+    if (!resolution.mountPoint) {
+      throw new Error(`Parent directory not found: ${parentPath}`);
+    }
+
+    const dirName = this.basename(normalizedPath);
+    const inode = await this.createDirectory(normalizedPath, options?.mode);
+
+    this.emit(VFSEvent.DIRECTORY_CREATED, {
+      path: normalizedPath,
+      inode: inode.inode,
+    });
+  }
+
+  /**
+   * Verzeichnis löschen
+   */
+  async rmdir(path: Path, options?: { recursive?: boolean }): Promise<void> {
+    const normalizedPath = this.resolve(path);
+    const node = await this.stat(normalizedPath);
+
+    if (node.type !== FileType.DIRECTORY) {
+      throw new Error(`Not a directory: ${path}`);
+    }
+
+    const entries = await this.readDir(normalizedPath);
+
+    if (!options?.recursive && entries.length > 0) {
+      throw new Error(`Directory not empty: ${path}`);
+    }
+
+    if (options?.recursive) {
+      // Rekursiv alle Inhalte löschen
+      for (const entry of entries) {
+        const fullPath = this.join(normalizedPath, entry.name);
+        if (entry.type === FileType.DIRECTORY) {
+          await this.rmdir(fullPath, { recursive: true });
+        } else {
+          await this.deleteFile(fullPath);
+        }
+      }
+    }
+
+    const resolution = await this.resolvePath(normalizedPath);
+    if (resolution.inode) {
+      await resolution.mountPoint.provider.deleteInode(resolution.inode);
+      this.pathCache.delete(normalizedPath);
+      this.inodeCache.delete(resolution.inode);
+    }
+
+    this.emit(VFSEvent.DIRECTORY_DELETED, {
+      path: normalizedPath,
+      inode: resolution.inode,
+    });
+  }
+
+  /**
    * Verzeichnis-Inhalt auflisten
    */
   async readDir(path: Path): Promise<IDirEntry[]> {
-    const resolution = await this.resolvePath(path);
-    if (!resolution.inode) {
-      throw new Error(`Directory not found: ${path}`);
+    const normalizedPath = this.resolve(path);
+    const node = await this.stat(normalizedPath);
+
+    if (node.type !== FileType.DIRECTORY) {
+      throw new Error(`Not a directory: ${path}`);
     }
 
-    const inode = await this.getInode(resolution.inode);
-    if (inode.type !== FileType.DIRECTORY) {
-      throw new Error(`Not a directory: ${path}`);
+    const resolution = await this.resolvePath(normalizedPath);
+    if (!resolution.inode) {
+      throw new Error(`Directory not found: ${path}`);
     }
 
     return resolution.mountPoint.provider.readDir(resolution.inode);
@@ -261,57 +415,76 @@ export class VFS extends EventEmitter implements IVFS {
   /**
    * Verzeichnis erstellen
    */
-  async createDir(path: Path, permissions = 0o755): Promise<void> {
-    try {
-      const resolution = await this.resolvePath(path);
-      if (resolution.inode) {
-        throw new Error(`Directory already exists: ${path}`);
-      }
+  async createDir(path: Path, permissions?: PermissionMask): Promise<void> {
+    const normalizedPath = this.resolve(path);
 
-      const inode = await this.createDirectory(path, permissions);
-      this.emit(VFSEvent.DIRECTORY_CREATED, { path, inode: inode.inode });
+    try {
+      await this.stat(normalizedPath);
+      throw new Error(`Directory already exists: ${path}`);
     } catch (error) {
-      throw new Error(`Failed to create directory ${path}: ${error}`);
+      // Directory doesn't exist, continue with creation
     }
+
+    const parentPath = this.dirname(normalizedPath);
+
+    // Prüfe ob Parent-Verzeichnis existiert (nicht rekursiv)
+    try {
+      const parentNode = await this.stat(parentPath);
+      if (parentNode.type !== FileType.DIRECTORY) {
+        throw new Error(`Parent is not a directory: ${parentPath}`);
+      }
+    } catch {
+      throw new Error(`Parent directory not found: ${parentPath}`);
+    }
+
+    const inode = await this.createDirectory(normalizedPath, permissions);
+
+    this.emit(VFSEvent.DIRECTORY_CREATED, {
+      path: normalizedPath,
+      inode: inode.inode,
+    });
   }
 
   /**
    * Verzeichnis löschen
    */
-  async deleteDir(path: Path, recursive = false): Promise<void> {
-    const resolution = await this.resolvePath(path);
-    if (!resolution.inode) {
-      throw new Error(`Directory not found: ${path}`);
-    }
+  async deleteDir(path: Path, recursive?: boolean): Promise<void> {
+    const normalizedPath = this.resolve(path);
+    const node = await this.stat(normalizedPath);
 
-    const inode = await this.getInode(resolution.inode);
-    if (inode.type !== FileType.DIRECTORY) {
+    if (node.type !== FileType.DIRECTORY) {
       throw new Error(`Not a directory: ${path}`);
     }
 
-    if (!recursive) {
-      const entries = await this.readDir(path);
-      if (entries.length > 0) {
-        throw new Error(`Directory not empty: ${path}`);
-      }
-    } else {
+    const entries = await this.readDir(normalizedPath);
+
+    if (!recursive && entries.length > 0) {
+      throw new Error(`Directory not empty: ${path}`);
+    }
+
+    if (recursive) {
       // Rekursiv alle Inhalte löschen
-      const entries = await this.readDir(path);
       for (const entry of entries) {
-        const entryPath = this.join(path, entry.name);
+        const fullPath = this.join(normalizedPath, entry.name);
         if (entry.type === FileType.DIRECTORY) {
-          await this.deleteDir(entryPath, true);
+          await this.deleteDir(fullPath, recursive);
         } else {
-          await this.deleteFile(entryPath);
+          await this.deleteFile(fullPath);
         }
       }
     }
 
-    await resolution.mountPoint.provider.deleteInode(resolution.inode);
-    this.pathCache.delete(path);
-    this.inodeCache.delete(resolution.inode);
+    const resolution = await this.resolvePath(normalizedPath);
+    if (resolution.inode) {
+      await resolution.mountPoint.provider.deleteInode(resolution.inode);
+      this.pathCache.delete(normalizedPath);
+      this.inodeCache.delete(resolution.inode);
+    }
 
-    this.emit(VFSEvent.DIRECTORY_DELETED, { path, inode: resolution.inode });
+    this.emit(VFSEvent.DIRECTORY_DELETED, {
+      path: normalizedPath,
+      inode: resolution.inode,
+    });
   }
 
   // === LINK OPERATIONS ===
@@ -320,40 +493,68 @@ export class VFS extends EventEmitter implements IVFS {
    * Symbolischen Link erstellen
    */
   async symlink(target: Path, linkPath: Path): Promise<void> {
-    const resolution = await this.resolvePath(linkPath);
-    if (resolution.inode) {
-      throw new Error(`Link already exists: ${linkPath}`);
+    const normalizedTarget = this.resolve(target);
+    const normalizedLink = this.resolve(linkPath);
+
+    // Prüfe ob Target existiert
+    try {
+      await this.stat(normalizedTarget);
+    } catch {
+      throw new Error(`Target does not exist: ${target}`);
     }
 
-    // Symlink-Inode erstellen
+    // Prüfe ob Link bereits existiert
+    try {
+      await this.stat(normalizedLink);
+      throw new Error(`Link already exists: ${linkPath}`);
+    } catch {
+      // Link existiert nicht, gut
+    }
+
+    const parentPath = this.dirname(normalizedLink);
+    const resolution = await this.resolvePath(parentPath);
+    if (!resolution.mountPoint) {
+      throw new Error(`Parent directory not found: ${parentPath}`);
+    }
+
+    // Erstelle Symlink als speziellen Inode
+    const targetData = new TextEncoder().encode(normalizedTarget);
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.SYMLINK,
       0o777,
     );
 
-    // Target-Pfad als "Datei-Inhalt" speichern
-    const targetData = new TextEncoder().encode(target);
     await resolution.mountPoint.provider.writeFile(inode.inode, targetData);
 
-    this.pathCache.set(linkPath, inode.inode);
-    this.inodeCache.set(inode.inode, { ...inode, target });
+    this.inodeCache.set(inode.inode, inode);
+    this.pathCache.set(normalizedLink, inode.inode);
+
+    this.emit(VFSEvent.FILE_CREATED, {
+      path: normalizedLink,
+      inode: inode.inode,
+    });
   }
 
   /**
    * Symbolischen Link auflösen
    */
   async readlink(path: Path): Promise<Path> {
-    const resolution = await this.resolvePath(path);
+    const normalizedPath = this.resolve(path);
+    const node = await this.stat(normalizedPath);
+
+    if (node.type !== FileType.SYMLINK) {
+      throw new Error(`Not a symlink: ${path}`);
+    }
+
+    const resolution = await this.resolvePath(normalizedPath);
     if (!resolution.inode) {
-      throw new Error(`Link not found: ${path}`);
+      throw new Error(`Symlink not found: ${path}`);
     }
 
-    const inode = await this.getInode(resolution.inode);
-    if (inode.type !== FileType.SYMLINK) {
-      throw new Error(`Not a symbolic link: ${path}`);
-    }
-
-    return inode.target || "";
+    const targetData = await resolution.mountPoint.provider.readFile(
+      resolution.inode,
+    );
+    return new TextDecoder().decode(targetData);
   }
 
   // === MOUNT OPERATIONS ===
@@ -559,39 +760,76 @@ export class VFS extends EventEmitter implements IVFS {
     data: Uint8Array,
     options?: Partial<INode>,
   ): Promise<INode> {
-    const resolution = await this.resolvePath(path);
+    const normalizedPath = this.resolve(path);
+    const parentPath = this.dirname(normalizedPath);
 
-    const inode = await resolution.mountPoint.provider.createInode(
+    // Prüfe ob Parent-Verzeichnis existiert
+    try {
+      const parentNode = await this.stat(parentPath);
+      if (parentNode.type !== FileType.DIRECTORY) {
+        throw new Error(`Parent is not a directory: ${parentPath}`);
+      }
+    } catch {
+      throw new Error(`Parent directory not found: ${parentPath}`);
+    }
+
+    const resolution = await this.resolvePath(parentPath);
+    if (!resolution.mountPoint) {
+      throw new Error(`Cannot resolve parent directory: ${parentPath}`);
+    }
+
+    // Erstelle Inode über Provider
+    const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.FILE,
-      options?.permissions || 0o644,
+      0o644,
     );
 
-    await resolution.mountPoint.provider.writeFile(inode.inode, data);
+    // Schreibe Daten
+    await resolution.mountPoint.provider.writeFile(createdInode.inode, data);
 
-    this.pathCache.set(path, inode.inode);
-    this.inodeCache.set(inode.inode, inode);
+    this.inodeCache.set(createdInode.inode, createdInode);
+    this.pathCache.set(normalizedPath, createdInode.inode);
 
-    return inode;
+    return createdInode;
   }
 
   /**
-   * Neues Verzeichnis erstellen
+   * Hilfsmethode: Verzeichnis erstellen
    */
   private async createDirectory(
     path: Path,
-    permissions: PermissionMask,
+    mode?: PermissionMask,
   ): Promise<INode> {
-    const resolution = await this.resolvePath(path);
+    const normalizedPath = this.resolve(path);
+    const parentPath = this.dirname(normalizedPath);
 
-    const inode = await resolution.mountPoint.provider.createInode(
+    if (parentPath !== normalizedPath) {
+      // Prüfe ob Parent-Verzeichnis existiert
+      try {
+        const parentNode = await this.stat(parentPath);
+        if (parentNode.type !== FileType.DIRECTORY) {
+          throw new Error(`Parent is not a directory: ${parentPath}`);
+        }
+      } catch {
+        throw new Error(`Parent directory not found: ${parentPath}`);
+      }
+    }
+
+    const resolution = await this.resolvePath(parentPath);
+    if (!resolution.mountPoint) {
+      throw new Error(`Cannot resolve parent directory: ${parentPath}`);
+    }
+
+    // Erstelle Inode über Provider
+    const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.DIRECTORY,
-      permissions,
+      mode || 0o755,
     );
 
-    this.pathCache.set(path, inode.inode);
-    this.inodeCache.set(inode.inode, inode);
+    this.inodeCache.set(createdInode.inode, createdInode);
+    this.pathCache.set(normalizedPath, createdInode.inode);
 
-    return inode;
+    return createdInode;
   }
 
   /**

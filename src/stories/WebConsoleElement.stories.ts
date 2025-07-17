@@ -1,7 +1,7 @@
 export default {
-  title: 'Components/WebConsole Element',
+  title: "Components/WebConsole Element",
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
 };
 

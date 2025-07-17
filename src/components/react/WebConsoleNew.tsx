@@ -130,7 +130,19 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
       } else if (event.key === 'ArrowDown') {
         event.preventDefault();
         const nextCommand = getNextCommand();
-        setInput(nextCommand);
+        if (nextCommand !== null) {
+          setInput(nextCommand);
+        }
+      } else if (event.key === 'Tab') {
+        event.preventDefault();
+        // TODO: Implement tab completion
+      } else if (event.ctrlKey && event.key === 'l') {
+        event.preventDefault();
+        setOutput([]);
+      } else if (event.ctrlKey && event.key === 'c') {
+        event.preventDefault();
+        addOutputLine('^C', 'command');
+        setInput('');
       }
     },
     [

@@ -11,14 +11,15 @@ export class ThemeCommand extends BaseCommand {
     "default",
     "dark",
     "light",
-    "matrix",
-    "solarized-dark",
-    "solarized-light",
+    "windows-terminal",
     "monokai",
+    "solarized-dark",
+    "matrix",
     "dracula",
     "nord",
     "github",
-    "terminal",
+    "catppuccin",
+    "tokyo-night",
   ];
 
   constructor() {
