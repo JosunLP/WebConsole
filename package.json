@@ -1,0 +1,81 @@
+{
+  "name": "web-console",
+  "version": "0.1.0",
+  "description": "Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./angular": {
+      "import": "./dist/components/angular/index.js",
+      "types": "./dist/components/angular/index.d.ts"
+    },
+    "./react": {
+      "import": "./dist/components/react/index.js",
+      "types": "./dist/components/react/index.d.ts"
+    },
+    "./vue": {
+      "import": "./dist/components/vue/index.js",
+      "types": "./dist/components/vue/index.d.ts"
+    },
+    "./svelte": {
+      "import": "./dist/components/svelte/index.js",
+      "types": "./dist/components/svelte/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "console",
+    "terminal",
+    "browser",
+    "typescript",
+    "angular",
+    "react",
+    "vue",
+    "svelte",
+    "web-components"
+  ],
+  "author": "Web-Console Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=16.0.0",
+    "react": ">=18.0.0",
+    "vue": ">=3.0.0",
+    "svelte": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/core": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
+  }
+}
