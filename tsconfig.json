@@ -36,14 +36,5 @@
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "src/components/react/**/*",
-    "src/components/angular/**/*",
-    "src/components/vue/**/*",
-    "src/components/svelte/**/*"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

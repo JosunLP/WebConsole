@@ -1,6 +1,6 @@
-import { ExitCode } from "../../enums/ExitCode.enum.js";
-import type { CommandContext } from "../../types/index.js";
-import { BaseCommand } from "../BaseCommand.js";
+import { ExitCode } from '../../enums/ExitCode.enum.js';
+import type { CommandContext } from '../../types/index.js';
+import { BaseCommand } from '../BaseCommand.js';
 
 /**
  * cp - Copy files and directories
@@ -11,35 +11,44 @@ import { BaseCommand } from "../BaseCommand.js";
  */
 export class CpCommand extends BaseCommand {
   constructor() {
-    super("cp", "Copy files and directories", "cp [-r] source... destination");
+    super('cp', 'Copy files and directories', 'cp [-r] source... destination');
   }
 
   override async execute(context: CommandContext): Promise<ExitCode> {
     const args = context.args.slice(1); // Remove command name
 
     if (args.length < 2) {
-      await this.writeToStderr(context, "cp: missing file operand\n");
+      await this.writeToStderr(context, 'cp: missing file operand\n');
       await this.writeToStderr(
         context,
-        "Try 'cp --help' for more information.\n",
+        "Try 'cp --help' for more information.\n"
       );
       return ExitCode.FAILURE;
     }
 
-    const recursive = args.includes("-r") || args.includes("-R");
-    const verbose = args.includes("-v");
-    const fileArgs = args.filter((arg) => !arg.startsWith("-"));
+    const recursive = args.includes('-r') || args.includes('-R');
+    const verbose = args.includes('-v');
+    const fileArgs = args.filter((arg) => !arg.startsWith('-'));
 
     if (fileArgs.length < 2) {
       await this.writeToStderr(
         context,
-        "cp: missing destination file operand\n",
+        'cp: missing destination file operand\n'
       );
       return ExitCode.FAILURE;
     }
 
     const destination = fileArgs[fileArgs.length - 1];
     const sources = fileArgs.slice(0, -1);
+
+    if (!destination) {
+      await this.writeToStderr(
+        context,
+        'cp: missing destination file operand\n'
+      );
+      return ExitCode.FAILURE;
+    }
+
     const vfs = context.vfs;
 
     try {
@@ -57,7 +66,7 @@ export class CpCommand extends BaseCommand {
         if (!destStat || !destStat.isDirectory()) {
           await this.writeToStderr(
             context,
-            `cp: target '${destination}' is not a directory\n`,
+            `cp: target '${destination}' is not a directory\n`
           );
           return ExitCode.FAILURE;
         }
@@ -77,7 +86,7 @@ export class CpCommand extends BaseCommand {
           } catch (error) {
             await this.writeToStderr(
               context,
-              `cp: cannot stat '${source}': No such file or directory\n`,
+              `cp: cannot stat '${source}': No such file or directory\n`
             );
             hasErrors = true;
             continue;
@@ -85,16 +94,16 @@ export class CpCommand extends BaseCommand {
 
           // If destination is a directory, copy into it
           if (destStat && destStat.isDirectory()) {
-            const sourceName = sourcePath.split("/").pop();
+            const sourceName = sourcePath.split('/').pop();
             finalDestPath =
-              destPath === "/" ? `/${sourceName}` : `${destPath}/${sourceName}`;
+              destPath === '/' ? `/${sourceName}` : `${destPath}/${sourceName}`;
           }
 
           if (sourceStat.isDirectory()) {
             if (!recursive) {
               await this.writeToStderr(
                 context,
-                `cp: -r not specified; omitting directory '${source}'\n`,
+                `cp: -r not specified; omitting directory '${source}'\n`
               );
               hasErrors = true;
               continue;
@@ -105,7 +114,7 @@ export class CpCommand extends BaseCommand {
               sourcePath,
               finalDestPath,
               verbose,
-              context,
+              context
             );
           } else {
             // Copy file
@@ -115,7 +124,7 @@ export class CpCommand extends BaseCommand {
             if (verbose) {
               await this.writeToStdout(
                 context,
-                `'${source}' -> '${finalDestPath}'\n`,
+                `'${source}' -> '${finalDestPath}'\n`
               );
             }
           }
@@ -124,7 +133,7 @@ export class CpCommand extends BaseCommand {
             error instanceof Error ? error.message : String(error);
           await this.writeToStderr(
             context,
-            `cp: cannot copy '${source}': ${message}\n`,
+            `cp: cannot copy '${source}': ${message}\n`
           );
           hasErrors = true;
         }
@@ -143,7 +152,7 @@ export class CpCommand extends BaseCommand {
     sourcePath: string,
     destPath: string,
     verbose: boolean,
-    context: CommandContext,
+    context: CommandContext
   ): Promise<void> {
     // Create destination directory
     try {
@@ -161,9 +170,9 @@ export class CpCommand extends BaseCommand {
 
     for (const entry of entries) {
       const sourceEntryPath =
-        sourcePath === "/" ? `/${entry.name}` : `${sourcePath}/${entry.name}`;
+        sourcePath === '/' ? `/${entry.name}` : `${sourcePath}/${entry.name}`;
       const destEntryPath =
-        destPath === "/" ? `/${entry.name}` : `${destPath}/${entry.name}`;
+        destPath === '/' ? `/${entry.name}` : `${destPath}/${entry.name}`;
 
       if (entry.isDirectory()) {
         await this.copyDirectoryRecursive(
@@ -171,7 +180,7 @@ export class CpCommand extends BaseCommand {
           sourceEntryPath,
           destEntryPath,
           verbose,
-          context,
+          context
         );
       } else {
         const content = await vfs.readFile(sourceEntryPath);
@@ -180,7 +189,7 @@ export class CpCommand extends BaseCommand {
         if (verbose) {
           await this.writeToStdout(
             context,
-            `'${sourceEntryPath}' -> '${destEntryPath}'\n`,
+            `'${sourceEntryPath}' -> '${destEntryPath}'\n`
           );
         }
       }

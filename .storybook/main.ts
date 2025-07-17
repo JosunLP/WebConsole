@@ -10,14 +10,5 @@ const config: StorybookConfig = {
   typescript: {
     check: false,
   },
-  viteFinal: async (config) => {
-    // TypeScript path resolution
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': new URL('../src', import.meta.url).pathname,
-    };
-    return config;
-  },
 };
 export default config;
