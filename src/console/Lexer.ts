@@ -1,10 +1,10 @@
 /**
- * Command-Lexer für die Web-Console
- * Zerlegt Eingabe-Strings in Tokens
+ * Command lexer for the Web Console
+ * Splits input strings into tokens
  */
 
 /**
- * Token-Typen
+ * Token types
  */
 export enum TokenType {
   WORD = "WORD",
@@ -29,7 +29,7 @@ export enum TokenType {
 }
 
 /**
- * Token-Struktur
+ * Token structure
  */
 export interface Token {
   type: TokenType;
@@ -40,7 +40,7 @@ export interface Token {
 }
 
 /**
- * Lexer-Zustand
+ * Lexer state
  */
 interface LexerState {
   input: string;
@@ -51,7 +51,7 @@ interface LexerState {
 }
 
 /**
- * Command-Lexer Implementierung
+ * Command lexer implementation
  */
 export class Lexer {
   private state: LexerState;
@@ -67,7 +67,7 @@ export class Lexer {
   }
 
   /**
-   * Alle Tokens aus dem Input extrahieren
+   * Extract all tokens from the input
    */
   tokenize(): Token[] {
     const tokens: Token[] = [];
@@ -79,7 +79,7 @@ export class Lexer {
       }
     }
 
-    // EOF-Token hinzufügen
+    // Add EOF token
     tokens.push({
       type: TokenType.EOF,
       value: "",
@@ -92,7 +92,7 @@ export class Lexer {
   }
 
   /**
-   * Nächstes Token lesen
+   * Read next token
    */
   private nextToken(): Token | null {
     this.skipWhitespace();
@@ -105,7 +105,7 @@ export class Lexer {
     const line = this.state.line;
     const column = this.state.column;
 
-    // Kommentare überspringen
+    // Skip comments
     if (this.current() === "#") {
       this.skipComment();
       return this.nextToken();
@@ -123,7 +123,7 @@ export class Lexer {
       };
     }
 
-    // Strings (mit Anführungszeichen)
+    // Strings (with quotes)
     if (this.current() === '"' || this.current() === "'") {
       return this.readString(position, line, column);
     }
@@ -185,13 +185,13 @@ export class Lexer {
       };
     }
 
-    // Error Redirection (2>, 2>>)
+    // Error redirection (2>, 2>>)
     if (this.current() === "2") {
       if (this.peek() === ">") {
         this.advance(); // 2
         this.advance(); // >
         if (this.current() === ">") {
-          this.advance(); // zweites >
+          this.advance(); // second >
           return {
             type: TokenType.REDIRECT_ERR_APPEND,
             value: "2>>",
@@ -268,7 +268,7 @@ export class Lexer {
       };
     }
 
-    // Variable oder Assignment
+    // Variable or assignment
     if (this.current() === "$") {
       return this.readVariable(position, line, column);
     }
@@ -278,16 +278,16 @@ export class Lexer {
   }
 
   /**
-   * String-Token lesen (mit Anführungszeichen)
+   * Read string token (with quotes)
    */
   private readString(position: number, line: number, column: number): Token {
     const quote = this.current();
-    this.advance(); // Öffnendes Anführungszeichen überspringen
+    this.advance(); // Skip opening quote
 
     let value = "";
     while (!this.isAtEnd() && this.current() !== quote) {
       if (this.current() === "\\" && this.peek() === quote) {
-        this.advance(); // Escape-Zeichen überspringen
+        this.advance(); // Skip escape character
         value += this.current();
         this.advance();
       } else {
@@ -297,7 +297,7 @@ export class Lexer {
     }
 
     if (this.current() === quote) {
-      this.advance(); // Schließendes Anführungszeichen überspringen
+      this.advance(); // Skip closing quote
     }
 
     return {
@@ -310,14 +310,14 @@ export class Lexer {
   }
 
   /**
-   * Variable-Token lesen
+   * Read variable token
    */
   private readVariable(position: number, line: number, column: number): Token {
-    this.advance(); // $ überspringen
+    this.advance(); // Skip $
 
     let value = "$";
 
-    // Geschweifte Klammern für ${VAR}
+    // Curly braces for ${VAR}
     if (this.current() === "{") {
       value += this.current();
       this.advance();
@@ -332,7 +332,7 @@ export class Lexer {
         this.advance();
       }
     } else {
-      // Einfache Variable $VAR
+      // Simple variable $VAR
       while (!this.isAtEnd() && this.isVariableChar(this.current())) {
         value += this.current();
         this.advance();
@@ -349,23 +349,23 @@ export class Lexer {
   }
 
   /**
-   * Word-Token lesen
+   * Read word token
    */
   private readWord(position: number, line: number, column: number): Token {
     let value = "";
 
     while (!this.isAtEnd() && !this.isDelimiter(this.current())) {
-      // Assignment erkennen (VAR=value)
+      // Detect assignment (VAR=value)
       if (
         this.current() === "=" &&
         value.length > 0 &&
         this.isValidVariableName(value)
       ) {
-        // Assignment-Token erstellen
+        // Create assignment token
         const assignmentValue = value + "=";
-        this.advance(); // = überspringen
+        this.advance(); // Skip =
 
-        // Wert lesen
+        // Read value
         while (!this.isAtEnd() && !this.isDelimiter(this.current())) {
           assignmentValue + this.current();
           this.advance();
@@ -394,7 +394,7 @@ export class Lexer {
   }
 
   /**
-   * Whitespace überspringen
+   * Skip whitespace
    */
   private skipWhitespace(): void {
     while (
@@ -407,7 +407,7 @@ export class Lexer {
   }
 
   /**
-   * Kommentar überspringen
+   * Skip comment
    */
   private skipComment(): void {
     while (!this.isAtEnd() && this.current() !== "\n") {
@@ -416,7 +416,7 @@ export class Lexer {
   }
 
   /**
-   * Nächstes Zeichen im Input
+   * Next character in input
    */
   private advance(): void {
     if (this.state.current === "\n") {
@@ -431,28 +431,28 @@ export class Lexer {
   }
 
   /**
-   * Aktuelles Zeichen
+   * Current character
    */
   private current(): string {
     return this.state.current;
   }
 
   /**
-   * Nächstes Zeichen (ohne zu konsumieren)
+   * Peek next character (without consuming)
    */
   private peek(): string {
     return this.state.input[this.state.position + 1] || "";
   }
 
   /**
-   * Prüft ob am Ende des Inputs
+   * Check if at end of input
    */
   private isAtEnd(): boolean {
     return this.state.position >= this.state.input.length;
   }
 
   /**
-   * Prüft ob Zeichen ein Delimiter ist
+   * Check if character is a delimiter
    */
   private isDelimiter(char: string): boolean {
     return (
@@ -470,21 +470,21 @@ export class Lexer {
   }
 
   /**
-   * Prüft ob Zeichen Whitespace ist
+   * Check if character is whitespace
    */
   private isWhitespace(char: string): boolean {
     return char === " " || char === "\t" || char === "\r";
   }
 
   /**
-   * Prüft ob Zeichen für Variable-Namen gültig ist
+   * Check if character is valid for variable name
    */
   private isVariableChar(char: string): boolean {
     return /[a-zA-Z0-9_]/.test(char);
   }
 
   /**
-   * Prüft ob String ein gültiger Variable-Name ist
+   * Check if string is a valid variable name
    */
   private isValidVariableName(name: string): boolean {
     return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name);

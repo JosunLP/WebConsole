@@ -1,5 +1,5 @@
 /**
- * State Manager für hierarchische State-Verwaltung
+ * State Manager for hierarchical state management
  */
 
 import { PersistenceMode } from "../enums/index.js";
@@ -8,7 +8,7 @@ import { StateConfig } from "../types/index.js";
 import { EventEmitter } from "./EventEmitter.js";
 
 /**
- * Interne State-Entry Struktur
+ * Internal state entry structure
  */
 interface StateEntry {
   value: unknown;
@@ -17,7 +17,7 @@ interface StateEntry {
 }
 
 /**
- * State-Events
+ * State events
  */
 export const StateEvents = {
   CHANGED: "state:changed",
@@ -26,7 +26,7 @@ export const StateEvents = {
 } as const;
 
 /**
- * State Manager Implementierung
+ * State Manager implementation
  */
 export class StateManager extends EventEmitter implements IStateManager {
   private readonly entries = new Map<string, StateEntry>();
@@ -41,7 +41,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Wert aus dem State abrufen
+   * Get value from state
    */
   get<T>(key: string): T | undefined {
     const entry = this.entries.get(key);
@@ -49,14 +49,14 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Wert im State setzen
+   * Set value in state
    */
   set<T>(key: string, value: T): void {
     const entry = this.entries.get(key);
     const config = entry?.config;
 
     if (!config) {
-      // Fallback-Konfiguration ohne explizite Konfiguration
+      // Fallback configuration without explicit config
       this.entries.set(key, {
         value,
         config: {
@@ -67,7 +67,7 @@ export class StateManager extends EventEmitter implements IStateManager {
         lastModified: Date.now(),
       });
     } else {
-      // Existierenden Eintrag aktualisieren
+      // Update existing entry
       this.entries.set(key, {
         value,
         config,
@@ -75,14 +75,14 @@ export class StateManager extends EventEmitter implements IStateManager {
       });
     }
 
-    // Event emittieren
+    // Emit event
     this.emit(StateEvents.CHANGED, {
       key,
       value,
       namespace: this.namespaceName,
     });
 
-    // Auto-Persist bei persistent/session Modes
+    // Auto-persist for persistent/session modes
     if (
       config?.persistence === PersistenceMode.PERSISTENT ||
       config?.persistence === PersistenceMode.SESSION
@@ -94,14 +94,14 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Prüfen ob Key existiert
+   * Check if key exists
    */
   has(key: string): boolean {
     return this.entries.has(key);
   }
 
   /**
-   * Key aus State entfernen
+   * Remove key from state
    */
   delete(key: string): boolean {
     const entry = this.entries.get(key);
@@ -109,7 +109,7 @@ export class StateManager extends EventEmitter implements IStateManager {
 
     this.entries.delete(key);
 
-    // Aus Persistierung entfernen
+    // Remove from persistence
     if (entry.config.persistence !== PersistenceMode.VOLATILE) {
       this.removeFromStorage(key, entry.config.persistence);
     }
@@ -123,7 +123,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Kompletten State leeren
+   * Clear entire state
    */
   clear(): void {
     const keys = Array.from(this.entries.keys());
@@ -134,14 +134,14 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Alle Keys abrufen
+   * Get all keys
    */
   keys(): string[] {
     return Array.from(this.entries.keys());
   }
 
   /**
-   * State-Konfiguration für einen Key definieren
+   * Define state configuration for a key
    */
   configure<T>(config: StateConfig<T>): void {
     const existingEntry = this.entries.get(config.key);
@@ -155,7 +155,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Namespace erstellen/abrufen
+   * Create/get namespace
    */
   namespace(name: string): IStateManager {
     let child = this.children.get(name);
@@ -167,7 +167,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Gesamten State persistieren
+   * Persist entire state
    */
   async persist(): Promise<void> {
     const persistPromises: Promise<void>[] = [];
@@ -178,7 +178,7 @@ export class StateManager extends EventEmitter implements IStateManager {
       }
     }
 
-    // Child-Namespaces auch persistieren
+    // Also persist child namespaces
     for (const child of this.children.values()) {
       persistPromises.push(child.persist());
     }
@@ -188,7 +188,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * State aus Persistierung wiederherstellen
+   * Restore state from persistence
    */
   async restore(): Promise<void> {
     const restorePromises: Promise<void>[] = [];
@@ -199,7 +199,7 @@ export class StateManager extends EventEmitter implements IStateManager {
       }
     }
 
-    // Child-Namespaces auch wiederherstellen
+    // Also restore child namespaces
     for (const child of this.children.values()) {
       restorePromises.push(child.restore());
     }
@@ -209,7 +209,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Einzelnen Key persistieren
+   * Persist a single key
    */
   private async persistKey(key: string): Promise<void> {
     const entry = this.entries.get(key);
@@ -237,7 +237,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Einzelnen Key wiederherstellen
+   * Restore a single key
    */
   private async restoreKey(key: string): Promise<void> {
     const entry = this.entries.get(key);
@@ -261,7 +261,7 @@ export class StateManager extends EventEmitter implements IStateManager {
           ? entry.config.serializer.deserialize(serializedValue)
           : JSON.parse(serializedValue);
 
-        // Direkt den Wert setzen ohne Event zu triggern
+        // Set value directly without triggering event
         this.entries.set(key, {
           ...entry,
           value,
@@ -272,12 +272,12 @@ export class StateManager extends EventEmitter implements IStateManager {
         `Failed to restore key "${key}" from ${entry.config.persistence}:`,
         error,
       );
-      // Bei Fehler Default-Wert verwenden
+      // Use default value on error
     }
   }
 
   /**
-   * Key aus Storage entfernen
+   * Remove key from storage
    */
   private removeFromStorage(key: string, persistence: PersistenceMode): void {
     const storageKey = this.getStorageKey(key);
@@ -300,14 +300,14 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * Storage-Key mit Namespace generieren
+   * Generate storage key with namespace
    */
   private getStorageKey(key: string): string {
     return `webconsole:${this.namespaceName}:${key}`;
   }
 
   /**
-   * Debug-Informationen abrufen
+   * Get debug information
    */
   debug(): object {
     return {
@@ -327,26 +327,26 @@ export class StateManager extends EventEmitter implements IStateManager {
   }
 
   /**
-   * State laden (Alias für restore)
+   * Load state (alias for restore)
    */
   async load(): Promise<void> {
     return this.restore();
   }
 
   /**
-   * State speichern (Alias für persist)
+   * Save state (alias for persist)
    */
   async save(): Promise<void> {
     return this.persist();
   }
 
   /**
-   * Ressourcen freigeben
+   * Release resources
    */
   override dispose(): void {
     this.clear();
 
-    // Child-Namespaces auch freigeben
+    // Also release child namespaces
     for (const child of this.children.values()) {
       child.dispose();
     }

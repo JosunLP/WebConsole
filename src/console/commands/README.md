@@ -1,175 +1,195 @@
 # Built-in Commands
 
-Diese Datei dokumentiert alle implementierten Built-in Commands der Web-Console.
+This file documents all implemented built-in commands of the Web Console.
 
-## Dateisystem-Befehle
+## File System Commands
 
 ### `ls` - List Directory Contents
-- **Beschreibung**: Zeigt den Inhalt von Verzeichnissen an
+
+- **Description**: Displays the contents of directories
 - **Syntax**: `ls [OPTION]... [FILE]...`
-- **Optionen**:
-  - `-l`: Langes Format mit Details
-  - `-a`: Alle Dateien anzeigen (inklusive versteckte)
-  - `-A`: Alle Dateien außer . und ..
-  - `-1`: Eine Datei pro Zeile
-  - `--color`: Farbige Ausgabe
+- **Options**:
+  - `-l`: Long format with details
+  - `-a`: Show all files (including hidden)
+  - `-A`: All files except . and ..
+  - `-1`: One file per line
+  - `--color`: Colored output
 
 ### `cd` - Change Directory
-- **Beschreibung**: Wechselt das aktuelle Arbeitsverzeichnis
+
+- **Description**: Changes the current working directory
 - **Syntax**: `cd [DIRECTORY]`
-- **Spezielle Pfade**:
-  - `cd` oder `cd ~`: Zu Home-Verzeichnis
-  - `cd -`: Zum vorherigen Verzeichnis
-  - `cd ..`: Zum übergeordneten Verzeichnis
+- **Special paths**:
+  - `cd` or `cd ~`: To home directory
+  - `cd -`: To previous directory
+  - `cd ..`: To parent directory
 
 ### `pwd` - Print Working Directory
-- **Beschreibung**: Zeigt das aktuelle Arbeitsverzeichnis an
+
+- **Description**: Shows the current working directory
 - **Syntax**: `pwd [OPTION]`
-- **Optionen**:
-  - `-L`: Logischer Pfad (Standard)
-  - `-P`: Physischer Pfad (Links aufgelöst)
+- **Options**:
+  - `-L`: Logical path (default)
+  - `-P`: Physical path (resolves links)
 
 ### `cat` - Display File Contents
-- **Beschreibung**: Zeigt Dateiinhalte an
-- **Syntax**: `cat [OPTION]... [FILE]...`
-- **Optionen**:
-  - `-n, --number`: Zeilen nummerieren
-  - `-b, --number-nonblank`: Nur nicht-leere Zeilen nummerieren
-  - `-E, --show-ends`: Zeilenendes mit $ markieren
-  - `-T, --show-tabs`: Tabs als ^I anzeigen
-  - `-A, --show-all`: Alle nicht-druckbaren Zeichen anzeigen
-  - `-s, --squeeze-blank`: Mehrere Leerzeilen komprimieren
 
-## Utility-Befehle
+- **Description**: Displays file contents
+- **Syntax**: `cat [OPTION]... [FILE]...`
+- **Options**:
+  - `-n, --number`: Number all lines
+  - `-b, --number-nonblank`: Number non-blank lines only
+  - `-E, --show-ends`: Mark line ends with $
+  - `-T, --show-tabs`: Show tabs as ^I
+  - `-A, --show-all`: Show all non-printable characters
+  - `-s, --squeeze-blank`: Squeeze multiple blank lines
+
+## Utility Commands
 
 ### `echo` - Display Text
-- **Beschreibung**: Gibt Text aus
+
+- **Description**: Outputs text
 - **Syntax**: `echo [OPTION]... [STRING]...`
-- **Optionen**:
-  - `-n`: Kein Zeilenendezeichen
-  - `-e`: Escape-Sequenzen interpretieren
-  - `-E`: Escape-Sequenzen nicht interpretieren (Standard)
-- **Escape-Sequenzen**:
-  - `\\n`: Zeilumbruch
-  - `\\t`: Tabulator
-  - `\\r`: Wagenrücklauf
-  - `\\b`: Rücktaste
-  - `\\a`: Warnsignal
-  - `\\e`: Escape-Zeichen
-  - `\\\\`: Backslash
+- **Options**:
+  - `-n`: No trailing newline
+  - `-e`: Interpret escape sequences
+  - `-E`: Do not interpret escape sequences (default)
+- **Escape sequences**:
+  - `\n`: Newline
+  - `\t`: Tab
+  - `\r`: Carriage return
+  - `\b`: Backspace
+  - `\a`: Bell
+  - `\e`: Escape character
+  - `\\`: Backslash
 
 ### `clear` - Clear Terminal Screen
-- **Beschreibung**: Löscht den Bildschirm
-- **Syntax**: `clear`
-- **ANSI-Sequenz**: `\\x1b[2J\\x1b[H`
 
-## Umgebungs-Befehle
+- **Description**: Clears the screen
+- **Syntax**: `clear`
+- **ANSI sequence**: `\x1b[2J\x1b[H`
+
+## Environment Commands
 
 ### `export` - Set Environment Variables
-- **Beschreibung**: Setzt und verwaltet Umgebungsvariablen
+
+- **Description**: Sets and manages environment variables
 - **Syntax**: `export [name[=value] ...]`
-- **Optionen**:
-  - `-p`: Alle Variablen anzeigen
-- **Beispiele**:
+- **Options**:
+  - `-p`: Show all variables
+- **Examples**:
   - `export PATH=/usr/bin:$PATH`
   - `export NODE_ENV=production`
-  - `export -p` (alle Variablen anzeigen)
+  - `export -p` (show all variables)
 
 ### `alias` - Command Aliases
-- **Beschreibung**: Erstellt und verwaltet Befehlsaliase
+
+- **Description**: Creates and manages command aliases
 - **Syntax**: `alias [-p] [name[=value] ...]`
-- **Optionen**:
-  - `-p`: Alle Aliase anzeigen
-- **Beispiele**:
+- **Options**:
+  - `-p`: Show all aliases
+- **Examples**:
   - `alias ll='ls -la'`
   - `alias cls='clear'`
-  - `alias` (alle Aliase anzeigen)
+  - `alias` (show all aliases)
 
-## Console-Befehle
+## Console Commands
 
 ### `theme` - Change Console Theme
-- **Beschreibung**: Ändert das Console-Theme
+
+- **Description**: Changes the console theme
 - **Syntax**: `theme [THEME_NAME] | list | reset`
-- **Verfügbare Themes**:
-  - `default`: Standard schwarzer Hintergrund
-  - `dark`: Dunkles VS Code Theme
-  - `light`: Helles Theme
-  - `matrix`: Matrix-Style grün auf schwarz
+- **Available themes**:
+  - `default`: Standard black background
+  - `dark`: Dark VS Code theme
+  - `light`: Light theme
+  - `matrix`: Matrix-style green on black
   - `solarized-dark`: Solarized Dark
   - `solarized-light`: Solarized Light
   - `monokai`: Monokai
   - `dracula`: Dracula
-  - `nord`: Nord Theme
-  - `github`: GitHub Theme
-  - `terminal`: Terminal-Style
-- **Befehle**:
-  - `theme list`: Verfügbare Themes anzeigen
-  - `theme reset`: Auf Standard-Theme zurücksetzen
-  - `theme dark`: Theme wechseln
+  - `nord`: Nord theme
+  - `github`: GitHub theme
+  - `terminal`: Terminal style
+- **Commands**:
+  - `theme list`: Show available themes
+  - `theme reset`: Reset to default theme
+  - `theme dark`: Switch theme
 
-## Implementierungs-Details
+## Implementation Details
 
-### Base Command Funktionalität
-Alle Commands erben von `BaseCommand` und bieten:
-- Einheitliche Argument-Parsing
-- ANSI-Farbunterstützung
-- Hilfe-System
-- Error-Handling
-- stdin/stdout/stderr Verwaltung
+### Base Command Functionality
 
-### Farbunterstützung
+All commands inherit from `BaseCommand` and provide:
+
+- Unified argument parsing
+- ANSI color support
+- Help system
+- Error handling
+- stdin/stdout/stderr management
+
+### Color Support
+
 ```typescript
 // ANSI Color Codes
 colors = {
-  reset: '\\x1b[0m',
-  bright: '\\x1b[1m',
-  red: '\\x1b[31m',
-  green: '\\x1b[32m',
-  yellow: '\\x1b[33m',
-  blue: '\\x1b[34m',
-  magenta: '\\x1b[35m',
-  cyan: '\\x1b[36m',
-  white: '\\x1b[37m'
-}
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+};
 ```
 
 ### VFS Integration
-Commands wie `ls`, `cd`, und `cat` integrieren sich nahtlos mit dem Virtual File System:
-- Pfadauflösung mit `vfs.resolvePath()`
-- Dateioperationen mit `vfs.readFile()`, `vfs.stat()`
-- Verzeichnisoperationen mit `vfs.readDir()`
+
+Commands like `ls`, `cd`, and `cat` integrate seamlessly with the virtual file system:
+
+- Path resolution with `vfs.resolvePath()`
+- File operations with `vfs.readFile()`, `vfs.stat()`
+- Directory operations with `vfs.readDir()`
 
 ### State Management
-Commands nutzen den StateManager für:
-- Environment-Variablen
-- Current Working Directory
-- Theme-Einstellungen
-- Aliase
+
+Commands use the StateManager for:
+
+- Environment variables
+- Current working directory
+- Theme settings
+- Aliases
 
 ### Event System
-Commands emittieren Events für:
-- Theme-Änderungen (`THEME_CHANGED`)
-- Verzeichniswechsel (`DIRECTORY_CHANGED`)
-- Command-Ausführung (`COMMAND_COMPLETED`)
+
+Commands emit events for:
+
+- Theme changes (`THEME_CHANGED`)
+- Directory changes (`DIRECTORY_CHANGED`)
+- Command execution (`COMMAND_COMPLETED`)
 
 ## Error Handling
 
-Alle Commands folgen POSIX Exit Codes:
-- `0`: Erfolg
-- `1`: Allgemeiner Fehler
-- `2`: Ungültige Verwendung
-- `127`: Befehl nicht gefunden
+All commands follow POSIX exit codes:
 
-## Performance Optimierungen
+- `0`: Success
+- `1`: General error
+- `2`: Invalid usage
+- `127`: Command not found
 
-- Lazy Loading von Command-Modulen
-- Streaming für große Dateioperationen
-- Efficient Path Resolution
-- Minimal Memory Footprint für Theme-Wechsel
+## Performance Optimizations
+
+- Lazy loading of command modules
+- Streaming for large file operations
+- Efficient path resolution
+- Minimal memory footprint for theme switching
 
 ## Testing
 
-Jeder Command kann einzeln getestet werden:
+Each command can be tested individually:
+
 ```typescript
 const command = new LsCommand(vfs);
 const result = await command.execute(context);

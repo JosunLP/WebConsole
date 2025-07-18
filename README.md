@@ -1,6 +1,6 @@
 # 🖥️ WebConsole
 
-> Eine modulare, vollständig im Browser laufende Konsolen-Bibliothek für moderne Web-Anwendungen
+> A modular, fully browser-based console library for modern web applications
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org/)
@@ -9,38 +9,38 @@
 
 ## 🌟 Highlights
 
-**WebConsole** erlaubt es Entwicklern, in Sekundenschnelle eine Windows-Terminal-ähnliche Console in jede Web-Anwendung zu integrieren – **ohne Backend, ohne Build-Schritte, ohne externe Abhängigkeiten**.
+**WebConsole** allows developers to integrate a Windows Terminal-like console into any web application in seconds – **no backend, no build steps, no external dependencies**.
 
-### ✨ Kern-Features
+### ✨ Core Features
 
-- 🖥️ **Browser-Native** - Vollständig clientseitig, keine Server-Abhängigkeiten
-- 🏗️ **Modulare Architektur** - Kernel, VFS, StateManager, Parser, ThemeManager
-- 📁 **Virtuelles Dateisystem** - POSIX-ähnliche Operationen mit localStorage-Backend
-- 🎨 **Flexibles Theme-System** - CSS Custom Properties, Design-Tokens, Hot-Reload
-- ⚡ **Framework-Agnostisch** - Native Web Components + React, Angular, Vue, Svelte Adapter
-- 📦 **Tree-Shaking Ready** - Minimale Bundle-Größe durch modularen Aufbau
-- 🔒 **Sicherheit** - Sandbox-Umgebung, CSP-kompatibel, kein `eval()`
-- 📚 **Full TypeScript** - Vollständige Type-Unterstützung mit strikten Einstellungen
-- 🧩 **Plugin-System** - Erweiterbare Kommando-Registrierung
-- 💾 **State-Persistierung** - Hierarchisches State-Management mit localStorage/sessionStorage
-- 🔧 **Worker Multithreading** - Echtes Multithreading mit Web Workers, einfacher als async/await
+- 🖥️ **Browser-Native** - Fully client-side, no server dependencies
+- 🏗️ **Modular Architecture** - Kernel, VFS, StateManager, Parser, ThemeManager
+- 📁 **Virtual File System** - POSIX-like operations with localStorage backend
+- 🎨 **Flexible Theme System** - CSS custom properties, design tokens, hot-reload
+- ⚡ **Framework-Agnostic** - Native Web Components + React, Angular, Vue, Svelte adapters
+- 📦 **Tree-Shaking Ready** - Minimal bundle size due to modular design
+- 🔒 **Security** - Sandbox environment, CSP-compatible, no `eval()`
+- 📚 **Full TypeScript** - Complete type support with strict settings
+- 🧩 **Plugin System** - Extensible command registration
+- 💾 **State Persistence** - Hierarchical state management with localStorage/sessionStorage
+- 🔧 **Worker Multithreading** - True multithreading with Web Workers, easier than async/await
 
 ## 🚀 Quick Start
 
-### Option 1: Storybook Demo (Empfohlen für Evaluation)
+### Option 1: Storybook Demo (Recommended for Evaluation)
 
 ```bash
 npm install
-npm run storybook  # Startet auf http://localhost:6006
+npm run storybook  # Starts at http://localhost:6006
 ```
 
-**Storybook bietet:**
+**Storybook offers:**
 
-- 🎮 **Interactive Demos** - Live-Tests aller Features und Komponenten
-- 🔧 **Core-System Tests** - Kernel, VFS, StateManager, CommandRegistry Tests
-- 📱 **Framework Examples** - React, Angular, Vue, Svelte Live-Beispiele
-- 📚 **Live-Dokumentation** - API-Referenz mit Code-Snippets
-- 🔧 **Worker System Demo** - Interaktive Worker Multithreading Tests
+- 🎮 **Interactive Demos** - Live tests of all features and components
+- 🔧 **Core System Tests** - Kernel, VFS, StateManager, CommandRegistry tests
+- 📱 **Framework Examples** - React, Angular, Vue, Svelte live examples
+- 📚 **Live Documentation** - API reference with code snippets
+- 🔧 **Worker System Demo** - Interactive worker multithreading tests
 
 ### Option 2: Native Web Component
 
@@ -66,100 +66,100 @@ npm run storybook  # Startet auf http://localhost:6006
 ```javascript
 import { kernel } from "web-console";
 
-// Kernel starten
+// Start kernel
 await kernel.start();
 
-// Console erstellen
+// Create console
 const console = await kernel.createConsole({
   id: "main",
   workingDirectory: "/home/user",
   prompt: "$ ",
 });
 
-// Befehl ausführen
+// Execute command
 const result = await console.execute("ls -la");
 console.log(result.stdout);
 ```
 
-## 🏗️ Architektur & Implementierungsstand
+## 🏗️ Architecture & Implementation Status
 
-### Core-Module (✅ Implementiert)
+### Core Modules (✅ Implemented)
 
-| Modul                  | Status    | Verantwortung                              | Features                                      |
-| ---------------------- | --------- | ------------------------------------------ | --------------------------------------------- |
-| **🧠 Kernel**          | ✅ Fertig | Zentrale Event- und Lebenszyklus-Steuerung | Singleton, Event-System, Console-Management   |
-| **📁 VFS**             | ✅ Fertig | Virtuelles Dateisystem mit localStorage    | POSIX-like, Inode-System, Mount-Points        |
-| **🎨 ThemeManager**    | ✅ Fertig | Design-System mit CSS Custom Properties    | Hot-Reload, Token-System, Built-in Themes     |
-| **📊 StateManager**    | ✅ Fertig | Hierarchische State-Verwaltung             | Persistenz-Modi, Event-driven Updates         |
-| **🔧 CommandRegistry** | ✅ Fertig | Command-Registrierung und -Verwaltung      | Plugin-System, Aliase, Built-ins              |
-| **⚙️ Parser/Lexer**    | ⚠️ Basis  | Shell-Syntax Parsing (bash-ähnlich)        | Grundbefehle ✅, Pipes/Redirects 🔄           |
-| **🔧 WorkerManager**   | ✅ Fertig | Web Worker Multithreading-System           | Worker-Pools, Task-Queues, Parallel-Execution |
+| Module                 | Status   | Responsibility                           | Features                                      |
+| ---------------------- | -------- | ---------------------------------------- | --------------------------------------------- |
+| **🧠 Kernel**          | ✅ Done  | Central event and lifecycle control      | Singleton, event system, console management   |
+| **📁 VFS**             | ✅ Done  | Virtual file system with localStorage    | POSIX-like, inode system, mount points        |
+| **🎨 ThemeManager**    | ✅ Done  | Design system with CSS custom properties | Hot-reload, token system, built-in themes     |
+| **📊 StateManager**    | ✅ Done  | Hierarchical state management            | Persistence modes, event-driven updates       |
+| **🔧 CommandRegistry** | ✅ Done  | Command registration and management      | Plugin system, aliases, built-ins             |
+| **⚙️ Parser/Lexer**    | ⚠️ Basic | Shell syntax parsing (bash-like)         | Basic commands ✅, pipes/redirects 🔄         |
+| **🔧 WorkerManager**   | ✅ Done  | Web Worker multithreading system         | Worker pools, task queues, parallel execution |
 
-### Built-in Commands (Aktueller Stand)
+### Built-in Commands (Current Status)
 
-| Command   | Status | Beschreibung           | Features                          |
-| --------- | ------ | ---------------------- | --------------------------------- |
-| `help`    | ✅     | Hilfe-System           | Interaktive Befehlsreferenz       |
-| `clear`   | ✅     | Terminal leeren        | ANSI Escape Sequences             |
-| `echo`    | ✅     | Text ausgeben          | Variable-Substitution             |
-| `test`    | ✅     | System-Tests           | Core-Module Validierung           |
-| `jobs`    | ✅     | Worker-Status anzeigen | Active Tasks, Pool-Management     |
-| `kill`    | ✅     | Tasks beenden          | Task-Cancellation, Worker-Cleanup |
-| `worker`  | ✅     | Worker-Management      | Pool-Ops, Status, Configuration   |
-| `run`     | ✅     | Parallel-Ausführung    | Batch-Processing, Multi-Threading |
-| `cat`     | 🔄     | Datei-Inhalt anzeigen  | Basic ✅, Syntax-Highlighting 🔄  |
-| `ls`      | 🔄     | Verzeichnis-Listing    | Basic ✅, Farben/Icons 🔄         |
-| `cd`      | 🔄     | Verzeichnis wechseln   | Basic ✅, Tab-Completion 🔄       |
-| `pwd`     | 🔄     | Aktueller Pfad         | Basic ✅                          |
-| `mkdir`   | 🔄     | Verzeichnis erstellen  | Basic ✅, Recursive-Flag 🔄       |
-| `rm`      | 🔄     | Dateien/Ordner löschen | Basic ✅, Sicherheits-Prompts 🔄  |
-| `cp`      | 🔄     | Kopieren               | Implementierung läuft             |
-| `mv`      | 🔄     | Verschieben/Umbenennen | Implementierung läuft             |
-| `alias`   | 🔄     | Command-Aliase         | Basis-Funktionalität              |
-| `export`  | 🔄     | Umgebungsvariablen     | Implementierung läuft             |
-| `env`     | 🔄     | Environment anzeigen   | Implementierung läuft             |
-| `date`    | 🔄     | Datum/Zeit             | Implementierung läuft             |
-| `history` | 🔄     | Befehlshistorie        | Implementierung läuft             |
-| `theme`   | 🔄     | Theme-Wechsel          | Implementierung läuft             |
-| `which`   | 🔄     | Command-Pfad finden    | Implementierung läuft             |
-| `unset`   | 🔄     | Variablen löschen      | Implementierung läuft             |
+| Command   | Status | Description           | Features                          |
+| --------- | ------ | --------------------- | --------------------------------- |
+| `help`    | ✅     | Help system           | Interactive command reference     |
+| `clear`   | ✅     | Clear terminal        | ANSI escape sequences             |
+| `echo`    | ✅     | Output text           | Variable substitution             |
+| `test`    | ✅     | System tests          | Core module validation            |
+| `jobs`    | ✅     | Show worker status    | Active tasks, pool management     |
+| `kill`    | ✅     | Terminate tasks       | Task cancellation, worker cleanup |
+| `worker`  | ✅     | Worker management     | Pool ops, status, configuration   |
+| `run`     | ✅     | Parallel execution    | Batch processing, multithreading  |
+| `cat`     | 🔄     | Show file contents    | Basic ✅, syntax highlighting 🔄  |
+| `ls`      | 🔄     | Directory listing     | Basic ✅, colors/icons 🔄         |
+| `cd`      | 🔄     | Change directory      | Basic ✅, tab completion 🔄       |
+| `pwd`     | 🔄     | Current path          | Basic ✅                          |
+| `mkdir`   | 🔄     | Create directory      | Basic ✅, recursive flag 🔄       |
+| `rm`      | 🔄     | Delete files/folders  | Basic ✅, safety prompts 🔄       |
+| `cp`      | 🔄     | Copy                  | Implementation in progress        |
+| `mv`      | 🔄     | Move/rename           | Implementation in progress        |
+| `alias`   | 🔄     | Command aliases       | Basic functionality               |
+| `export`  | 🔄     | Environment variables | Implementation in progress        |
+| `env`     | 🔄     | Show environment      | Implementation in progress        |
+| `date`    | 🔄     | Date/time             | Implementation in progress        |
+| `history` | 🔄     | Command history       | Implementation in progress        |
+| `theme`   | 🔄     | Change theme          | Implementation in progress        |
+| `which`   | 🔄     | Find command path     | Implementation in progress        |
+| `unset`   | 🔄     | Delete variables      | Implementation in progress        |
 
-### Framework-Integration
+### Framework Integration
 
 | Framework                 | Status | Package               | Features                      |
 | ------------------------- | ------ | --------------------- | ----------------------------- |
-| **Native Web Components** | ✅     | `<web-console>`       | Vollständig implementiert     |
-| **React**                 | ⚠️     | `web-console/react`   | Basis ✅, JSX-Build Issues 🔄 |
-| **Angular**               | 📋     | `web-console/angular` | Geplant, Stubs vorhanden      |
-| **Vue**                   | 📋     | `web-console/vue`     | Geplant, Stubs vorhanden      |
-| **Svelte**                | 📋     | `web-console/svelte`  | Geplant, Stubs vorhanden      |
+| **Native Web Components** | ✅     | `<web-console>`       | Fully implemented             |
+| **React**                 | ⚠️     | `web-console/react`   | Basic ✅, JSX build issues 🔄 |
+| **Angular**               | 📋     | `web-console/angular` | Planned, stubs available      |
+| **Vue**                   | 📋     | `web-console/vue`     | Planned, stubs available      |
+| **Svelte**                | 📋     | `web-console/svelte`  | Planned, stubs available      |
 
 ### Advanced Features (Roadmap)
 
-- **Shell Features**: Pipes `|`, Redirections `>`, `>>`, `<`, Variable-Substitution `$VAR`
-- **Theme-System**: Hot-Reload, Custom CSS-Injection, Animation-Support
-- **Security**: WebWorker-Sandbox, Command-Permissions, CSP-Headers
-- **Performance**: Virtual-Scrolling, Command-Caching, Lazy-Loading
-- **Testing**: Unit-Tests (Vitest), E2E-Tests, Performance-Benchmarks
+- **Shell Features**: Pipes `|`, redirections `>`, `>>`, `<`, variable substitution `$VAR`
+- **Theme System**: Hot-reload, custom CSS injection, animation support
+- **Security**: WebWorker sandbox, command permissions, CSP headers
+- **Performance**: Virtual scrolling, command caching, lazy loading
+- **Testing**: Unit tests (Vitest), E2E tests, performance benchmarks
 
-## � Worker Multithreading System
+## 🧵 Worker Multithreading System
 
-WebConsole bietet ein innovatives **Web Worker Multithreading System**, das echte Parallelität im Browser ermöglicht und **einfacher zu verwenden ist als async/await**.
+WebConsole offers an innovative **Web Worker Multithreading System** that enables true parallelism in the browser and is **easier to use than async/await**.
 
-### ✨ Worker-Features
+### ✨ Worker Features
 
-- **🔧 Echtes Multithreading** - Web Workers für CPU-intensive Tasks
-- **⚡ Einfacher als async/await** - Keine komplexe Promise-Verkettung
-- **🏊‍♂️ Worker-Pool Management** - Automatische Skalierung und Load-Balancing
-- **📋 Task-Queuing** - Prioritäten, Timeouts, Retry-Mechanismus
-- **🔄 VFS-Integration** - Dateizugriff aus Workern über Proxy
-- **📊 Performance-Monitoring** - Live-Status und Ausführungszeiten
-- **🛡️ Sandbox-Sicherheit** - Isolierte Worker-Umgebung
+- **🔧 True Multithreading** - Web Workers for CPU-intensive tasks
+- **⚡ Easier than async/await** - No complex promise chaining
+- **🏊‍♂️ Worker Pool Management** - Automatic scaling and load balancing
+- **📋 Task Queuing** - Priorities, timeouts, retry mechanism
+- **🔄 VFS Integration** - File access from workers via proxy
+- **📊 Performance Monitoring** - Live status and execution times
+- **🛡️ Sandbox Security** - Isolated worker environment
 
-### 🎯 Worker CLI-Befehle
+### 🎯 Worker CLI Commands
 
 ```bash
-# Worker-Status anzeigen
+# Show worker status
 $ jobs
 🔧 Worker Status
 Active Workers: 3
@@ -173,30 +173,30 @@ Active Tasks:
   ├─ task_002: running (0.8s)
   └─ task_003: queued
 
-# Task beenden
+# Terminate task
 $ kill task_001
-✅ Task 'task_001' wurde erfolgreich beendet
+✅ Task 'task_001' was successfully terminated
 
-# Worker-Pool Management
+# Worker pool management
 $ worker status
 $ worker create compute-pool 4
 $ worker destroy old-pool
 
-# Parallel-Ausführung
+# Parallel execution
 $ run --parallel "ls -la" "pwd" "date"
 $ run --batch process-files *.txt
 ```
 
-### 🚀 Programmier-API
+### 🚀 Programming API
 
 ```typescript
 import { kernel } from "web-console";
 
-// Kernel starten
+// Start kernel
 await kernel.start();
 const workerManager = kernel.getWorkerManager();
 
-// Schwere Berechnung in Worker ausführen
+// Run heavy computation in worker
 const result = await workerManager.runTask(() => {
   let sum = 0;
   for (let i = 0; i < 1000000; i++) {
@@ -205,7 +205,7 @@ const result = await workerManager.runTask(() => {
   return sum;
 });
 
-// Batch-Verarbeitung
+// Batch processing
 const tasks = [
   () => processFile("file1.txt"),
   () => processFile("file2.txt"),
@@ -213,40 +213,40 @@ const tasks = [
 ];
 const results = await workerManager.runParallelBatch(tasks);
 
-// Command-Integration
+// Command integration
 class MyCommand extends BaseCommand {
   async execute(context: CommandContext): Promise<ExitCode> {
-    // Super einfach - kein async/await Chaos!
+    // Super easy - no async/await chaos!
     const result = await this.runInWorker(() => {
       return heavyComputation(context.args[0]);
     });
 
-    await this.writeToStdout(context, `Ergebnis: ${result}`);
+    await this.writeToStdout(context, `Result: ${result}`);
     return ExitCode.SUCCESS;
   }
 }
 ```
 
-### 📚 Worker-Dokumentation
+### 📚 Worker Documentation
 
-Für eine vollständige Anleitung zum Worker-System siehe: [**docs/WORKER_SYSTEM.md**](docs/WORKER_SYSTEM.md)
+For a complete guide to the worker system see: [**docs/WORKER_SYSTEM.md**](docs/WORKER_SYSTEM.md)
 
-## �📦 Installation & Framework-Integration
+## 📦 Installation & Framework Integration
 
 ### NPM Installation
 
 ```bash
-# Core-Bibliothek
+# Core library
 npm install web-console
 
-# Framework-spezifische Pakete (in Entwicklung)
+# Framework-specific packages (in development)
 npm install web-console @angular/core  # Angular
 npm install web-console react          # React
 npm install web-console vue            # Vue
 npm install web-console svelte         # Svelte
 ```
 
-### Framework-Beispiele
+### Framework Examples
 
 #### Native Web Components
 
@@ -320,7 +320,7 @@ export class AppModule {}
 
 ### Built-in Themes
 
-| Theme              | Beschreibung                      | Preview                                 |
+| Theme              | Description                       | Preview                                 |
 | ------------------ | --------------------------------- | --------------------------------------- |
 | `windows-terminal` | 🪟 Windows Terminal Look & Feel   | Dark, modern, Microsoft-inspired        |
 | `monokai`          | 🌃 Klassisches Sublime Text Theme | Dunkles Theme mit Syntax-Highlighting   |
@@ -345,51 +345,51 @@ const customTheme = {
   },
 };
 
-// Theme registrieren
+// Register theme
 ThemeManager.register(customTheme);
 
-// Theme aktivieren
+// Activate theme
 await ThemeManager.setTheme("cyberpunk-2077");
 
-// Hot-Reload während Entwicklung
+// Hot-reload during development
 ThemeManager.injectCSS();
 ```
 
 ## 🗂️ Virtual File System (VFS)
 
-### POSIX-ähnliche API
+### POSIX-like API
 
 ```typescript
 import { VFS } from "web-console";
 
-// Dateien schreiben/lesen
+// Write/read files
 await VFS.writeFile(
   "/home/user/projects/app.js",
   'console.log("Hello World!");',
 );
 const content = await VFS.readFile("/home/user/projects/app.js");
 
-// Verzeichnisse erstellen
+// Create directories
 await VFS.createDir("/home/user/documents", { recursive: true });
 
-// Dateien/Ordner auflisten
+// List files/folders
 const entries = await VFS.readDir("/home/user");
 console.log(entries); // [{ name: 'projects', type: 'directory' }, ...]
 
-// Glob-Pattern Support
+// Glob pattern support
 const jsFiles = await VFS.glob("**/*.js");
 const configFiles = await VFS.glob("**/config.{json,yaml,yml}");
 
-// Permissions & Metadata
+// Permissions & metadata
 await VFS.chmod("/home/user/script.sh", 0o755); // Executable
 const stats = await VFS.stat("/home/user/script.sh");
 console.log(stats.permissions); // 0o755
 ```
 
-### Mount-Points & Provider
+### Mount Points & Provider
 
 ```typescript
-// External Provider mounten
+// Mount external provider
 await VFS.mount(
   "/mnt/cloud",
   new CloudStorageProvider({
@@ -398,7 +398,7 @@ await VFS.mount(
   }),
 );
 
-// IndexedDB für große Dateien
+// IndexedDB for large files
 await VFS.mount(
   "/var/db",
   new IndexedDBProvider({
@@ -407,7 +407,7 @@ await VFS.mount(
   }),
 );
 
-// In-Memory für temporäre Dateien
+// In-memory for temporary files
 await VFS.mount(
   "/tmp",
   new MemoryProvider({
@@ -462,7 +462,7 @@ class GitStatusCommand extends BaseCommand {
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
-    // Simulierte Git-Integration
+    // Simulated Git integration
     const gitData = await this.fetchGitStatus(context.workingDirectory);
 
     await this.writeToStdout(
@@ -484,25 +484,25 @@ Untracked files:
   }
 
   private async fetchGitStatus(cwd: string): Promise<GitStatus> {
-    // Integration mit Git-APIs oder lokalen Repositories
+    // Integration with Git APIs or local repositories
     return await fetch(`/api/git/status?path=${cwd}`).then((r) => r.json());
   }
 }
 
-// Command registrieren
+// Register command
 CommandRegistry.register(new GitStatusCommand());
 ```
 
 ### Advanced Command Features
 
 ```typescript
-// Asynchrone Commands mit Progress
+// Asynchronous commands with progress
 class DeployCommand extends BaseCommand {
   async execute(context: CommandContext): Promise<ExitCode> {
     const { flags, positional } = this.parseArgs(context);
     const environment = positional[0] || "staging";
 
-    // Progress-Stream
+    // Progress stream
     await this.writeToStdout(
       context,
       `🚀 Starting deployment to ${environment}...\n`,
@@ -535,17 +535,17 @@ class DeployCommand extends BaseCommand {
 ```typescript
 import { kernel } from "web-console";
 
-// Kernel-Initialisierung
+// Kernel initialization
 await kernel.start();
 console.log(`WebConsole Kernel v${kernel.version} started`);
 
-// Services abrufen
+// Retrieve services
 const vfs = kernel.getVFS();
 const themeManager = kernel.getThemeManager();
 const commandRegistry = kernel.getCommandRegistry();
 const logger = kernel.getLogger();
 
-// Console-Instanzen verwalten
+// Manage console instances
 const mainConsole = await kernel.createConsole({
   id: "main",
   workingDirectory: "/home/user",
@@ -554,12 +554,12 @@ const mainConsole = await kernel.createConsole({
   enablePersistence: true,
 });
 
-// Event-Listeners
+// Event listeners
 kernel.on("console:created", (console) => {
   console.log(`New console created: ${console.id}`);
 });
 
-// Graceful Shutdown
+// Graceful shutdown
 await kernel.shutdown();
 ```
 
@@ -570,7 +570,7 @@ import { StateManager, PersistenceMode } from "web-console";
 
 const appState = new StateManager("myWebApp");
 
-// Konfiguration mit Persistierung
+// Configuration with persistence
 appState.configure({
   key: "userPreferences",
   defaultValue: {
@@ -585,20 +585,20 @@ appState.configure({
   },
 });
 
-// Session-basierte Einstellungen
+// Session-based settings
 appState.configure({
   key: "temporarySettings",
   defaultValue: { debugMode: false },
   persistence: PersistenceMode.SESSION, // sessionStorage
 });
 
-// Reactive Updates
+// Reactive updates
 appState.on("userPreferences:changed", (newPrefs) => {
   themeManager.setTheme(newPrefs.theme);
   updateFontSize(newPrefs.fontSize);
 });
 
-// Werte setzen/abrufen
+// Set/get values
 appState.set("userPreferences", { ...currentPrefs, theme: "monokai" });
 const prefs = appState.get("userPreferences");
 ```
@@ -608,7 +608,7 @@ const prefs = appState.get("userPreferences");
 ```typescript
 import { ConsoleEvent, KernelEvent } from "web-console";
 
-// Console-Events
+// Console events
 console.on(ConsoleEvent.COMMAND_ENTERED, ({ command, args }) => {
   analytics.track("command_executed", { command, timestamp: Date.now() });
 });
@@ -623,14 +623,14 @@ console.on(
   },
 );
 
-// Kernel-Events
+// Kernel events
 kernel.on(KernelEvent.CONSOLE_CREATED, (console) => {
-  // Auto-Setup für neue Consoles
+  // Auto-setup for new consoles
   console.executeCommand('echo "Welcome to WebConsole!"');
   console.executeCommand("cd /home/user");
 });
 
-// VFS-Events für Dateisystem-Monitoring
+// VFS events for file system monitoring
 vfs.on("file:created", ({ path, inode }) => {
   console.log(`New file created: ${path}`);
 });
