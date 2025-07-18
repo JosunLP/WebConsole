@@ -602,7 +602,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   private getPoolIdForCommand(command: string): string {
-    // Bestimme Pool basierend auf Command
+    // Determine pool based on command
     const commandPools: Record<string, string> = {
       grep: "command",
       find: "command",
