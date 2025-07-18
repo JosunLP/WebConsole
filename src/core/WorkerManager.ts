@@ -272,7 +272,7 @@ class WorkerPool implements IWorkerPool {
     const taskData = this.activeTasks.get(taskId);
     if (!taskData) return false;
 
-    // Task abbrechen
+    // Cancel task
     taskData.worker.postMessage({
       type: "cancel",
       taskId,
