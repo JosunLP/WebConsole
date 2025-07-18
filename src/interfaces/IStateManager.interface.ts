@@ -20,7 +20,7 @@ export interface IStateManager extends IEventEmitter {
   // Namespaces
   namespace(name: string): IStateManager;
 
-  // Persistierung
+  // Persistence
   persist(): Promise<void>;
   restore(): Promise<void>;
   load(): Promise<void>;
