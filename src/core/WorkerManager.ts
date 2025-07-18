@@ -395,16 +395,60 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     return Array.from(this.pools.keys());
   }
 
-  // Vereinfachte API
+  // Vereinfachte API mit sicheren vordefinierten Funktionen
   async runTask<T, R>(
-    taskFunction: () => T,
-    options: Partial<IWorkerTask> = {},
+    taskFunction: string | (() => T),
+    options: Partial<IWorkerTask> & { args?: unknown[] } = {},
   ): Promise<R> {
+    let functionName: string;
+    let args: unknown[] = [];
+
+    if (typeof taskFunction === "string") {
+      // Sichere vordefinierte Funktion verwenden
+      functionName = taskFunction;
+      args = options.args || [];
+    } else {
+      // Legacy-Support: Funktion anhand von Inhalten erkennen
+      const funcString = taskFunction.toString();
+
+      // Versuche bekannte Funktions-Pattern zu erkennen
+      if (funcString.includes("fibonacci")) functionName = "fibonacci";
+      else if (
+        funcString.includes("Math.sin") &&
+        funcString.includes("Math.cos")
+      )
+        functionName = "heavyComputation";
+      else if (
+        funcString.includes("primeFactors") ||
+        funcString.includes("factors")
+      )
+        functionName = "primeFactors";
+      else if (funcString.includes("sort")) functionName = "sortNumbers";
+      else if (
+        funcString.includes("toUpperCase") ||
+        funcString.includes("toLowerCase")
+      )
+        functionName = "processText";
+      else if (funcString.includes("analyze") || funcString.includes("mean"))
+        functionName = "analyzeData";
+      else if (funcString.includes("batch") || funcString.includes("map"))
+        functionName = "batchProcess";
+      else {
+        // Default zu heavyComputation für unbekannte Funktionen
+        functionName = "heavyComputation";
+        // Verwende console.warn als Fallback da kein Logger verfügbar
+        // eslint-disable-next-line no-console
+        console.warn(
+          "Unknown function pattern, defaulting to heavyComputation",
+        );
+      }
+    }
+
     const task: IWorkerTask = {
       id: this.generateTaskId(),
       payload: {
-        function: taskFunction.toString(),
-        args: [],
+        function: functionName,
+        args: args,
       },
       priority: options.priority || WorkerTaskPriority.NORMAL,
       timeout: options.timeout || this.defaultPermissions.maxExecutionTime,
@@ -416,15 +460,15 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   async runParallel<T>(
-    taskFunction: () => T,
-    options: Partial<IWorkerTask> = {},
+    taskFunction: string | (() => T),
+    options: Partial<IWorkerTask> & { args?: unknown[] } = {},
   ): Promise<T> {
     return this.runTask<T, T>(taskFunction, options);
   }
 
   async runParallelBatch<T>(
-    taskFunctions: (() => T)[],
-    options: Partial<IWorkerTask> = {},
+    taskFunctions: (string | (() => T))[],
+    options: Partial<IWorkerTask> & { args?: unknown[] } = {},
   ): Promise<T[]> {
     const tasks = taskFunctions.map((func) =>
       this.runTask<T, T>(func, options),

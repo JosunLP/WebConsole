@@ -127,25 +127,12 @@ const meta = {
       try {
         const workerManager = kernel.getWorkerManager();
 
-        // Schwere Berechnung
-        const result = await workerManager.runTask(
-          () => {
-            // Simuliere CPU-intensive Berechnung
-            let sum = 0;
-            for (let i = 0; i < 1000000; i++) {
-              sum += Math.sin(i) * Math.cos(i);
-            }
-            return {
-              result: sum,
-              calculations: 1000000,
-              timestamp: Date.now(),
-            };
-          },
-          {
-            timeout: 10000,
-            type: WorkerTaskType.COMPUTATION,
-          },
-        );
+        // Sichere vordefinierte Funktion verwenden
+        const result = await workerManager.runTask("heavyComputation", {
+          args: [500000], // Anzahl Iterationen
+          timeout: 10000,
+          type: WorkerTaskType.COMPUTATION,
+        });
 
         log(`Computation completed: ${JSON.stringify(result)}`, "success");
         updateStatus(workerManager);
@@ -160,22 +147,18 @@ const meta = {
       try {
         const workerManager = kernel.getWorkerManager();
 
-        const tasks = Array.from({ length: 5 }, (_, i) => () => ({
-          taskId: i + 1,
-          processed: true,
-          data: `Task ${i + 1} data processed`,
-          timestamp: Date.now(),
-        }));
-
-        const results = await workerManager.runParallelBatch(tasks, {
+        // Verwende vordefinierte Batch-Processing Funktion
+        const result = await workerManager.runTask("batchProcess", {
+          args: [[1, 2, 3, 4, 5], "square"], // Zahlen und Operation
           timeout: 5000,
           type: WorkerTaskType.COMPUTATION,
         });
 
-        log(`Batch completed: ${results.length} tasks processed`, "success");
-        results.forEach((result, i) => {
-          log(`  Task ${i + 1}: ${JSON.stringify(result)}`, "worker");
-        });
+        log(
+          `Batch completed: processed ${Array.isArray(result) ? result.length : 1} items`,
+          "success",
+        );
+        log(`  Result: ${JSON.stringify(result)}`, "worker");
 
         updateStatus(workerManager);
       } catch (error) {

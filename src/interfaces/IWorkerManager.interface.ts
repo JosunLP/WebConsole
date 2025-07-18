@@ -29,18 +29,18 @@ export interface IWorkerManager extends IEventEmitter {
   getPool(id: string): IWorkerPool | undefined;
   listPools(): string[];
 
-  // Task Execution - Simplified API
+  // Task Execution - Simplified API (Updated for Security)
   runTask<T, R>(
-    taskFunction: () => T,
-    options?: Partial<IWorkerTask>,
+    taskFunction: string | (() => T),
+    options?: Partial<IWorkerTask> & { args?: unknown[] },
   ): Promise<R>;
   runParallel<T>(
-    taskFunction: () => T,
-    options?: Partial<IWorkerTask>,
+    taskFunction: string | (() => T),
+    options?: Partial<IWorkerTask> & { args?: unknown[] },
   ): Promise<T>;
   runParallelBatch<T>(
-    taskFunctions: (() => T)[],
-    options?: Partial<IWorkerTask>,
+    taskFunctions: (string | (() => T))[],
+    options?: Partial<IWorkerTask> & { args?: unknown[] },
   ): Promise<T[]>;
 
   // Advanced Task Execution

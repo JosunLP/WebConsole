@@ -329,7 +329,7 @@ export abstract class BaseCommand implements ICommandHandler {
    * Vereinfachte Worker-Ausführung für Command-spezifische Tasks
    */
   protected async runCommandInWorker<T>(
-    taskFunction: () => T,
+    taskFunction: string | (() => T),
     options: {
       priority?: WorkerTaskPriority;
       timeout?: number;
@@ -352,7 +352,7 @@ export abstract class BaseCommand implements ICommandHandler {
    * Parallel ausgeführte Command-Tasks
    */
   protected async runParallelCommands<T>(
-    taskFunctions: (() => T)[],
+    taskFunctions: (string | (() => T))[],
     options: {
       priority?: WorkerTaskPriority;
       timeout?: number;
