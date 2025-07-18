@@ -23,6 +23,10 @@ import { MvCommand } from "../console/commands/MvCommand.js";
 import { PwdCommand } from "../console/commands/PwdCommand.js";
 import { RmCommand } from "../console/commands/RmCommand.js";
 import { ThemeCommand } from "../console/commands/ThemeCommand.js";
+import { JobsCommand } from "../console/commands/JobsCommand.js";
+import { KillCommand } from "../console/commands/KillCommand.js";
+import { WorkerCommand } from "../console/commands/WorkerCommand.js";
+import { RunCommand } from "../console/commands/RunCommand.js";
 
 /**
  * Command Registry Events
@@ -268,6 +272,12 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
 
     // Theme commands
     this.register(new ThemeCommand() as ICommandHandler);
+
+    // Worker management commands
+    this.register(new JobsCommand() as ICommandHandler);
+    this.register(new KillCommand() as ICommandHandler);
+    this.register(new WorkerCommand() as ICommandHandler);
+    this.register(new RunCommand() as ICommandHandler);
 
     // VFS-dependent commands (register only if VFS is available)
     if (vfs) {

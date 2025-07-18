@@ -13,6 +13,7 @@ import { ILogger } from "./ILogger.interface.js";
 import { IStateManager } from "./IStateManager.interface.js";
 import { IThemeManager } from "./IThemeManager.interface.js";
 import { IVFS } from "./IVFS.interface.js";
+import { IWorkerManager } from "./IWorkerManager.interface.js";
 
 export interface IKernel extends IEventEmitter {
   readonly version: string;
@@ -29,6 +30,7 @@ export interface IKernel extends IEventEmitter {
   getComponentRegistry(): IComponentRegistry;
   getPluginManager(): any; // PluginManager type will be imported separately
   getLogger(): ILogger;
+  getWorkerManager(): IWorkerManager;
 
   // Console Management
   createConsole(options?: Partial<IConsoleOptions>): Promise<IConsole>;

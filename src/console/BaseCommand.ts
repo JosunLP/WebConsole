@@ -3,10 +3,12 @@
  */
 
 import { ICommandHandler } from "../interfaces/index.js";
+import { IWorkerTask, WorkerTaskType, WorkerTaskPriority } from "../interfaces/IWorkerTask.interface.js";
 
 import { CommandContext, Path } from "../types/index.js";
 
 import { CommandType, ExitCode } from "../enums/index.js";
+import { kernel } from "../core/Kernel.js";
 
 /**
  * Abstrakte Basis-Klasse für Commands
@@ -287,5 +289,88 @@ export abstract class BaseCommand implements ICommandHandler {
    */
   protected colorize(text: string, color: string): string {
     return `${color}${text}${BaseCommand.COLORS.RESET}`;
+  }
+
+  /**
+   * Task in Worker ausführen
+   */
+  protected async runInWorker<T, R>(
+    payload: T,
+    options: {
+      command?: string;
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+      type?: WorkerTaskType;
+    } = {}
+  ): Promise<R> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+    
+    const task: IWorkerTask<T, R> = {
+      id: this.generateTaskId(),
+      payload,
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000, // 30 Sekunden default
+      command: options.command || this.name,
+      type: options.type || WorkerTaskType.COMMAND
+    };
+
+    return workerManager.executeTask(task);
+  }
+
+  /**
+   * Vereinfachte Worker-Ausführung für Command-spezifische Tasks
+   */
+  protected async runCommandInWorker<T>(
+    taskFunction: () => T,
+    options: {
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+    } = {}
+  ): Promise<T> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+    return workerManager.runTask<T, T>(taskFunction, {
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000,
+      command: this.name,
+      type: WorkerTaskType.COMMAND
+    });
+  }
+
+  /**
+   * Parallel ausgeführte Command-Tasks
+   */
+  protected async runParallelCommands<T>(
+    taskFunctions: (() => T)[],
+    options: {
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+    } = {}
+  ): Promise<T[]> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+    return workerManager.runParallelBatch(taskFunctions, {
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000,
+      command: this.name,
+      type: WorkerTaskType.COMMAND
+    });
+  }
+
+  /**
+   * Task-ID generieren
+   */
+  private generateTaskId(): string {
+    return `${this.name}-task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }
