@@ -20,7 +20,7 @@ export enum ConsoleEvent {
   COMMAND_END = "command:end",
   /** Befehl fehlgeschlagen */
   COMMAND_FAILED = "command:failed",
-  /** Befehl Fehler */
+  /** Command error */
   COMMAND_ERROR = "command:error",
   /** Working directory changed */
   DIRECTORY_CHANGED = "directory:changed",
@@ -28,12 +28,12 @@ export enum ConsoleEvent {
   CWD_CHANGED = "cwd:changed",
   /** Environment variable changed */
   ENV_CHANGED = "env:changed",
-  /** Prompt geändert */
+  /** Prompt changed */
   PROMPT_CHANGED = "prompt:changed",
   /** History geleert */
   HISTORY_CLEARED = "history:cleared",
   /** History aktualisiert */
   HISTORY_UPDATED = "history:updated",
-  /** Theme geändert */
+  /** Theme changed */
   THEME_CHANGED = "theme:changed",
 }

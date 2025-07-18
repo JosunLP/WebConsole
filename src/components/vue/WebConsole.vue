@@ -37,7 +37,7 @@ export default defineComponent({
         webConsoleElement.style.height =
           typeof props.height === "number" ? `${props.height}px` : props.height;
 
-        // Event-Listener hinzufügen
+        // Add event listener
         webConsoleElement.addEventListener("command", (event: Event) => {
           const customEvent = event as CustomEvent;
           emit("command", customEvent.detail);
@@ -54,7 +54,7 @@ export default defineComponent({
           emit("error", customEvent.detail);
         });
 
-        // Zum DOM hinzufügen
+        // Add to DOM
         if (container.value) {
           container.value.appendChild(webConsoleElement);
         }
@@ -63,7 +63,7 @@ export default defineComponent({
       }
     };
 
-    // Watch für Theme-Änderungen
+    // Watch for theme changes
     watch(
       () => props.theme,
       (newTheme) => {
@@ -73,7 +73,7 @@ export default defineComponent({
       },
     );
 
-    // Watch für Prompt-Änderungen
+    // Watch for prompt changes
     watch(
       () => props.prompt,
       (newPrompt) => {

@@ -670,38 +670,38 @@ npm run build
 ```bash
 WebConsole/
 ├── 📁 src/
-│   ├── 📁 types/           # TypeScript-Typdefinitionen
-│   ├── 📁 enums/           # Globale Enums (ExitCode, LogLevel, etc.)
-│   ├── 📁 interfaces/      # Interface-Definitionen (IKernel, IVFS, etc.)
-│   ├── 📁 core/            # Kern-Module
-│   │   ├── Kernel.ts       # 🧠 Zentraler Kernel (Singleton)
+│   ├── 📁 types/           # TypeScript type definitions
+│   ├── 📁 enums/           # Global enums (ExitCode, LogLevel, etc.)
+│   ├── 📁 interfaces/      # Interface definitions (IKernel, IVFS, etc.)
+│   ├── 📁 core/            # Core modules
+│   │   ├── Kernel.ts       # 🧠 Central kernel (Singleton)
 │   │   ├── VFS.ts          # 📁 Virtual File System
-│   │   ├── ThemeManager.ts # 🎨 Theme-Verwaltung
-│   │   ├── StateManager.ts # 📊 State-Management
-│   │   └── CommandRegistry.ts # 🔧 Command-Registrierung
-│   ├── 📁 console/         # Console-Implementation
-│   │   ├── ConsoleInstance.ts # Console-Instanz
+│   │   ├── ThemeManager.ts # 🎨 Theme management
+│   │   ├── StateManager.ts # 📊 State management
+│   │   └── CommandRegistry.ts # 🔧 Command registration
+│   ├── 📁 console/         # Console implementation
+│   │   ├── ConsoleInstance.ts # Console instance
 │   │   ├── Lexer.ts        # Token lexer for shell syntax
-│   │   ├── Parser.ts       # Command-Parser
-│   │   ├── BaseCommand.ts  # Base-Klasse für Commands
-│   │   └── 📁 commands/    # Built-in Commands
-│   ├── 📁 components/      # Framework-Komponenten
+│   │   ├── Parser.ts       # Command parser
+│   │   ├── BaseCommand.ts  # Base class for commands
+│   │   └── 📁 commands/    # Built-in commands
+│   ├── 📁 components/      # Framework components
 │   │   ├── WebConsoleElement.ts # Native Web Component
-│   │   ├── 📁 react/       # React-Integration
-│   │   ├── 📁 angular/     # Angular-Integration
-│   │   ├── 📁 vue/         # Vue-Integration
-│   │   └── 📁 svelte/      # Svelte-Integration
-│   ├── 📁 themes/          # Built-in Themes
-│   └── 📁 utils/           # Hilfsfunktionen
-├── 📁 docs/                # Dokumentation
-├── 📁 stories/             # Storybook-Stories
-├── 📁 examples/            # Anwendungsbeispiele
-└── 📁 dist/                # Build-Ausgabe
+│   │   ├── 📁 react/       # React integration
+│   │   ├── 📁 angular/     # Angular integration
+│   │   ├── 📁 vue/         # Vue integration
+│   │   └── 📁 svelte/      # Svelte integration
+│   ├── 📁 themes/          # Built-in themes
+│   └── 📁 utils/           # Helper functions
+├── 📁 docs/                # Documentation
+├── 📁 stories/             # Storybook stories
+├── 📁 examples/            # Application examples
+└── 📁 dist/                # Build output
 ```
 
-### TypeScript-Konfiguration
+### TypeScript Configuration
 
-Das Projekt nutzt **strenge TypeScript-Einstellungen** für maximale Typsicherheit:
+The project uses **strict TypeScript settings** for maximum type safety:
 
 ```json
 {
@@ -716,66 +716,66 @@ Das Projekt nutzt **strenge TypeScript-Einstellungen** für maximale Typsicherhe
 }
 ```
 
-### Testing-Strategy
+### Testing Strategy
 
 ```bash
-# Unit-Tests mit Vitest
+# Unit tests with Vitest
 npm run test:unit
 
-# Integration-Tests
+# Integration tests
 npm run test:integration
 
-# E2E-Tests mit Playwright (geplant)
+# E2E tests with Playwright (planned)
 npm run test:e2e
 
-# Performance-Benchmarks
+# Performance benchmarks
 npm run test:performance
 
-# Coverage-Report
+# Coverage report
 npm run test:coverage
 ```
 
 ### Contributing Guidelines
 
-1. **🍴 Fork** das Repository
-2. **🌿 Feature-Branch** erstellen: `git checkout -b feature/amazing-command`
-3. **✨ Implementierung** mit Tests
-4. **📝 Commit** mit Conventional Commits: `feat: add amazing command with auto-completion`
-5. **🚀 Push** zum Branch: `git push origin feature/amazing-command`
-6. **📬 Pull Request** erstellen
+1. **🍴 Fork** the repository
+2. **🌿 Feature branch** create: `git checkout -b feature/amazing-command`
+3. **✨ Implementation** with tests
+4. **📝 Commit** with Conventional Commits: `feat: add amazing command with auto-completion`
+5. **🚀 Push** to branch: `git push origin feature/amazing-command`
+6. **📬 Pull Request** create
 
 #### Commit-Conventions
 
 ```bash
-feat: neue Features
-fix: Bugfixes
-docs: Dokumentation
-style: Code-Formatierung
-refactor: Code-Refactoring
-test: Tests hinzufügen/ändern
-chore: Build-System, Dependencies
+feat: new features
+fix: bugfixes
+docs: documentation
+style: code formatting
+refactor: code refactoring
+test: add/modify tests
+chore: build system, dependencies
 ```
 
 ### 🌟 Future Vision
 
-- **📱 Mobile-Support** - Touch-optimierte UI, Gesture-Navigation
+- **📱 Mobile Support** - Touch-optimized UI, gesture navigation
 
 ## 🤝 Community & Support
 
-### 📖 Ressourcen
+### 📖 Resources
 
-- **📚 [Dokumentation](./docs/)** - Vollständige API-Referenz und Tutorials
-- **🎮 [Live-Demo](https://josunlp.github.io/WebConsole/)** - Interaktive Online-Demo
-- **📊 [Storybook](http://localhost:6006)** - Komponenten-Bibliothek (lokal)
-- **🐛 [Issues](https://github.com/JosunLP/WebConsole/issues)** - Bug-Reports und Feature-Requests
-- **💬 [Discussions](https://github.com/JosunLP/WebConsole/discussions)** - Community-Forum
+- **📚 [Documentation](./docs/)** - Complete API reference and tutorials
+- **🎮 [Live Demo](https://josunlp.github.io/WebConsole/)** - Interactive online demo
+- **📊 [Storybook](http://localhost:6006)** - Component library (local)
+- **🐛 [Issues](https://github.com/JosunLP/WebConsole/issues)** - Bug reports and feature requests
+- **💬 [Discussions](https://github.com/JosunLP/WebConsole/discussions)** - Community forum
 
 ### 🆘 Support
 
-- **🚀 Quick-Start-Probleme?** → Schau in die [Examples](./examples/) oder [Storybook](http://localhost:6006)
+- **🚀 Quick start problems?** → Check the [Examples](./examples/) or [Storybook](http://localhost:6006)
 - **🐛 Bug found?** → [Create issue](https://github.com/JosunLP/WebConsole/issues/new)
-- **💡 Feature-Idee?** → [Discussion starten](https://github.com/JosunLP/WebConsole/discussions)
-- **🤝 Contributing?** → [Contributing Guide](./CONTRIBUTING.md) lesen
+- **💡 Feature idea?** → [Start discussion](https://github.com/JosunLP/WebConsole/discussions)
+- **🤝 Contributing?** → Read [Contributing Guide](./CONTRIBUTING.md)
 
 ### 📊 Stats
 
@@ -784,7 +784,7 @@ chore: Build-System, Dependencies
 ![GitHub issues](https://img.shields.io/github/issues/JosunLP/WebConsole?style=for-the-badge&logo=github)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/JosunLP/WebConsole?style=for-the-badge&logo=github)
 
-## 📄 Lizenz
+## 📄 License
 
 ```text
 MIT License

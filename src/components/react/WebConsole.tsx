@@ -1,5 +1,5 @@
 /**
- * React-Komponente für Web-Console mit verbesserter Implementation
+ * React component for Web-Console with improved implementation
  */
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -78,7 +78,7 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
     }
   }, [width, height]);
 
-  // Theme-Änderung
+  // Theme change
   useEffect(() => {
     if (theme && changeTheme) {
       changeTheme(theme);
@@ -211,7 +211,7 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
     return `web-console__line web-console__line--${type}`;
   };
 
-  // CSS Custom Properties für dynamische Werte
+  // CSS Custom Properties for dynamic values
   const cssVariables = {
     "--web-console-height": typeof height === "number" ? `${height}px` : height,
     "--web-console-width": typeof width === "number" ? `${width}px` : width,

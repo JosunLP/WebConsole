@@ -2,17 +2,17 @@
  * Exit-Codes für Befehlsausführung
  */
 export enum ExitCode {
-  /** Erfolgreich */
+  /** Successful */
   SUCCESS = 0,
-  /** Allgemeiner Fehler */
+  /** General error */
   ERROR = 1,
   /** General error (alias for ERROR) */
   FAILURE = 1,
-  /** Allgemeiner Fehler */
+  /** General error */
   GENERAL_ERROR = 1,
   /** Invalid use of a shell builtin */
   MISUSE = 2,
-  /** Befehl nicht gefunden */
+  /** Command not found */
   COMMAND_NOT_FOUND = 127,
   /** Invalid argument for exit */
   INVALID_EXIT_ARGUMENT = 128,

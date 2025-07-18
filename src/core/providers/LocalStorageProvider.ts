@@ -210,7 +210,7 @@ export class LocalStorageProvider implements IVFSProvider {
   }
 
   /**
-   * Lade Root-Inode (oder erstelle falls nicht vorhanden)
+   * Load root inode (or create if not exists)
    */
   async getRootInode(): Promise<InodeNumber> {
     // Suche nach Root-Verzeichnis (Inode 1)
@@ -219,7 +219,7 @@ export class LocalStorageProvider implements IVFSProvider {
       return 1;
     }
 
-    // Erstelle Root-Verzeichnis
+    // Create root directory
     const rootInode = await this.createInode(FileType.DIRECTORY, 0o755);
     return rootInode.inode;
   }
@@ -302,7 +302,7 @@ export class LocalStorageProvider implements IVFSProvider {
     this.storage.clear();
     this.nextInode = 1;
 
-    // Erstelle Root-Verzeichnis
+    // Create root directory
     await this.createInode(FileType.DIRECTORY, 0o755);
   }
 

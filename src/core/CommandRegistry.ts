@@ -49,8 +49,8 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Registry initialisieren
    */
   async initialize(): Promise<void> {
-    // Registry ist bereit für die Registrierung von Commands
-    // Built-in Commands werden später vom Kernel mit VFS registriert
+    // Registry is ready for command registration
+    // Built-in commands will be registered later by the kernel with VFS
   }
 
   /**

@@ -17,7 +17,7 @@ function getRandomExecutionTime(min: number, max: number): number {
     const randomFloat = array[0]! / 0xffffffff; // Konvertiert zu 0-1
     return min + randomFloat * (max - min);
   } else {
-    // Fallback für Umgebungen ohne crypto API
+    // Fallback for environments without crypto API
     return Math.random() * (max - min) + min;
   }
 }
@@ -65,7 +65,7 @@ export class RunCommand extends BaseCommand {
   ): Promise<ExitCode> {
     await this.writeToStdout(context, `Running: ${command.join(" ")}\n`);
 
-    // Simulierte Command-Ausführung in Worker
+    // Simulated command execution in worker
     const result = await this.runCommandInWorker(
       () => {
         // Simuliere Command-Verarbeitung

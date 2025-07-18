@@ -1,5 +1,5 @@
 /**
- * ThemeManager - Zentrale Theme-Verwaltung
+ * ThemeManager - Central theme management
  */
 
 import { ThemeMode } from "../enums/ThemeMode.enum.js";
@@ -65,7 +65,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
     // Entferne vorhandenes CSS
     this.removeCSS();
 
-    // Erstelle neue Style-Element
+    // Create new style element
     this.cssElement = document.createElement("style");
     this.cssElement.id = "web-console-theme";
 
@@ -87,7 +87,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   }
 
   public setToken(name: string, value: string): void {
-    // Temporäre Token-Überschreibung
+    // Temporary token override
     const newTokens = { ...this.currentTheme.tokens, [name]: value };
     this.currentTheme = { ...this.currentTheme, tokens: newTokens };
     this.injectCSS();
@@ -148,7 +148,7 @@ web-console {
 
   private async registerBuiltInThemes(): Promise<void> {
     try {
-      // Dynamisches Laden der Theme-Module
+      // Dynamic loading of theme modules
       const { DefaultTheme } = await import("../themes/DefaultTheme.js");
       const { DarkTheme } = await import("../themes/DarkTheme.js");
       const { LightTheme } = await import("../themes/LightTheme.js");

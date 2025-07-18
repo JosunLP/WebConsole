@@ -1,5 +1,5 @@
 /**
- * VFS-Fehlercodes
+ * VFS error codes
  */
 export enum VfsError {
   /** File or directory not found */

@@ -6,9 +6,9 @@ export enum KernelEvent {
   STARTED = "kernel:started",
   /** Kernel wird heruntergefahren */
   SHUTDOWN = "kernel:shutdown",
-  /** Fehler im Kernel */
+  /** Kernel error */
   ERROR = "kernel:error",
-  /** Console erstellt */
+  /** Console created */
   CONSOLE_CREATED = "kernel:console:created",
   /** Console destroyed */
   CONSOLE_DESTROYED = "kernel:console:destroyed",

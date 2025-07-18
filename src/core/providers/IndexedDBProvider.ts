@@ -41,13 +41,13 @@ export class IndexedDBProvider implements IVFSProvider {
       request.onupgradeneeded = () => {
         const db = request.result;
 
-        // Store für Inodes
+        // Store for inodes
         if (!db.objectStoreNames.contains("inodes")) {
           const store = db.createObjectStore("inodes", { keyPath: "inode" });
           store.createIndex("type", "inode.type");
         }
 
-        // Store für Metadaten
+        // Store for metadata
         if (!db.objectStoreNames.contains("metadata")) {
           db.createObjectStore("metadata");
         }

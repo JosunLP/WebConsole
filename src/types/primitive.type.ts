@@ -3,7 +3,7 @@
  */
 
 /**
- * Eindeutige ID für verschiedene Entitäten
+ * Unique ID for various entities
  */
 export type ID = string;
 

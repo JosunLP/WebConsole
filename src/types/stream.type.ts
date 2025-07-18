@@ -3,11 +3,11 @@
  */
 
 /**
- * Stream-Reader für Output
+ * Stream reader for output
  */
 export type StreamReader = ReadableStreamDefaultReader<Uint8Array>;
 
 /**
- * Stream-Writer für Input
+ * Stream writer for input
  */
 export type StreamWriter = WritableStreamDefaultWriter<Uint8Array>;

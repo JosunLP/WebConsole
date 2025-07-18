@@ -1,4 +1,4 @@
-# Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
+# Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
 
 ## 1. Vision & Goals
 
@@ -88,17 +88,17 @@ The worker system enables true multithreading in the browser and is **easier to 
 | `worker` | Worker pool management | `worker create pool 4`          |
 | `run`    | Parallel execution     | `run --parallel cmd1 cmd2 cmd3` |
 
-### 4.4 Programmier-API
+### 4.4 Programming API
 
 ```typescript
-// Einfache Task-Ausführung
+// Simple task execution
 const result = await workerManager.runTask(() => heavyComputation());
 
-// Batch-Verarbeitung
+// Batch processing
 const tasks = [() => process(1), () => process(2), () => process(3)];
 const results = await workerManager.runParallelBatch(tasks);
 
-// Command-Integration
+// Command integration
 class MyCommand extends BaseCommand {
   async execute(context: CommandContext): Promise<ExitCode> {
     const result = await this.runInWorker(() => processData(context.args));
@@ -112,213 +112,213 @@ class MyCommand extends BaseCommand {
 
 ## 5. State Management
 
-### 5.1 Hierarchie
+### 5.1 Hierarchy
 
-- Globaler State (Kernel, Theme, VFS-Metadaten)
-- Pro-Console-State (History, CWD, Env-Variablen)
-- Prozess-State (laufende Befehle, Pipes)
+- Global state (Kernel, Theme, VFS metadata)
+- Per-console state (History, CWD, env variables)
+- Process state (running commands, pipes)
 
-### 5.2 Persistenz-Flags
+### 5.2 Persistence Flags
 
-- `volatile` – nur im RAM
+- `volatile` – RAM only
 - `session` – `sessionStorage`
 - `persistent` – `localStorage`
 
 ---
 
-## 6. Console & Befehlsverarbeitung
+## 6. Console & Command Processing
 
 ### 6.1 Parser
 
-- LL(1)-ähnlicher Parser für POSIX-Console-Syntax
-- Unterstützt:
+- LL(1)-like parser for POSIX console syntax
+- Supports:
   - Pipes `|`
   - Redirections `>`, `>>`, `<`
-  - SubConsoles `$(...)`
-  - Environment-Variablen `$VAR`, `${VAR:-default}`
+  - Sub-consoles `$(...)`
+  - Environment variables `$VAR`, `${VAR:-default}`
   - Globbing `*.js`
 
 ### 6.2 Built-ins
 
-| Befehl   | Beschreibung                    |
+| Command  | Description                     |
 | -------- | ------------------------------- |
-| `ls`     | Auflisten mit Farbcodes         |
-| `cat`    | Ausgabe mit Syntax-Highlighting |
-| `cd`     | Wechsel Arbeitsverzeichnis      |
-| `export` | Setzen von Umgebungsvariablen   |
-| `theme`  | Theme zur Laufzeit wechseln     |
-| `alias`  | Kommandoverknüpfungen           |
+| `ls`     | List with color codes           |
+| `cat`    | Output with syntax highlighting |
+| `cd`     | Change working directory        |
+| `export` | Set environment variables       |
+| `theme`  | Switch theme at runtime         |
+| `alias`  | Command shortcuts               |
 
-### 6.3 Erweiterbarkeit
+### 6.3 Extensibility
 
-- Plugin-System über `registerCommand(name, handler)`
-- Async-Ausführung via `Promise<ExitCode>`
-- Streaming-Output (ReadableStream)
+- Plugin system via `registerCommand(name, handler)`
+- Async execution via `Promise<ExitCode>`
+- Streaming output (ReadableStream)
 
-### 6.4 Worker-Commands
+### 6.4 Worker Commands
 
-| Command  | Beschreibung           |
+| Command  | Description            |
 | -------- | ---------------------- |
-| `jobs`   | Worker-Status anzeigen |
-| `kill`   | Tasks beenden          |
-| `worker` | Worker-Pool Management |
-| `run`    | Parallel-Ausführung    |
+| `jobs`   | Show worker status     |
+| `kill`   | Terminate tasks        |
+| `worker` | Worker pool management |
+| `run`    | Parallel execution     |
 
 ---
 
-## 7. Design-System & Anpassbarkeit
+## 7. Design System & Customizability
 
-### 7.1 Token-System
+### 7.1 Token System
 
-- CSS-Custom-Properties für Farben, Abstände, Fonts
-- Design-Tokens in JSON definierbar
-- Hot-Reload via `theme reload`
+- CSS custom properties for colors, spacing, fonts
+- Design tokens definable in JSON
+- Hot reload via `theme reload`
 
 ### 7.2 Themes
 
 - Standard: `windows-terminal`, `monokai`, `solarized`
-- Custom-Themes via JSON oder TypeScript-API
-- Unterstützung für Hintergrundbilder, GIFs, Shader (WebGL)
+- Custom themes via JSON or TypeScript API
+- Support for background images, GIFs, shaders (WebGL)
 
-### 7.3 Layout-System
+### 7.3 Layout System
 
-- Tabs, Panes, Splits (wie tmux)
-- Resize-Handles via Pointer-Events
-- Fullscreen-Modus
+- Tabs, panes, splits (like tmux)
+- Resize handles via pointer events
+- Fullscreen mode
 
 ---
 
-## 8. Framework-Integration
+## 8. Framework Integration
 
 ### 8.1 Angular
 
-- `Web-ConsoleModule` mit `Web-ConsoleComponent`
-- DI-Token für Kernel und VFS
-- Lazy-Loading über `import('Web-Console/ng')`
+- **Angular Module** with `WebConsoleComponent`
+- DI token for Kernel and VFS
+- Lazy loading via `import('WebConsole/ng')`
 
 ### 8.2 React
 
-- `Web-Console` als Function-Component mit Hooks
+- `WebConsole` as Function Component with Hooks
 - `useConsole()`, `useVFS()`, `useTheme()`
 
 ### 8.3 Vue
 
-- `Web-Console` als Composition-API-Component
-- `provide/inject` für Kernel
+- `WebConsole` as Composition API Component
+- `provide/inject` for Kernel
 
 ### 8.4 Svelte
 
-- `Web-Console` als Svelte-Component
-- Stores für Kernel, VFS, Theme
+- `WebConsole` as Svelte Component
+- Stores for Kernel, VFS, Theme
 
 ### 8.5 Native Web Components
 
-- `<web-console>` Custom-Element
-- Attribute für Theme, Prompt, Height
+- `<web-console>` Custom Element
+- Attributes for Theme, Prompt, Height
 - Events: `command`, `exit`, `ready`
 
 ---
 
-## 9. Ressourcen-Optimierung
+## 9. Resource Optimization
 
-### 9.1 Tree-Shaking
+### 9.1 Tree Shaking
 
-- Jede Framework-Integration ist eigenes NPM-Paket
-- Core-Bundle < 50 kB (gzipped)
+- Each framework integration is a separate NPM package
+- Core bundle < 50 kB (gzipped)
 
 ### 9.2 Lazy Loading
 
-- Befehle werden erst bei erstmaligem Aufruf geladen
-- Themes werden asynchron nachgeladen
+- Commands are loaded only on first call
+- Themes are loaded asynchronously
 
-### 9.3 Memory-Management
+### 9.3 Memory Management
 
-- WeakRefs für Event-Listener
-- Offscreen-Canvas für Rendering
-- RequestIdleCallback für Hintergrundaufgaben
+- WeakRefs for event listeners
+- Offscreen canvas for rendering
+- RequestIdleCallback for background tasks
 
 ---
 
-## 10. Sicherheit
+## 10. Security
 
 ### 10.1 Sandbox
 
-- Kein `eval`, kein `new Function`
-- Befehle laufen in isolierten Web-Workern
-- CSP-kompatibel
+- No `eval`, no `new Function`
+- Commands run in isolated Web Workers
+- CSP compatible
 
 ### 10.2 Permissions
 
-- ACLs im VFS
-- Read-Only Mounts möglich
+- ACLs in VFS
+- Read-only mounts possible
 
 ---
 
-## 11. Aktueller Stand & ToDos (Stand: Juli 2025)
+## 11. Current Status & ToDos (As of July 2025)
 
-### Implementiert
+### Implemented
 
-- **Core-Architektur:** Kernel, VFS, StateManager, EventEmitter, CommandRegistry
-- **Worker-System:** WorkerManager, BaseWorker, CommandWorker, TaskWorker mit CLI-Integration
-- **WebComponent:** `<web-console>` als native Komponente
-- **Test-Infrastruktur:** Storybook mit interaktiven Demos und Core-Tests
-- **Built-in Commands:** echo, help, clear, test, jobs, kill, worker, run (weitere in Planung)
-- **Parser/Lexer:** Grundfunktionalität, aber noch ohne Pipes/Redirections
+- **Core Architecture:** Kernel, VFS, StateManager, EventEmitter, CommandRegistry
+- **Worker System:** WorkerManager, BaseWorker, CommandWorker, TaskWorker with CLI integration
+- **WebComponent:** `<web-console>` as native component
+- **Test Infrastructure:** Storybook with interactive demos and core tests
+- **Built-in Commands:** echo, help, clear, test, jobs, kill, worker, run (more planned)
+- **Parser/Lexer:** Basic functionality, but without pipes/redirections yet
 
-### Teilweise implementiert
+### Partially Implemented
 
-- **React-Component:** Vorhanden, aber Build/JSX-Probleme
-- **Command-Parser:** Unterstützt einfache Befehle, keine komplexen Shell-Features
+- **React Component:** Available, but build/JSX problems
+- **Command Parser:** Supports simple commands, no complex shell features
 
-### Geplant/Nächste Schritte
+### Planned/Next Steps
 
-1. Command-Parser vervollständigen (Pipes, Variablen, Chaining)
-2. Built-in Commands erweitern (ls, cd, pwd, cat, mkdir, rm, cp, mv)
-3. Theme-System (CSS-Custom-Properties, Theme-Manager)
-4. VFS-Extensions (Mounts, Permissions, Symlinks)
-5. Plugin-System (Dynamic Command-Loading)
-6. Build-Optimierung (Rollup, Tree-Shaking)
-7. Unit-Tests (Vitest)
+1. Complete command parser (pipes, variables, chaining)
+2. Extend built-in commands (ls, cd, pwd, cat, mkdir, rm, cp, mv)
+3. Theme system (CSS custom properties, theme manager)
+4. VFS extensions (mounts, permissions, symlinks)
+5. Plugin system (dynamic command loading)
+6. Build optimization (Rollup, tree shaking)
+7. Unit tests (Vitest)
 
-### Testen & Entwicklung
+### Testing & Development
 
-- **Storybook starten:**
+- **Start Storybook:**
 
   ```bash
   npm run storybook
   ```
 
-- **Tests ausführen:**
+- **Run tests:**
 
   ```bash
   npm run test
   ```
 
-- **Legacy HTML-Tests:**
+- **Legacy HTML tests:**
 
   ```bash
   npm run serve
   npm run test:legacy
   ```
 
-Weitere Details und aktuellen Status siehe auch [STATUS_CURRENT.md].
+See also [STATUS_CURRENT.md] for more details and current status.
 
 ---
 
-## 12. Lizenz & Community
+## 12. License & Community
 
-- MIT-Lizenz
-- GitHub-Monorepo mit Issues, Discussions
-- Beispiel-App auf GitHub Pages
+- MIT License
+- GitHub monorepo with issues, discussions
+- Example app on GitHub Pages
 
 ---
 
-## 13. Nächste Schritte
+## 13. Next Steps
 
-1. Repository anlegen
-2. Core-Module skizzieren (Interfaces, Enums, Typen)
-3. VFS-Prototyp mit `localStorage`
-4. Console-Parser mit einfachen Built-ins
-5. React-Adapter als Proof-of-Concept
+1. Create repository
+2. Sketch core modules (interfaces, enums, types)
+3. VFS prototype with `localStorage`
+4. Console parser with simple built-ins
+5. React adapter as proof of concept
 
-Viel Spaß beim Bauen – und immer schön im Terminal bleiben!
+Have fun building – and always stay in the terminal!

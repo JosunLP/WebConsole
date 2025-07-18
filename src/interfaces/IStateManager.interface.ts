@@ -14,7 +14,7 @@ export interface IStateManager extends IEventEmitter {
   clear(): void;
   keys(): string[];
 
-  // Konfiguration für Keys
+  // Configuration for keys
   configure<T>(config: StateConfig<T>): void;
 
   // Namespaces

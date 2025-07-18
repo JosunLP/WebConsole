@@ -18,12 +18,12 @@ export type EventHandler<T = unknown> = (data: T) => void;
 export type AsyncEventHandler<T = unknown> = (data: T) => Promise<void>;
 
 /**
- * Observable-Pattern für Events
+ * Observable pattern for events
  */
 export type EventUnsubscriber = () => void;
 
 /**
- * Event-Daten für verschiedene Events
+ * Event data for various events
  */
 export interface EventData {
   [ConsoleEvent.COMMAND_ENTERED]: { command: string; args: CommandArgs };

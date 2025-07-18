@@ -33,7 +33,7 @@ export class EventEmitter implements IEventEmitter {
     };
     this.listeners.get(event)!.add(listener);
 
-    // Unsubscriber zurückgeben
+    // Return unsubscriber
     return () => {
       this.listeners.get(event)?.delete(listener);
     };
@@ -83,14 +83,14 @@ export class EventEmitter implements IEventEmitter {
     const eventListeners = this.listeners.get(event);
     if (!eventListeners) return;
 
-    // Kopie erstellen um Modifikationen während Iteration zu vermeiden
+    // Create copy to avoid modifications during iteration
     const listenersToCall = Array.from(eventListeners);
 
     for (const listener of listenersToCall) {
       try {
         listener.handler(data);
 
-        // Once-Listener nach Ausführung entfernen
+        // Remove once-listener after execution
         if (listener.once) {
           eventListeners.delete(listener);
         }

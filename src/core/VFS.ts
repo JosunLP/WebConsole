@@ -52,14 +52,14 @@ export class VFS extends EventEmitter implements IVFS {
   }
 
   /**
-   * VFS initialisieren
+   * Initialize VFS
    */
   public async initialize(): Promise<void> {
     await this.initializeRoot();
   }
 
   /**
-   * Root-Filesystem initialisieren
+   * Initialize root filesystem
    */
   private async initializeRoot(): Promise<void> {
     // Default LocalStorage provider for root filesystem
@@ -460,7 +460,7 @@ Features:
 
     const parentPath = this.dirname(normalizedPath);
 
-    // Prüfe ob Parent-Verzeichnis existiert (nicht rekursiv)
+    // Check if parent directory exists (not recursive)
     try {
       const parentNode = await this.stat(parentPath);
       if (parentNode.type !== FileType.DIRECTORY) {
@@ -663,7 +663,7 @@ Features:
    */
   async glob(pattern: GlobPattern, cwd = "/"): Promise<Path[]> {
     // Vereinfachte Glob-Implementation
-    // Würde in echter Implementation minimatch oder ähnliche Bibliothek verwenden
+    // Would use minimatch or similar library in real implementation
     const results: Path[] = [];
 
     const searchDir = async (dir: Path) => {
@@ -779,17 +779,17 @@ Features:
   private async getInode(inodeNumber: InodeNumber): Promise<INode> {
     const inode = this.inodeCache.get(inodeNumber);
     if (!inode) {
-      // Versuche von Provider zu laden
+      // Try to load from provider
       for (const mountPoint of this.mountPoints.values()) {
         try {
           const exists = await mountPoint.provider.exists(inodeNumber);
           if (exists) {
-            // Provider müsste eine Methode haben, um Inode zu laden
-            // Für jetzt werfen wir einen Fehler
+            // Provider should have a method to load inode
+            // For now we throw an error
             throw new Error(`Inode ${inodeNumber} not found in cache`);
           }
         } catch {
-          // Provider unterstützt möglicherweise keine exists-Methode
+          // Provider might not support exists method
         }
       }
       throw new Error(`Inode ${inodeNumber} not found`);
@@ -823,7 +823,7 @@ Features:
       throw new Error(`Cannot resolve parent directory: ${parentPath}`);
     }
 
-    // Erstelle Inode über Provider
+    // Create inode via provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.FILE,
       0o644,
@@ -865,7 +865,7 @@ Features:
       throw new Error(`Cannot resolve parent directory: ${parentPath}`);
     }
 
-    // Erstelle Inode über Provider
+    // Create inode via provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.DIRECTORY,
       mode || 0o755,

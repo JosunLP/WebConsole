@@ -25,7 +25,7 @@ export class ComponentRegistry
   }
 
   public async load(name: string): Promise<unknown> {
-    // Bereits geladen?
+    // Already loaded?
     if (this.loaded.has(name)) {
       return this.loaded.get(name)!;
     }

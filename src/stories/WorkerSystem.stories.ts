@@ -134,16 +134,16 @@ const meta = {
       `;
     }
 
-    // Demo-Funktionen
+    // Demo functions
     async function runComputationDemo() {
       log("Starting computation demo...", "info");
 
       try {
         const workerManager = kernel.getWorkerManager();
 
-        // Sichere vordefinierte Funktion verwenden
+        // Use secure predefined function
         const result = await workerManager.runTask("heavyComputation", {
-          args: [500000], // Anzahl Iterationen
+          args: [500000], // Number of iterations
           timeout: 10000,
           type: WorkerTaskType.COMPUTATION,
         });

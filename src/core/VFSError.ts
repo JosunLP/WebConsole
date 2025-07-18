@@ -89,7 +89,7 @@ export class VFSException extends Error {
 }
 
 /**
- * Error Handler für bessere Fehlerbehandlung
+ * Error Handler for better error handling
  */
 export class VFSErrorHandler {
   static handleError(error: unknown, operation: string, path?: string): never {

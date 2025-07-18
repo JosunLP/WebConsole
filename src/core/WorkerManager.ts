@@ -1,5 +1,5 @@
 /**
- * Worker Manager - Zentrale Verwaltung von Web Workers
+ * Worker Manager - Central management of Web Workers
  */
 
 import {
@@ -56,7 +56,7 @@ class WorkerPool implements IWorkerPool {
   }
 
   async initialize(): Promise<void> {
-    // Erstelle initiale Worker
+    // Create initial workers
     const initialWorkers = Math.min(2, this.maxWorkers);
     for (let i = 0; i < initialWorkers; i++) {
       await this.createWorker();
@@ -102,7 +102,7 @@ class WorkerPool implements IWorkerPool {
 
   async executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R> {
     return new Promise<R>((resolve, reject) => {
-      // Task zur Queue hinzufügen
+      // Add task to queue
       this.taskQueue.push(task);
       this.queuedTasks++;
 
@@ -141,7 +141,7 @@ class WorkerPool implements IWorkerPool {
       });
     }
 
-    // Erstelle neue Worker wenn nötig
+    // Create new workers if needed
     if (this.taskQueue.length > 0 && this.workers.length < this.maxWorkers) {
       try {
         await this.createWorker();
@@ -328,7 +328,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   async initialize(): Promise<void> {
     if (this._isInitialized) return;
 
-    // Erstelle Standard-Pool
+    // Create default pool
     await this.createPool(this.defaultPoolId, 4, this.defaultPermissions);
 
     this._isInitialized = true;
@@ -434,9 +434,9 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
       else if (funcString.includes("batch") || funcString.includes("map"))
         functionName = "batchProcess";
       else {
-        // Default zu heavyComputation für unbekannte Funktionen
+        // Default to heavyComputation for unknown functions
         functionName = "heavyComputation";
-        // Verwende console.warn als Fallback da kein Logger verfügbar
+        // Use console.warn as fallback since no logger available
         // eslint-disable-next-line no-console
         console.warn(
           "Unknown function pattern, defaulting to heavyComputation",

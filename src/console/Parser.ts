@@ -15,7 +15,7 @@ import { RedirectionType } from "../enums/index.js";
 import { Lexer, Token, TokenType } from "./Lexer.js";
 
 /**
- * Parse-Fehler
+ * Parse error
  */
 export class ParseError extends Error {
   constructor(
@@ -72,7 +72,7 @@ export class Parser {
     const segments: PipelineSegment[] = [];
     let background = false;
 
-    // Environment-Variablen am Anfang verarbeiten
+    // Process environment variables at the beginning
     while (this.current().type === TokenType.ASSIGNMENT) {
       const assignment = this.parseAssignment();
       environment[assignment.key] = assignment.value;
@@ -84,7 +84,7 @@ export class Parser {
       const pipeline = this.parsePipeline();
       segments.push(...pipeline);
 
-      // Background-Ausführung prüfen
+      // Check background execution
       if (this.current().type === TokenType.BACKGROUND) {
         background = true;
         this.advance();
@@ -109,7 +109,7 @@ export class Parser {
     segments.push(this.parseCommand());
 
     while (this.current().type === TokenType.PIPE) {
-      this.advance(); // Pipe überspringen
+      this.advance(); // Skip pipe
       segments.push(this.parseCommand());
     }
 
@@ -145,7 +145,7 @@ export class Parser {
       if (this.isRedirection()) {
         redirections.push(this.parseRedirection());
       } else if (this.current().type === TokenType.ASSIGNMENT) {
-        // Environment-Variable assignment für diesen Befehl
+        // Environment variable assignment for this command
         const assignment = this.parseAssignment();
         environment[assignment.key] = assignment.value;
         this.advance();
@@ -156,7 +156,7 @@ export class Parser {
         args.push(this.current().value);
         this.advance();
       } else if (this.current().type === TokenType.VARIABLE) {
-        // Variable expansion würde hier stattfinden
+        // Variable expansion would happen here
         args.push(this.current().value);
         this.advance();
       } else {
@@ -168,7 +168,7 @@ export class Parser {
       command,
       args,
       redirections,
-      environment, // Hinzufügen der lokalen Environment-Variablen
+      environment, // Add local environment variables
     };
   }
 
@@ -226,7 +226,7 @@ export class Parser {
     const target = this.current().value;
     this.advance();
 
-    // Prüfen ob Target ein File-Descriptor ist (Zahl)
+    // Check if target is a file descriptor (number)
     const targetFd = parseInt(target, 10);
     const resolvedTarget = !isNaN(targetFd) ? targetFd : target;
 
@@ -393,7 +393,7 @@ export class Parser {
   private expandGlob(pattern: string): string[] {
     // Vereinfachte Glob-Expansion
     if (pattern.includes("*")) {
-      // In einer echten Implementation würde hier das VFS durchsucht
+      // In real implementation, VFS would be searched here
       return [pattern]; // Fallback: Pattern as-is
     }
     return [pattern];
@@ -417,13 +417,13 @@ export class Parser {
   private substituteCommands(value: string): string {
     // $(command) syntax
     let result = value.replace(/\$\(([^)]+)\)/g, (match, command) => {
-      // In einer echten Implementation würde hier der Befehl ausgeführt
+      // In real implementation, command would be executed here
       return `[output of: ${command}]`;
     });
 
     // `command` syntax (backticks)
     result = result.replace(/`([^`]+)`/g, (match, command) => {
-      // In einer echten Implementation würde hier der Befehl ausgeführt
+      // In real implementation, command would be executed here
       return `[output of: ${command}]`;
     });
 

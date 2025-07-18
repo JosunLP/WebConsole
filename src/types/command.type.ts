@@ -1,22 +1,22 @@
 /**
- * Kommando-bezogene Typdefinitionen
+ * Command-related type definitions
  */
 
 import { ExitCode, RedirectionType } from "../enums/index.js";
 import { Environment, Path } from "./primitive.type.js";
 
 /**
- * Befehlsargumente
+ * Command arguments
  */
 export type CommandArgs = string[];
 
 /**
- * Exit-Handler für Befehle
+ * Exit handler for commands
  */
 export type ExitHandler = (code: ExitCode) => void;
 
 /**
- * Command-Ergebnis
+ * Command result
  */
 export interface CommandResult {
   readonly exitCode: ExitCode;
@@ -26,7 +26,7 @@ export interface CommandResult {
 }
 
 /**
- * Command-Kontext
+ * Command context
  */
 export interface CommandContext {
   readonly args: CommandArgs;
@@ -40,7 +40,7 @@ export interface CommandContext {
 }
 
 /**
- * Redirection-Definiton
+ * Redirection definition
  */
 export interface Redirection {
   readonly type: RedirectionType;
@@ -49,7 +49,7 @@ export interface Redirection {
 }
 
 /**
- * Pipeline-Segment
+ * Pipeline segment
  */
 export interface PipelineSegment {
   readonly command: string;
@@ -59,7 +59,7 @@ export interface PipelineSegment {
 }
 
 /**
- * Komplett geparste Kommandozeile
+ * Completely parsed command line
  */
 export interface ParsedCommand {
   readonly segments: PipelineSegment[];

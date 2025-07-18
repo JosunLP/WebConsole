@@ -27,7 +27,7 @@ export class MemoryProvider implements IVFSProvider {
   private nextInode = 1;
 
   constructor() {
-    // Root-Verzeichnis erstellen
+    // Create root directory
     this.createRootDirectory();
   }
 
@@ -47,7 +47,7 @@ export class MemoryProvider implements IVFSProvider {
 
     entry.data = data;
 
-    // Erstelle neues INode mit aktualisierten Werten
+    // Create new INode with updated values
     const updatedInode: INode = {
       ...entry.inode,
       size: data.length,
@@ -97,7 +97,7 @@ export class MemoryProvider implements IVFSProvider {
       throw new Error(`Inode not found: ${inode}`);
     }
 
-    // Rekursiv Verzeichnisinhalte löschen
+    // Recursively delete directory contents
     if (entry.inode.type === FileType.DIRECTORY && entry.children) {
       for (const childInode of entry.children.values()) {
         await this.deleteInode(childInode);
@@ -116,7 +116,7 @@ export class MemoryProvider implements IVFSProvider {
       throw new Error(`Inode not found: ${inode}`);
     }
 
-    // Erstelle neues INode mit Updates
+    // Create new INode with updates
     const updatedInode: INode = {
       ...entry.inode,
       ...updates,
@@ -222,7 +222,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Root-Verzeichnis erstellen
+   * Create root directory
    */
   private createRootDirectory(): void {
     const now = Date.now();

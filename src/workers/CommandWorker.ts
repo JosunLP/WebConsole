@@ -25,7 +25,7 @@ export interface VFSWorkerProxy {
 }
 
 /**
- * CommandWorker - Führt Command-spezifische Tasks aus
+ * CommandWorker - Executes command-specific tasks
  */
 export class CommandWorker extends BaseWorker {
   private vfsProxy: VFSWorkerProxy | null = null;
@@ -246,7 +246,7 @@ export class CommandWorker extends BaseWorker {
   }
 
   /**
-   * VFS-Proxy für Worker-Kommunikation mit Hauptthread
+   * VFS proxy for worker communication with main thread
    */
   private initializeVFSProxy(): void {
     this.vfsProxy = {

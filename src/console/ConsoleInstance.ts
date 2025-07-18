@@ -143,10 +143,10 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
       this._isRunning = true;
       this.emit(ConsoleEvent.COMMAND_START, { input: command });
 
-      // Füge zur History hinzu
+      // Add to history
       this._addToHistory(command);
 
-      // Parse und führe den Command aus
+      // Parse and execute the command
       const result = await this._executeCommand(command);
 
       this.emit(ConsoleEvent.COMMAND_END, { input: command, result });
@@ -172,7 +172,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
   }
 
   public async changeDirectory(path: Path): Promise<void> {
-    // Validierung über VFS
+    // Validation via VFS
     const vfs = this._kernel.getVFS();
     if (!vfs.exists(path)) {
       throw new Error(`Directory does not exist: ${path}`);
@@ -262,7 +262,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     this._currentOutput = new Uint8Array();
     this._currentError = new Uint8Array();
 
-    // Erstelle synchrone Streams für einfache Ausgaben
+    // Create synchronous streams for simple outputs
     const context = {
       args,
       environment: this.environment,
@@ -303,7 +303,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     };
 
     try {
-      // Führe den Command aus
+      // Execute the command
       const exitCode = await handler.execute(context);
 
       return {

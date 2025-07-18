@@ -39,7 +39,7 @@ export class PluginManager {
       throw new Error(`Plugin '${name}' is already registered`);
     }
 
-    // Prüfe Dependencies
+    // Check dependencies
     for (const dep of plugin.metadata.dependencies || []) {
       if (!this.plugins.has(dep)) {
         throw new Error(`Plugin '${name}' requires dependency '${dep}'`);
@@ -110,7 +110,7 @@ export class PluginManager {
   }
 
   /**
-   * Alle geladenen Plugins auflisten
+   * List all loaded plugins
    */
   getLoadedPlugins(): PluginMetadata[] {
     return Array.from(this.plugins.values()).map((p) => p.metadata);
@@ -312,7 +312,7 @@ export class SystemPlugin implements IPlugin {
 
         let output: string;
         if (format && format.startsWith("+")) {
-          // Einfache Format-Unterstützung
+          // Simple format support
           output = format
             .replace(/%Y/g, now.getFullYear().toString())
             .replace(/%m/g, (now.getMonth() + 1).toString().padStart(2, "0"))

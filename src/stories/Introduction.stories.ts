@@ -20,10 +20,10 @@ export const Welcome = {
         <h3>✨ Features</h3>
         <ul>
           <li>🔧 <strong>Modulare Architektur</strong> - Kernel, VFS, StateManager, Parser</li>
-          <li>🗂️ <strong>Virtuelles Dateisystem</strong> - POSIX-ähnlich mit localStorage-Backend</li>
+          <li>🗂️ <strong>Virtual File System</strong> - POSIX-like with localStorage backend</li>
           <li>🎨 <strong>Framework-agnostisch</strong> - Angular, React, Vue, Svelte, Web Components</li>
           <li>🔒 <strong>Sicherheit</strong> - Sandbox, CSP-kompatibel, keine eval()-Nutzung</li>
-          <li>📦 <strong>Tree-Shaking</strong> - Minimale Bundle-Größe durch modularen Aufbau</li>
+          <li>📦 <strong>Tree-Shaking</strong> - Minimal bundle size through modular structure</li>
         </ul>
 
         <h2>🧪 Test-Kategorien</h2>
@@ -40,10 +40,10 @@ export const Welcome = {
 
         <h3>💡 Hinweise</h3>
         <ul>
-          <li>Alle Console-Instanzen haben ein vorkonfiguriertes VFS mit Demo-Dateien</li>
-          <li>Themes können über den <code>theme</code>-Befehl gewechselt werden</li>
-          <li>Verwenden Sie <code>help</code> für eine Übersicht der verfügbaren Befehle</li>
-          <li>Das VFS ist persistent - Änderungen bleiben zwischen Stories erhalten</li>
+          <li>All console instances have a preconfigured VFS with demo files</li>
+          <li>Themes can be switched using the <code>theme</code> command</li>
+          <li>Use <code>help</code> for an overview of available commands</li>
+          <li>The VFS is persistent - changes persist between stories</li>
         </ul>
       </div>
     `;
