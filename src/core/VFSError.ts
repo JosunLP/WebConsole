@@ -92,7 +92,7 @@ export class VFSException extends Error {
  * Error Handler für bessere Fehlerbehandlung
  */
 export class VFSErrorHandler {
-  static handleError(error: any, operation: string, path?: string): never {
+  static handleError(error: unknown, operation: string, path?: string): never {
     if (error instanceof VFSException) {
       throw error;
     }
@@ -103,14 +103,15 @@ export class VFSErrorHandler {
       throw VFSException.notFound(path);
     }
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
     throw new VFSException(
       VfsError.INVALID_PATH,
-      `Unknown error during ${operation}: ${error.message}`,
+      `Unknown error during ${operation}: ${errorMessage}`,
       path,
     );
   }
 
-  static wrapAsync<T extends any[], R>(
+  static wrapAsync<T extends unknown[], R>(
     fn: (...args: T) => Promise<R>,
     operation: string,
   ) {

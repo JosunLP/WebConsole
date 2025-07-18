@@ -3,10 +3,7 @@
  */
 
 import { kernel } from "../core/Kernel.js";
-import {
-  IWorkerPool,
-  WorkerTaskType,
-} from "../interfaces/IWorkerTask.interface.js";
+import { WorkerTaskType } from "../interfaces/IWorkerTask.interface.js";
 
 // Worker-Demo Interface
 interface WorkerSystemArgs {
@@ -90,32 +87,49 @@ const meta = {
     }
 
     // Status updater
-    function updateStatus(workerManager: any) {
-      if (!workerManager) return;
+    function updateStatus(workerManager: unknown) {
+      if (!workerManager || typeof workerManager !== "object") return;
 
-      const status = workerManager.getWorkerStatus();
-      const activeCount = workerManager.getActiveWorkerCount();
-      const activeTasks = workerManager.listActiveTasks();
+      const manager = workerManager as {
+        getWorkerStatus?: () => unknown;
+        getActiveWorkerCount?: () => number;
+        listActiveTasks?: () => unknown[];
+      };
+
+      const status = manager.getWorkerStatus?.();
+      const activeCount = manager.getActiveWorkerCount?.() || 0;
+      const activeTasks = manager.listActiveTasks?.() || [];
+
+      const statusArray = Array.isArray(status) ? status : [];
+      const statusLength = statusArray.length;
 
       statusContainer.innerHTML = `
         <h4>Worker Status</h4>
         <p><strong>Active Workers:</strong> ${activeCount}</p>
-        <p><strong>Worker Pools:</strong> ${status.length}</p>
+        <p><strong>Worker Pools:</strong> ${statusLength}</p>
         <p><strong>Active Tasks:</strong> ${activeTasks.length}</p>
 
         <h5>Pool Details:</h5>
-        ${status
-          .map(
-            (pool: IWorkerPool) => `
+        ${statusArray
+          .map((pool: unknown) => {
+            const p = pool as {
+              id?: string;
+              activeWorkers?: number;
+              maxWorkers?: number;
+              queuedTasks?: number;
+              completedTasks?: number;
+              status?: string;
+            };
+            return `
           <div style="margin: 5px 0; padding: 5px; background: white; border-radius: 3px;">
-            <strong>${pool.id}:</strong>
-            ${pool.activeWorkers}/${pool.maxWorkers} workers,
-            ${pool.queuedTasks} queued,
-            ${pool.completedTasks} completed,
-            ${pool.failedTasks} failed
+            <strong>${p.id || "Unknown"}:</strong>
+            ${p.activeWorkers || 0}/${p.maxWorkers || 0} workers,
+            ${p.queuedTasks || 0} queued,
+            ${p.completedTasks || 0} completed,
+            Status: ${p.status || "Unknown"}
           </div>
-        `,
-          )
+        `;
+          })
           .join("")}
       `;
     }

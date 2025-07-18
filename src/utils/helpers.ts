@@ -59,7 +59,7 @@ export function deepClone<T>(obj: T): T {
     const cloned = {} as Record<string, unknown>;
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        cloned[key] = deepClone((obj as any)[key]);
+        cloned[key] = deepClone((obj as Record<string, unknown>)[key]);
       }
     }
     return cloned as T;
@@ -71,7 +71,7 @@ export function deepClone<T>(obj: T): T {
 /**
  * Debounce-Funktion
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
 ): (...args: Parameters<T>) => void {
@@ -91,7 +91,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle-Funktion
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {

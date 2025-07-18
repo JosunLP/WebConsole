@@ -124,10 +124,12 @@ export class ThemeCommand extends BaseCommand {
       this.emitThemeChangeEvent(context, themeName);
 
       return ExitCode.SUCCESS;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       await this.writeToStderr(
         context,
-        `theme: failed to set theme '${themeName}': ${error.message}\n`,
+        `theme: failed to set theme '${themeName}': ${errorMessage}\n`,
       );
       return ExitCode.FAILURE;
     }
@@ -146,10 +148,12 @@ export class ThemeCommand extends BaseCommand {
       this.emitThemeChangeEvent(context, defaultTheme);
 
       return ExitCode.SUCCESS;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       await this.writeToStderr(
         context,
-        `theme: failed to reset theme: ${error.message}\n`,
+        `theme: failed to reset theme: ${errorMessage}\n`,
       );
       return ExitCode.FAILURE;
     }
@@ -186,7 +190,7 @@ export class ThemeCommand extends BaseCommand {
     try {
       // Try to get from state manager
       if (context.state && typeof context.state.get === "function") {
-        return context.state.get("console.theme", "default");
+        return context.state.get("console.theme") || "default";
       }
       return "default";
     } catch {
@@ -198,7 +202,7 @@ export class ThemeCommand extends BaseCommand {
     try {
       // Try to get from state manager
       if (context.state && typeof context.state.get === "function") {
-        return context.state.get("console.themeMode", ThemeMode.AUTO);
+        return context.state.get("console.themeMode") || ThemeMode.AUTO;
       }
       return ThemeMode.AUTO;
     } catch {

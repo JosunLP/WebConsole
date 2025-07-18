@@ -3,20 +3,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue';
-import { kernel } from '../../core/Kernel.js';
-import type { IConsole } from '../../interfaces/IConsole.interface.js';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { kernel } from "../../core/Kernel.js";
+import type { IConsole } from "../../interfaces/IConsole.interface.js";
 
 export default defineComponent({
-  name: 'WebConsole',
+  name: "WebConsole",
   props: {
-    prompt: { type: String, default: '$ ' },
-    width: { type: [String, Number], default: '100%' },
+    prompt: { type: String, default: "$ " },
+    width: { type: [String, Number], default: "100%" },
     height: { type: [String, Number], default: 400 },
-    theme: { type: String, default: 'default' },
-    workingDirectory: { type: String, default: '/home/user' },
+    theme: { type: String, default: "default" },
+    workingDirectory: { type: String, default: "/home/user" },
   },
-  emits: ['command', 'ready', 'error'],
+  emits: ["command", "ready", "error"],
   setup(props, { emit }) {
     const container = ref<HTMLElement | null>(null);
     let webConsoleElement: HTMLElement | null = null;
@@ -29,26 +29,29 @@ export default defineComponent({
         }
 
         // Erstelle WebConsole Element
-        webConsoleElement = document.createElement('web-console');
-        webConsoleElement.setAttribute('prompt', props.prompt);
-        webConsoleElement.setAttribute('theme', props.theme);
+        webConsoleElement = document.createElement("web-console");
+        webConsoleElement.setAttribute("prompt", props.prompt);
+        webConsoleElement.setAttribute("theme", props.theme);
         webConsoleElement.style.width =
-          typeof props.width === 'number' ? `${props.width}px` : props.width;
+          typeof props.width === "number" ? `${props.width}px` : props.width;
         webConsoleElement.style.height =
-          typeof props.height === 'number' ? `${props.height}px` : props.height;
+          typeof props.height === "number" ? `${props.height}px` : props.height;
 
         // Event-Listener hinzufügen
-        webConsoleElement.addEventListener('command', (event: any) => {
-          emit('command', event.detail);
+        webConsoleElement.addEventListener("command", (event: Event) => {
+          const customEvent = event as CustomEvent;
+          emit("command", customEvent.detail);
         });
 
-        webConsoleElement.addEventListener('ready', (event: any) => {
-          consoleInstance = event.detail;
-          emit('ready', event.detail);
+        webConsoleElement.addEventListener("ready", (event: Event) => {
+          const customEvent = event as CustomEvent;
+          consoleInstance = customEvent.detail;
+          emit("ready", customEvent.detail);
         });
 
-        webConsoleElement.addEventListener('error', (event: any) => {
-          emit('error', event.detail);
+        webConsoleElement.addEventListener("error", (event: Event) => {
+          const customEvent = event as CustomEvent;
+          emit("error", customEvent.detail);
         });
 
         // Zum DOM hinzufügen
@@ -56,7 +59,7 @@ export default defineComponent({
           container.value.appendChild(webConsoleElement);
         }
       } catch (error) {
-        emit('error', error);
+        emit("error", error);
       }
     };
 
@@ -65,9 +68,9 @@ export default defineComponent({
       () => props.theme,
       (newTheme) => {
         if (webConsoleElement) {
-          webConsoleElement.setAttribute('theme', newTheme);
+          webConsoleElement.setAttribute("theme", newTheme);
         }
-      }
+      },
     );
 
     // Watch für Prompt-Änderungen
@@ -75,9 +78,9 @@ export default defineComponent({
       () => props.prompt,
       (newPrompt) => {
         if (webConsoleElement) {
-          webConsoleElement.setAttribute('prompt', newPrompt);
+          webConsoleElement.setAttribute("prompt", newPrompt);
         }
-      }
+      },
     );
 
     onMounted(() => {
@@ -102,14 +105,14 @@ export default defineComponent({
     };
 
     const clear = () => {
-      if (webConsoleElement && 'clear' in webConsoleElement) {
+      if (webConsoleElement && "clear" in webConsoleElement) {
         (webConsoleElement as any).clear();
       }
     };
 
     const setPrompt = (newPrompt: string) => {
       if (webConsoleElement) {
-        webConsoleElement.setAttribute('prompt', newPrompt);
+        webConsoleElement.setAttribute("prompt", newPrompt);
       }
     };
 

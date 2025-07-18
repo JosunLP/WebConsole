@@ -1,4 +1,5 @@
 import { ExitCode } from "../../enums/ExitCode.enum.js";
+import { VfsItemType } from "../../enums/VfsItemType.enum.js";
 import type { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
@@ -58,7 +59,7 @@ export class RmCommand extends BaseCommand {
           continue;
         }
 
-        if (stat.isDirectory()) {
+        if (stat.type === VfsItemType.DIRECTORY) {
           if (!recursive) {
             await this.writeToStderr(
               context,
@@ -100,7 +101,7 @@ export class RmCommand extends BaseCommand {
   }
 
   private async removeDirectoryRecursive(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     dirPath: string,
     verbose: boolean,
     context: CommandContext,
@@ -114,7 +115,7 @@ export class RmCommand extends BaseCommand {
         const entryPath =
           dirPath === "/" ? `/${entry.name}` : `${dirPath}/${entry.name}`;
 
-        if (entry.isDirectory()) {
+        if (entry.type === VfsItemType.DIRECTORY) {
           await this.removeDirectoryRecursive(vfs, entryPath, verbose, context);
         } else {
           await vfs.deleteFile(entryPath);
@@ -126,7 +127,7 @@ export class RmCommand extends BaseCommand {
       }
 
       // Remove the directory itself
-      await vfs.deleteDirectory(dirPath);
+      await vfs.deleteDir(dirPath);
 
       if (verbose) {
         await this.writeToStdout(context, `removed directory '${dirPath}'\n`);

@@ -1,4 +1,5 @@
 import { ExitCode } from "../../enums/ExitCode.enum.js";
+import type { IVFS } from "../../interfaces/IVFS.interface.js";
 import type { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
@@ -148,7 +149,7 @@ export class CpCommand extends BaseCommand {
   }
 
   private async copyDirectoryRecursive(
-    vfs: any,
+    vfs: IVFS,
     sourcePath: string,
     destPath: string,
     verbose: boolean,
@@ -156,7 +157,7 @@ export class CpCommand extends BaseCommand {
   ): Promise<void> {
     // Create destination directory
     try {
-      await vfs.createDirectory(destPath);
+      await vfs.createDir(destPath);
     } catch (error) {
       // Directory might already exist
     }

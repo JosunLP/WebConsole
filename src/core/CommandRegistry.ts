@@ -257,7 +257,9 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   /**
    * Register all built-in commands
    */
-  registerBuiltinCommands(vfs: any): void {
+  registerBuiltinCommands(
+    vfs: import("../interfaces/IVFS.interface.js").IVFS,
+  ): void {
     // Commands that work without VFS
     this.register(new EchoCommand() as ICommandHandler);
     this.register(new ClearCommand() as ICommandHandler);
@@ -294,7 +296,9 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   /**
    * Create default registry with all built-in commands
    */
-  static createDefault(vfs: any): CommandRegistry {
+  static createDefault(
+    vfs: import("../interfaces/IVFS.interface.js").IVFS,
+  ): CommandRegistry {
     const registry = new CommandRegistry();
     registry.registerBuiltinCommands(vfs);
     return registry;

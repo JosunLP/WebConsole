@@ -28,7 +28,7 @@ export interface IKernel extends IEventEmitter {
   getThemeManager(): IThemeManager;
   getCommandRegistry(): ICommandRegistry;
   getComponentRegistry(): IComponentRegistry;
-  getPluginManager(): any; // PluginManager type will be imported separately
+  getPluginManager(): import("../plugins/PluginManager.js").PluginManager;
   getLogger(): ILogger;
   getWorkerManager(): IWorkerManager;
 

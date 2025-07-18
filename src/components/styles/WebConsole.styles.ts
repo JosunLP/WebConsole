@@ -118,7 +118,9 @@ export const webConsoleStyles = `
 `;
 
 // Style objects for theme integration (to support existing CSS-in-JS usage)
-export const getWebConsoleThemeStyles = (theme?: any) => {
+export const getWebConsoleThemeStyles = (theme?: {
+  tokens?: Record<string, unknown>;
+}) => {
   const tokens = theme?.tokens || {};
 
   return {

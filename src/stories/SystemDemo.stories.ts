@@ -285,12 +285,14 @@ function App() {
   \`
 })
 export class AppComponent {
-  onCommand(event: any) {
+  onCommand(event: Event) {
     console.log('Command:', event);
   }
 
-  onReady(console: any) {
-    console.executeCommand('echo "Angular WebConsole ready!"');
+  onReady(console: unknown) {
+    if (console && typeof console === 'object' && 'executeCommand' in console) {
+      (console as { executeCommand: (cmd: string) => void }).executeCommand('echo "Angular WebConsole ready!"');
+    }
   }
 }`,
         features: [

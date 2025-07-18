@@ -634,9 +634,12 @@ Features:
   watch(path: Path, handler: EventHandler): EventUnsubscriber {
     // Vereinfachte Implementation - lauscht auf alle VFS-Events
     // und filtert nach Pfad
-    const wrappedHandler = (data: any) => {
-      if (data.path === path || data.path.startsWith(path + "/")) {
-        handler(data);
+    const wrappedHandler = (data: unknown) => {
+      if (typeof data === "object" && data !== null && "path" in data) {
+        const eventData = data as { path: string };
+        if (eventData.path === path || eventData.path.startsWith(path + "/")) {
+          handler(data);
+        }
       }
     };
 
@@ -722,10 +725,7 @@ Features:
       throw new Error(`Path not found: ${path}`);
     }
 
-    const updates: Partial<INode> = { owner };
-    if (group) {
-      (updates as any).group = group;
-    }
+    const updates: Partial<INode> = { owner, ...(group && { group }) };
 
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,

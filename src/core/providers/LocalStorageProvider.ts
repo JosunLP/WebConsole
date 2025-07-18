@@ -13,6 +13,24 @@ interface StorageEntry {
   children?: Map<string, InodeNumber>;
 }
 
+interface SerializedStorageData {
+  nextInode: number;
+  entries: Record<
+    string,
+    {
+      inode: INode;
+      data?: number[];
+      children?: Record<string, number>;
+    }
+  >;
+}
+
+interface StorageEntryData {
+  inode: INode & { mtime?: number; atime?: number; ctime?: number };
+  data?: number[];
+  children?: Record<string, number>;
+}
+
 export class LocalStorageProvider implements IVFSProvider {
   public readonly name = "localStorage";
   public readonly readOnly = false;
@@ -42,7 +60,9 @@ export class LocalStorageProvider implements IVFSProvider {
 
     entry.data = data;
     entry.inode.size = data.length;
-    (entry.inode as any).mtime = Date.now();
+    if ("mtime" in entry.inode) {
+      (entry.inode as { mtime?: number }).mtime = Date.now();
+    }
 
     this.saveToStorage();
   }
@@ -212,24 +232,32 @@ export class LocalStorageProvider implements IVFSProvider {
         return;
       }
 
-      const data = JSON.parse(stored);
+      const data = JSON.parse(stored) as SerializedStorageData;
       this.nextInode = data.nextInode || 1;
 
       for (const [inodeStr, entryData] of Object.entries(data.entries)) {
         const inode = parseInt(inodeStr, 10);
+        const typedEntryData = entryData as StorageEntryData;
+
         const entry: StorageEntry = {
           inode: {
-            ...(entryData as any).inode,
-            atime: (entryData as any).inode.atime,
-            mtime: (entryData as any).inode.mtime,
-            ctime: (entryData as any).inode.ctime,
+            ...typedEntryData.inode,
+            ...(typedEntryData.inode.atime && {
+              atime: typedEntryData.inode.atime,
+            }),
+            ...(typedEntryData.inode.mtime && {
+              mtime: typedEntryData.inode.mtime,
+            }),
+            ...(typedEntryData.inode.ctime && {
+              ctime: typedEntryData.inode.ctime,
+            }),
           },
-          data: (entryData as any).data
-            ? new Uint8Array((entryData as any).data)
+          data: typedEntryData.data
+            ? new Uint8Array(typedEntryData.data)
             : new Uint8Array(0),
-          children: (entryData as any).children
+          children: typedEntryData.children
             ? new Map(
-                Object.entries((entryData as any).children).map(([k, v]) => [
+                Object.entries(typedEntryData.children).map(([k, v]) => [
                   k,
                   Number(v),
                 ]),
@@ -246,13 +274,16 @@ export class LocalStorageProvider implements IVFSProvider {
 
   private saveToStorage(): void {
     try {
-      const data: any = {
+      const data: {
+        nextInode: number;
+        entries: Record<string, unknown>;
+      } = {
         nextInode: this.nextInode,
         entries: {},
       };
 
       for (const [inode, entry] of this.storage) {
-        (data.entries as any)[inode] = {
+        data.entries[inode] = {
           inode: entry.inode,
           data: entry.data ? Array.from(entry.data) : undefined,
           children: entry.children

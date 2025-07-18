@@ -35,8 +35,8 @@ export interface CommandContext {
   readonly stdin: ReadableStream<Uint8Array>;
   readonly stdout: WritableStream<Uint8Array>;
   readonly stderr: WritableStream<Uint8Array>;
-  readonly vfs: any; // VirtualFileSystem
-  readonly state: any; // StateManager with cwd property
+  readonly vfs: import("../interfaces/IVFS.interface.js").IVFS;
+  readonly state: import("../interfaces/IStateManager.interface.js").IStateManager;
 }
 
 /**

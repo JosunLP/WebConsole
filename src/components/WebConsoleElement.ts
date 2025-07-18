@@ -188,7 +188,7 @@ export class WebConsoleElement extends HTMLElement {
     return "/home/user";
   }
 
-  public getConsoleState(): any {
+  public getConsoleState(): unknown {
     return this._console?.getState() || {};
   }
 
