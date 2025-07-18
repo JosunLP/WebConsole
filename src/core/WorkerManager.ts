@@ -13,6 +13,7 @@ import {
   WorkerTaskType,
 } from "../interfaces/index.js";
 import { EventEmitter } from "./EventEmitter.js";
+import { Logger } from "./Logger.js";
 
 /**
  * Worker Pool Implementation
@@ -42,6 +43,7 @@ class WorkerPool implements IWorkerPool {
 
   private permissions: IWorkerPermissions;
   private workerScript: string;
+  private logger: Logger;
 
   constructor(
     id: string,
@@ -53,6 +55,7 @@ class WorkerPool implements IWorkerPool {
     this.maxWorkers = maxWorkers;
     this.permissions = permissions;
     this.workerScript = workerScript;
+    this.logger = new Logger(`WorkerPool[${id}]`);
   }
 
   async initialize(): Promise<void> {
@@ -231,23 +234,29 @@ class WorkerPool implements IWorkerPool {
     // Implementation would forward VFS calls to the main thread here
   }
 
-  private handleWorkerError(worker: Worker, _error: ErrorEvent): void {
+  private handleWorkerError(worker: Worker, error: ErrorEvent): void {
+    this.logger.error("Worker error occurred:", error.message, error);
+
     // Remove faulty worker
     const index = this.workers.indexOf(worker);
     if (index >= 0) {
       this.workers.splice(index, 1);
+      this.logger.debug(`Removed faulty worker at index ${index}`);
     }
 
     const availableIndex = this.availableWorkers.indexOf(worker);
     if (availableIndex >= 0) {
       this.availableWorkers.splice(availableIndex, 1);
+      this.logger.debug(
+        `Removed worker from available pool at index ${availableIndex}`,
+      );
     }
 
     this.busyWorkers.delete(worker);
 
     // Create replacement worker
-    this.createWorker().catch(() => {
-      // Failed to create replacement worker
+    this.createWorker().catch((createError) => {
+      this.logger.error("Failed to create replacement worker:", createError);
     });
   }
 
@@ -309,9 +318,11 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   };
 
   private taskIdCounter = 0;
+  private logger: Logger;
 
   private constructor() {
     super();
+    this.logger = new Logger("WorkerManager");
   }
 
   public static getInstance(): WorkerManager {
@@ -436,9 +447,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
       else {
         // Default to heavyComputation for unknown functions
         functionName = "heavyComputation";
-        // Use console.warn as fallback since no logger available
-        // eslint-disable-next-line no-console
-        console.warn(
+        this.logger.warn(
           "Unknown function pattern, defaulting to heavyComputation",
         );
       }
