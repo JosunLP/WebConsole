@@ -88,7 +88,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
    * Get command handler
    */
   get(name: string): ICommandHandler | undefined {
-    // Zuerst nach Alias suchen
+    // First search for alias
     const resolvedName = this.aliases.get(name) || name;
     return this.commands.get(resolvedName);
   }

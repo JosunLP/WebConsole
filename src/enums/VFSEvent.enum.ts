@@ -14,6 +14,6 @@ export enum VFSEvent {
   DIRECTORY_DELETED = "directory:deleted",
   /** Mount point added */
   MOUNT_ADDED = "mount:added",
-  /** Mount-Point entfernt */
+  /** Mount point removed */
   MOUNT_REMOVED = "mount:removed",
 }

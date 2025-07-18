@@ -29,7 +29,7 @@ interface MountPoint {
 }
 
 /**
- * Pfad-Resolution Ergebnis
+ * Path resolution result
  */
 interface PathResolution {
   mountPoint: MountPoint;

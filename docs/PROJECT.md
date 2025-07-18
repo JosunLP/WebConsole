@@ -1,4 +1,4 @@
-# Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
+# Concept: Browser Console Library "Web-Console"
 
 ## 1. Vision & Goals
 

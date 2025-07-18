@@ -30,9 +30,9 @@ export enum ConsoleEvent {
   ENV_CHANGED = "env:changed",
   /** Prompt changed */
   PROMPT_CHANGED = "prompt:changed",
-  /** History geleert */
+  /** History cleared */
   HISTORY_CLEARED = "history:cleared",
-  /** History aktualisiert */
+  /** History updated */
   HISTORY_UPDATED = "history:updated",
   /** Theme changed */
   THEME_CHANGED = "theme:changed",

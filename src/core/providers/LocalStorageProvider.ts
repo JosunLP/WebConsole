@@ -213,7 +213,7 @@ export class LocalStorageProvider implements IVFSProvider {
    * Load root inode (or create if not exists)
    */
   async getRootInode(): Promise<InodeNumber> {
-    // Suche nach Root-Verzeichnis (Inode 1)
+    // Search for root directory (Inode 1)
     const rootEntry = this.storage.get(1);
     if (rootEntry && rootEntry.inode.type === FileType.DIRECTORY) {
       return 1;

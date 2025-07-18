@@ -76,7 +76,7 @@ class WorkerPool implements IWorkerPool {
       this.handleWorkerError(worker, error);
     });
 
-    // Worker bereit warten
+    // Wait for worker to be ready
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error("Worker initialization timeout"));
@@ -115,7 +115,7 @@ class WorkerPool implements IWorkerPool {
         startTime: performance.now(),
       });
 
-      // Versuche Task sofort zu starten
+      // Try to start task immediately
       this.processQueue();
     });
   }

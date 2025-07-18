@@ -1,5 +1,5 @@
 /**
- * Kill Command - Beendet Worker-Tasks
+ * Kill Command - Terminates worker tasks
  */
 
 import { kernel } from "../../core/Kernel.js";

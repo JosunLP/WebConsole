@@ -6,7 +6,7 @@ interface CoreSystemArgs {
   showLogs: boolean;
 }
 
-// Meta-Konfiguration
+// Meta configuration
 const meta = {
   title: "Core/System Tests",
   tags: ["autodocs"],
@@ -81,7 +81,7 @@ const meta = {
       return button;
     };
 
-    // Test-Funktionen
+    // Test functions
     const testKernelStart = async () => {
       log("🚀 Starting Kernel...");
       await kernel.start();
@@ -196,7 +196,7 @@ const meta = {
 
 export default meta;
 
-// Standard Core-Tests
+// Standard core tests
 export const CoreSystemTests = {
   name: "🔧 Manual Tests",
 };

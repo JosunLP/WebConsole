@@ -326,7 +326,7 @@ export class AppModule {}
 | `monokai`          | 🌃 Classic Sublime Text Theme   | Dark theme with syntax highlighting    |
 | `solarized-dark`   | 🌅 Popular designer theme       | Scientifically optimized color palette |
 | `light`            | ☀️ Light standard theme         | Clean, minimal, daylight-suitable      |
-| `default`          | 🎯 System-Standard              | Adaptive Farben, System-Preferences    |
+| `default`          | 🎯 System Standard              | Adaptive colors, system preferences    |
 
 ### Custom Theme API
 

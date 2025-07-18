@@ -89,7 +89,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Throttle-Funktion
+ * Throttle function
  */
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
@@ -152,7 +152,7 @@ export async function retry<T>(
 }
 
 /**
- * Sleep-Funktion
+ * Sleep function
  */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

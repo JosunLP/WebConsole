@@ -96,7 +96,7 @@ export class RunCommand extends BaseCommand {
 
     const result = await this.runCommandInWorker(
       () => {
-        // Simuliere parallele Verarbeitung
+        // Simulate parallel processing
         return {
           command: command.join(" "),
           output: `✓ Parallel execution: ${command.join(" ")}`,

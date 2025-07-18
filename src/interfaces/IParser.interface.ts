@@ -8,7 +8,7 @@ export interface IParser {
   parse(input: string): ParsedCommand;
   tokenize(input: string): string[];
 
-  // Erweiterungen
+  // Extensions
   addOperator(operator: string, precedence: number): void;
   addFunction(name: string, handler: Function): void;
 }

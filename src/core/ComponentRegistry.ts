@@ -35,7 +35,7 @@ export class ComponentRegistry
       return this.initializing.get(name)!;
     }
 
-    // Loader vorhanden?
+    // Loader available?
     const loader = this.components.get(name);
     if (!loader) {
       throw new Error(`Component '${name}' not registered`);
