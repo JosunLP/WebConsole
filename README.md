@@ -269,7 +269,7 @@ npm install web-console svelte         # Svelte
 </html>
 ```
 
-#### React (in Entwicklung)
+#### React (in development)
 
 ```tsx
 import { WebConsole } from "web-console/react";
@@ -292,7 +292,7 @@ function App() {
 }
 ```
 
-#### Angular (geplant)
+#### Angular (planned)
 
 ```typescript
 // app.module.ts
@@ -320,13 +320,13 @@ export class AppModule {}
 
 ### Built-in Themes
 
-| Theme              | Description                       | Preview                                 |
-| ------------------ | --------------------------------- | --------------------------------------- |
-| `windows-terminal` | 🪟 Windows Terminal Look & Feel   | Dark, modern, Microsoft-inspired        |
-| `monokai`          | 🌃 Klassisches Sublime Text Theme | Dunkles Theme mit Syntax-Highlighting   |
-| `solarized-dark`   | 🌅 Beliebtes Designer-Theme       | Wissenschaftlich optimierte Farbpalette |
-| `light`            | ☀️ Helles Standard-Theme          | Clean, minimal, tageslicht-tauglich     |
-| `default`          | 🎯 System-Standard                | Adaptive Farben, System-Preferences     |
+| Theme              | Description                     | Preview                                |
+| ------------------ | ------------------------------- | -------------------------------------- |
+| `windows-terminal` | 🪟 Windows Terminal Look & Feel | Dark, modern, Microsoft-inspired       |
+| `monokai`          | 🌃 Classic Sublime Text Theme   | Dark theme with syntax highlighting    |
+| `solarized-dark`   | 🌅 Popular designer theme       | Scientifically optimized color palette |
+| `light`            | ☀️ Light standard theme         | Clean, minimal, daylight-suitable      |
+| `default`          | 🎯 System-Standard              | Adaptive Farben, System-Preferences    |
 
 ### Custom Theme API
 
@@ -419,7 +419,7 @@ await VFS.mount(
 
 ## ⚡ Built-in Commands & Extensibility
 
-### Core Commands (verfügbar)
+### Core Commands (available)
 
 ```bash
 # System & Navigation
@@ -432,7 +432,7 @@ ls [-la] [path]         # Verzeichnis-Inhalt auflisten
 # Dateisystem-Operationen
 cat [file]              # Datei-Inhalt anzeigen
 mkdir [-p] <directory>  # Verzeichnis erstellen
-rm [-rf] <file/dir>     # Dateien/Ordner löschen
+rm [-rf] <file/dir>     # Delete files/folders
 cp [-r] <src> <dest>    # Kopieren
 mv <src> <dest>         # Verschieben/Umbenennen
 
@@ -642,30 +642,30 @@ vfs.on("directory:deleted", ({ path }) => {
 
 ## 🚀 Development & Contributing
 
-### Entwicklungsumgebung einrichten
+### Setting up the development environment
 
 ```bash
-# Repository klonen
+# Clone repository
 git clone https://github.com/JosunLP/WebConsole.git
 cd WebConsole
 
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Entwicklung starten (mit Live-Reload)
+# Start development (with live reload)
 npm run dev
 
-# Storybook für interaktive Entwicklung
+# Storybook for interactive development
 npm run storybook
 
-# Tests ausführen
+# Run tests
 npm run test
 
-# Build für Produktion
+# Build for production
 npm run build
 ```
 
-### Projektstruktur
+### Project structure
 
 ```bash
 WebConsole/
@@ -681,7 +681,7 @@ WebConsole/
 │   │   └── CommandRegistry.ts # 🔧 Command-Registrierung
 │   ├── 📁 console/         # Console-Implementation
 │   │   ├── ConsoleInstance.ts # Console-Instanz
-│   │   ├── Lexer.ts        # Token-Lexer für Shell-Syntax
+│   │   ├── Lexer.ts        # Token lexer for shell syntax
 │   │   ├── Parser.ts       # Command-Parser
 │   │   ├── BaseCommand.ts  # Base-Klasse für Commands
 │   │   └── 📁 commands/    # Built-in Commands

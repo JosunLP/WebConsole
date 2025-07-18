@@ -12,7 +12,7 @@ const meta: Meta = {
     layout: "centered",
     docs: {
       description: {
-        component: "WebConsole-Komponenten für alle unterstützten Frameworks.",
+        component: "WebConsole components for all supported frameworks.",
       },
     },
   },

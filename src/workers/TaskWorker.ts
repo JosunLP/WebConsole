@@ -1,5 +1,5 @@
 /**
- * Standard Task Worker für allgemeine Berechnungen
+ * Standard Task Worker for general computations
  */
 
 import {
@@ -9,7 +9,7 @@ import {
 import { BaseWorker } from "./BaseWorker.js";
 
 /**
- * TaskWorker - Führt allgemeine JavaScript-Tasks aus
+ * TaskWorker - Executes general JavaScript tasks
  */
 export class TaskWorker extends BaseWorker {
   protected async processTask(
@@ -40,31 +40,31 @@ export class TaskWorker extends BaseWorker {
     const { payload } = task;
 
     if (typeof payload === "object" && payload && "function" in payload) {
-      // Sichere Funktion-Ausführung mit vordefiniertem Set
+      // Secure function execution with predefined set
       const functionName = payload.function as string;
       const args = (payload as { args?: unknown[] }).args || [];
 
       return await this.executeSafeFunction(functionName, args, signal);
     }
 
-    // Standard-Payload-Verarbeitung
+    // Standard payload processing
     return payload;
   }
 
   /**
-   * Sichere Funktions-Ausführung mit vordefinierten erlaubten Funktionen
+   * Secure function execution with predefined allowed functions
    */
   private async executeSafeFunction(
     functionName: string,
     args: unknown[],
     signal: AbortSignal,
   ): Promise<unknown> {
-    // Vordefinierte erlaubte Funktionen für sicheren Betrieb
+    // Predefined allowed functions for secure operation
     const allowedFunctions: Record<
       string,
       (args: unknown[], signal: AbortSignal) => unknown | Promise<unknown>
     > = {
-      // Mathematische Operationen
+      // Mathematical operations
       fibonacci: (args: unknown[]) => {
         const n = Number(args[0]);
         if (n <= 1) return n;
@@ -76,7 +76,7 @@ export class TaskWorker extends BaseWorker {
         return b;
       },
 
-      // Komplexe Berechnungen
+      // Complex calculations
       primeFactors: (args: unknown[]) => {
         const num = Number(args[0]);
         const factors: number[] = [];
@@ -95,13 +95,13 @@ export class TaskWorker extends BaseWorker {
         return factors;
       },
 
-      // Array-Operationen
+      // Array operations
       sortNumbers: (args: unknown[]) => {
         const arr = args[0] as number[];
         return [...arr].sort((a, b) => a - b);
       },
 
-      // String-Verarbeitung
+      // String processing
       processText: (args: unknown[]) => {
         const text = String(args[0]);
         const operation = String(args[1] || "uppercase");
@@ -120,7 +120,7 @@ export class TaskWorker extends BaseWorker {
         }
       },
 
-      // Simulation schwerer Berechnungen
+      // Simulation of heavy computations
       heavyComputation: (args: unknown[], signal: AbortSignal) => {
         const iterations = Number(args[0]) || 1000000;
         let sum = 0;
@@ -139,7 +139,7 @@ export class TaskWorker extends BaseWorker {
         };
       },
 
-      // Batch-Verarbeitung
+      // Batch processing
       batchProcess: (args: unknown[]) => {
         const items = args[0] as unknown[];
         const operation = String(args[1] || "identity");
@@ -152,7 +152,7 @@ export class TaskWorker extends BaseWorker {
         }));
       },
 
-      // Daten-Analyse
+      // Data analysis
       analyzeData: (args: unknown[]) => {
         const data = args[0] as number[];
         const sum = data.reduce((acc, val) => acc + val, 0);
@@ -234,7 +234,7 @@ export class TaskWorker extends BaseWorker {
     this.checkAborted(signal);
 
     // Custom Task Execution
-    // Kann von Plugin-System erweitert werden
+    // Can be extended by plugin system
     return task.payload;
   }
 
@@ -244,11 +244,11 @@ export class TaskWorker extends BaseWorker {
   ): Promise<unknown> {
     this.checkAborted(signal);
 
-    // Beispiel: JSON-Parsing
+    // Example: JSON parsing
     try {
       return JSON.parse(content);
     } catch {
-      // Fallback: Line-by-line parsing
+      // Fallback: line-by-line parsing
       return content.split("\n").map((line, index) => ({
         line: index + 1,
         content: line.trim(),
@@ -264,7 +264,7 @@ export class TaskWorker extends BaseWorker {
 
     const errors: string[] = [];
 
-    // Basis-Validierungen
+    // Basic validations
     if (content.length === 0) {
       errors.push("File is empty");
     }
@@ -273,7 +273,7 @@ export class TaskWorker extends BaseWorker {
       errors.push("File is too large (>1MB)");
     }
 
-    // JSON-Validierung falls anwendbar
+    // JSON validation if applicable
     if (content.trim().startsWith("{") || content.trim().startsWith("[")) {
       try {
         JSON.parse(content);
@@ -296,7 +296,7 @@ export class TaskWorker extends BaseWorker {
   ): Promise<string> {
     this.checkAborted(signal);
 
-    // Basis-Transformationen
+    // Basic transformations
     return content
       .split("\n")
       .map((line) => line.trim())
@@ -305,7 +305,7 @@ export class TaskWorker extends BaseWorker {
   }
 }
 
-// Worker-Script für Browser
+// Worker script for browser
 if (
   typeof self !== "undefined" &&
   self.constructor.name === "DedicatedWorkerGlobalScope"

@@ -179,18 +179,18 @@ export function generateSecureId(): string {
 }
 
 /**
- * Sichere Message-ID-Generierung für Worker-Kommunikation
+ * Secure message ID generation for worker communication
  */
 export function generateMessageId(): string {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    // Kompakte aber sichere Message-ID (8 Bytes = 16 Hex-Zeichen)
+    // Compact but secure message ID (8 bytes = 16 hex characters)
     const array = new Uint8Array(8);
     crypto.getRandomValues(array);
     return Array.from(array)
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
   } else {
-    // Fallback für Umgebungen ohne crypto API
+    // Fallback for environments without crypto API
     console.warn(
       "crypto.getRandomValues not available, falling back to Math.random()",
     );
@@ -199,7 +199,7 @@ export function generateMessageId(): string {
 }
 
 /**
- * Sichere Worker-ID-Generierung
+ * Secure worker ID generation
  */
 export function generateWorkerId(): string {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
@@ -210,7 +210,7 @@ export function generateWorkerId(): string {
       .join("");
     return `worker-${randomPart}`;
   } else {
-    // Fallback für Umgebungen ohne crypto API
+    // Fallback for environments without crypto API
     console.warn(
       "crypto.getRandomValues not available, falling back to Math.random()",
     );
@@ -227,7 +227,7 @@ export function generateId(): string {
 }
 
 /**
- * Formatiert Bytes in menschenlesbare Form
+ * Format bytes into human-readable form
  */
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return "0 Bytes";
@@ -242,7 +242,7 @@ export function formatBytes(bytes: number, decimals = 2): string {
 }
 
 /**
- * Formatiert eine Zeitspanne in menschenlesbare Form
+ * Format time duration into human-readable form
  */
 export function formatDuration(ms: number): string {
   if (ms < 1000) {
@@ -264,7 +264,7 @@ export function formatDuration(ms: number): string {
 }
 
 /**
- * Escapen von HTML-Zeichen
+ * Escape HTML characters
  */
 export function escapeHtml(text: string): string {
   const div = document.createElement("div");
@@ -273,7 +273,7 @@ export function escapeHtml(text: string): string {
 }
 
 /**
- * Unescapen von HTML-Zeichen
+ * Unescape HTML characters
  */
 export function unescapeHtml(html: string): string {
   const div = document.createElement("div");
@@ -282,7 +282,7 @@ export function unescapeHtml(html: string): string {
 }
 
 /**
- * ANSI-Farbcodes entfernen
+ * Remove ANSI color codes
  */
 export function stripAnsi(text: string): string {
   // eslint-disable-next-line no-control-regex
@@ -290,19 +290,19 @@ export function stripAnsi(text: string): string {
 }
 
 /**
- * Pfad-Validierung
+ * Path validation
  */
 export function isValidPath(path: string): boolean {
   if (!path || typeof path !== "string") {
     return false;
   }
 
-  // Muss mit / beginnen
+  // Must start with /
   if (!path.startsWith("/")) {
     return false;
   }
 
-  // Keine ungültigen Zeichen
+  // No invalid characters
   // eslint-disable-next-line no-control-regex
   const invalidChars = /[<>:"|?*\x00-\x1f]/;
   if (invalidChars.test(path)) {
@@ -313,7 +313,7 @@ export function isValidPath(path: string): boolean {
 }
 
 /**
- * Normalisiert einen Pfad
+ * Normalize a path
  */
 export function normalizePath(path: Path): Path {
   if (!isValidPath(path)) {
@@ -335,13 +335,13 @@ export function normalizePath(path: Path): Path {
 }
 
 /**
- * Relative Pfade berechnen
+ * Calculate relative paths
  */
 export function relativePath(from: Path, to: Path): Path {
   const fromParts = normalizePath(from).split("/").filter(Boolean);
   const toParts = normalizePath(to).split("/").filter(Boolean);
 
-  // Gemeinsamen Prefix finden
+  // Find common prefix
   let commonLength = 0;
   for (let i = 0; i < Math.min(fromParts.length, toParts.length); i++) {
     if (fromParts[i] === toParts[i]) {

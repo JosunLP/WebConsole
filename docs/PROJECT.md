@@ -1,27 +1,27 @@
-# Konzept: Browser-Konsolen-Bibliothek „Web-Console“
+# Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
 
-## 1. Vision & Zielsetzung
+## 1. Vision & Goals
 
-Web-Console ist eine modulare, vollständig im Browser laufende Konsolen-Bibliothek, die Entwicklern erlaubt, in Sekundenschnelle eine Windows-Terminal-ähnliche Console in jede Web-Anwendung zu integrieren – ohne Backend, ohne Build-Schritte, ohne externe Abhängigkeiten.
-Die Bibliothek liefert fertige Komponenten für Angular, React, Svelte und Vue sowie native Web Components und bietet dabei maximale Anpassbarkeit, ein virtuelles Dateisystem, State-Management und bash-ähnliche Syntax.
+Web-Console is a modular, fully browser-based console library that allows developers to integrate a Windows Terminal-like console into any web application in seconds – without backend, without build steps, without external dependencies.
+The library provides ready-made components for Angular, React, Svelte and Vue as well as native Web Components and offers maximum customizability, a virtual file system, state management and bash-like syntax.
 
 ---
 
-## 2. Architektur-Überblick
+## 2. Architecture Overview
 
 ### 2.1 Kern-Module
 
-| Modul                     | Verantwortung                                            | Singleton | Persistenz |
-| ------------------------- | -------------------------------------------------------- | --------- | ---------- |
-| Kernel                    | zentrale Event- und Lebenszyklus-Steuerung               | ja        | nein       |
-| VFS (Virtual File System) | virtuelles Dateisystem auf Basis von `localStorage`      | ja        | ja         |
-| Console                   | Parser, Lexer, Executor für Befehle                      | nein      | nein       |
-| Theme & Styling           | Design-System, Token, CSS-Custom-Properties              | ja        | ja         |
-| StateManager              | globale und pro-Console-State-Hierarchie                 | nein      | optional   |
-| ComponentRegistry         | Registrierung und Lazy-Loading der Framework-Komponenten | ja        | nein       |
-| WorkerManager             | Web Worker Multithreading-System                         | ja        | nein       |
+| Module                    | Responsibility                                           | Singleton | Persistence |
+| ------------------------- | -------------------------------------------------------- | --------- | ----------- |
+| Kernel                    | zentrale Event- und Lebenszyklus-Steuerung               | ja        | nein        |
+| VFS (Virtual File System) | virtual file system based on `localStorage`              | yes       | yes         |
+| Console                   | Parser, Lexer, Executor for commands                     | no        | no          |
+| Theme & Styling           | Design-System, Token, CSS-Custom-Properties              | ja        | ja          |
+| StateManager              | globale und pro-Console-State-Hierarchie                 | nein      | optional    |
+| ComponentRegistry         | Registrierung und Lazy-Loading der Framework-Komponenten | ja        | nein        |
+| WorkerManager             | Web Worker Multithreading-System                         | ja        | nein        |
 
-### 2.2 Verzeichnis-Struktur (OOP-first)
+### 2.2 Directory Structure (OOP-first)
 
 ```bash
 Web-Console/
@@ -39,11 +39,11 @@ Web-Console/
 
 ---
 
-## 3. Virtuelles Dateisystem (VFS)
+## 3. Virtual File System (VFS)
 
-### 3.1 Konzept
+### 3.1 Concept
 
-- POSIX-ähnliche Pfade (`/home/user/.config`)
+- POSIX-like paths (`/home/user/.config`)
 - Inodes statt echter Dateien
 - Symlinks, Hardlinks, Permissions (rwx)
 - Mount-Points für externe Provider (z. B. IndexedDB, Cloud)

@@ -1,5 +1,5 @@
 /**
- * Base Worker Class für Web Workers
+ * Base Worker Class for Web Workers
  */
 
 import {
@@ -23,17 +23,17 @@ export interface WorkerResponse {
 
 /**
  * Base Worker Implementation
- * Läuft im Worker-Thread
+ * Runs in worker thread
  */
 export abstract class BaseWorker {
   private taskRegistry = new Map<string, AbortController>();
   private isTerminated = false;
 
   constructor() {
-    // Worker-seitige Message-Handler
+    // Worker-side message handler
     self.addEventListener("message", this.handleMessage.bind(this));
 
-    // Worker bereit signalisieren
+    // Signal worker ready
     this.postResponse({ type: "pong" });
   }
 
@@ -83,7 +83,7 @@ export abstract class BaseWorker {
     const startTime = performance.now();
 
     try {
-      // Timeout-Handler
+      // Timeout handler
       let timeoutId: number | undefined;
       if (task.timeout) {
         timeoutId = self.setTimeout(() => {
@@ -96,7 +96,7 @@ export abstract class BaseWorker {
         }, task.timeout);
       }
 
-      // Task ausführen
+      // Execute task
       const result = await this.processTask(task, controller.signal);
 
       if (timeoutId) {
@@ -105,7 +105,7 @@ export abstract class BaseWorker {
 
       const executionTime = performance.now() - startTime;
 
-      // Erfolg zurücksenden
+      // Send success response
       this.postResponse({
         type: "result",
         taskId,
@@ -145,13 +145,13 @@ export abstract class BaseWorker {
   private terminate(): void {
     this.isTerminated = true;
 
-    // Alle laufenden Tasks abbrechen
+    // Cancel all running tasks
     for (const controller of this.taskRegistry.values()) {
       controller.abort();
     }
     this.taskRegistry.clear();
 
-    // Worker beenden
+    // Terminate worker
     self.close();
   }
 
@@ -160,8 +160,8 @@ export abstract class BaseWorker {
   }
 
   /**
-   * Abstrakte Methode zur Task-Verarbeitung
-   * Muss von konkreten Worker-Implementierungen überschrieben werden
+   * Abstract method for task processing
+   * Must be overridden by concrete worker implementations
    */
   protected abstract processTask(
     task: IWorkerTask,
@@ -169,7 +169,7 @@ export abstract class BaseWorker {
   ): Promise<unknown>;
 
   /**
-   * Hilfsmethode für Progress-Updates
+   * Helper method for progress updates
    */
   protected reportProgress(
     taskId: string,
@@ -184,7 +184,7 @@ export abstract class BaseWorker {
   }
 
   /**
-   * Prüft ob Task abgebrochen wurde
+   * Check if task was cancelled
    */
   protected checkAborted(signal: AbortSignal): void {
     if (signal.aborted) {

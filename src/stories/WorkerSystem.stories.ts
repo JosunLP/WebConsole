@@ -1,5 +1,5 @@
 /**
- * Storybook-Demo für das Worker-Multithreading-System
+ * Storybook demo for the worker multithreading system
  */
 
 import { kernel } from "../core/Kernel.js";

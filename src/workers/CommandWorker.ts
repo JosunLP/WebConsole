@@ -1,5 +1,5 @@
 /**
- * Command Worker für Command-spezifische Tasks
+ * Command Worker for command-specific tasks
  */
 
 import {
@@ -59,7 +59,7 @@ export class CommandWorker extends BaseWorker {
     const payload = task.payload as CommandWorkerPayload;
     const { command, args, cwd } = payload;
 
-    // Simulierte Command-Ausführung
+    // Simulated command execution
     switch (command) {
       case "grep":
         return this.executeGrep(args, signal);
@@ -136,7 +136,7 @@ export class CommandWorker extends BaseWorker {
       throw new Error("Invalid grep arguments");
     }
 
-    // Simuliere Datei-Lesen und Pattern-Matching
+    // Simulate file reading and pattern matching
     if (this.vfsProxy && (await this.vfsProxy.exists(fileName))) {
       const content = await this.vfsProxy.readFile(fileName);
       const regex = new RegExp(pattern, "gi");
@@ -166,7 +166,7 @@ export class CommandWorker extends BaseWorker {
       return [];
     }
 
-    // Simuliere Datei-Suche
+    // Simulate file search
     if (this.vfsProxy) {
       try {
         const files = await this.vfsProxy.readdir(searchPath);
@@ -359,7 +359,7 @@ export class CommandWorker extends BaseWorker {
   }
 }
 
-// Worker-Script für Browser
+// Worker script for browser
 if (
   typeof self !== "undefined" &&
   self.constructor.name === "DedicatedWorkerGlobalScope"
