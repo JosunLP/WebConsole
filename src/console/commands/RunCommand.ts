@@ -7,6 +7,21 @@ import { WorkerTaskPriority } from "../../interfaces/IWorkerTask.interface.js";
 import { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
+/**
+ * Helper-Funktion für zufällige Simulationszeiten
+ */
+function getRandomExecutionTime(min: number, max: number): number {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const randomFloat = array[0]! / 0xffffffff; // Konvertiert zu 0-1
+    return min + randomFloat * (max - min);
+  } else {
+    // Fallback für Umgebungen ohne crypto API
+    return Math.random() * (max - min) + min;
+  }
+}
+
 export class RunCommand extends BaseCommand {
   constructor() {
     super(
@@ -86,7 +101,7 @@ export class RunCommand extends BaseCommand {
           command: command.join(" "),
           output: `✓ Parallel execution: ${command.join(" ")}`,
           exitCode: 0,
-          executionTime: Math.random() * 1000 + 500, // 0.5-1.5s
+          executionTime: getRandomExecutionTime(500, 1500), // 0.5-1.5s
         };
       },
       {
@@ -116,7 +131,7 @@ export class RunCommand extends BaseCommand {
       command: cmd,
       output: `✓ Batch execution: ${cmd}`,
       exitCode: 0,
-      executionTime: Math.random() * 1000 + 200,
+      executionTime: getRandomExecutionTime(200, 1200),
     }));
 
     const results = await this.runParallelCommands(taskFunctions, {

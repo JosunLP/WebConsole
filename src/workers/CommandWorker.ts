@@ -6,6 +6,7 @@ import {
   IWorkerTask,
   WorkerTaskType,
 } from "../interfaces/IWorkerTask.interface.js";
+import { generateMessageId } from "../utils/helpers.js";
 import { BaseWorker } from "./BaseWorker.js";
 
 export interface CommandWorkerPayload {
@@ -251,7 +252,7 @@ export class CommandWorker extends BaseWorker {
     this.vfsProxy = {
       readFile: async (path: string): Promise<string> => {
         return new Promise((resolve, reject) => {
-          const messageId = Math.random().toString(36);
+          const messageId = generateMessageId();
 
           const handler = (event: MessageEvent) => {
             if (event.data.id === messageId) {
@@ -276,7 +277,7 @@ export class CommandWorker extends BaseWorker {
 
       writeFile: async (path: string, content: string): Promise<void> => {
         return new Promise((resolve, reject) => {
-          const messageId = Math.random().toString(36);
+          const messageId = generateMessageId();
 
           const handler = (event: MessageEvent) => {
             if (event.data.id === messageId) {
@@ -302,7 +303,7 @@ export class CommandWorker extends BaseWorker {
 
       exists: async (path: string): Promise<boolean> => {
         return new Promise((resolve, reject) => {
-          const messageId = Math.random().toString(36);
+          const messageId = generateMessageId();
 
           const handler = (event: MessageEvent) => {
             if (event.data.id === messageId) {
@@ -327,7 +328,7 @@ export class CommandWorker extends BaseWorker {
 
       readdir: async (path: string): Promise<string[]> => {
         return new Promise((resolve, reject) => {
-          const messageId = Math.random().toString(36);
+          const messageId = generateMessageId();
 
           const handler = (event: MessageEvent) => {
             if (event.data.id === messageId) {

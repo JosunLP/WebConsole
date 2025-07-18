@@ -10,6 +10,7 @@ import {
 } from "../interfaces/IWorkerTask.interface.js";
 
 import { CommandContext, Path } from "../types/index.js";
+import { generateMessageId } from "../utils/helpers.js";
 
 import { kernel } from "../core/Kernel.js";
 import { CommandType, ExitCode } from "../enums/index.js";
@@ -375,6 +376,6 @@ export abstract class BaseCommand implements ICommandHandler {
    * Task-ID generieren
    */
   private generateTaskId(): string {
-    return `${this.name}-task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `${this.name}-task-${Date.now()}-${generateMessageId()}`;
   }
 }

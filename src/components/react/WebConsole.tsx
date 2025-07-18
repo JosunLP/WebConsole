@@ -2,27 +2,28 @@
  * React-Komponente für Web-Console mit verbesserter Implementation
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import type { IConsole } from '../../interfaces/IConsole.interface.js';
-import type { IConsoleOptions } from '../../interfaces/IConsoleOptions.interface.js';
-import type { CommandResult } from '../../types/index.js';
-import '../styles/WebConsole.scss';
-import { useCommandHistory, useConsole, useTheme } from './hooks.js';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import type { IConsole } from "../../interfaces/IConsole.interface.js";
+import type { IConsoleOptions } from "../../interfaces/IConsoleOptions.interface.js";
+import type { CommandResult } from "../../types/index.js";
+import { generateMessageId } from "../../utils/helpers.js";
+import "../styles/WebConsole.scss";
+import { useCommandHistory, useConsole, useTheme } from "./hooks.js";
 
 // CSS custom properties utility function
 function setCSSVariables(
   element: HTMLElement | null,
   width: string | number,
-  height: string | number
+  height: string | number,
 ) {
   if (element) {
     element.style.setProperty(
-      '--web-console-width',
-      typeof width === 'number' ? `${width}px` : width
+      "--web-console-width",
+      typeof width === "number" ? `${width}px` : width,
     );
     element.style.setProperty(
-      '--web-console-height',
-      typeof height === 'number' ? `${height}px` : height
+      "--web-console-height",
+      typeof height === "number" ? `${height}px` : height,
     );
   }
 }
@@ -42,23 +43,23 @@ export interface WebConsoleProps {
 interface OutputLine {
   id: string;
   text: string;
-  type: 'command' | 'output' | 'error' | 'info';
+  type: "command" | "output" | "error" | "info";
   timestamp: Date;
 }
 
 export const WebConsole: React.FC<WebConsoleProps> = ({
-  prompt = '$ ',
-  width = '100%',
+  prompt = "$ ",
+  width = "100%",
   height = 400,
-  theme = 'default',
+  theme = "default",
   onCommand,
   onReady,
-  className = '',
+  className = "",
   style = {},
   consoleOptions = {},
 }) => {
   const [output, setOutput] = useState<OutputLine[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -106,23 +107,23 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
   }, [isLoading]);
 
   const addOutputLine = useCallback(
-    (text: string, type: OutputLine['type']) => {
+    (text: string, type: OutputLine["type"]) => {
       const line: OutputLine = {
-        id: `${Date.now()}-${Math.random()}`,
+        id: `${Date.now()}-${generateMessageId()}`,
         text,
         type,
         timestamp: new Date(),
       };
       setOutput((prev) => [...prev, line]);
     },
-    []
+    [],
   );
 
   const handleKeyDown = useCallback(
     async (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter' && input.trim()) {
+      if (event.key === "Enter" && input.trim()) {
         const command = input.trim();
-        addOutputLine(`${prompt}${command}`, 'command');
+        addOutputLine(`${prompt}${command}`, "command");
         addCommand(command);
 
         try {
@@ -131,12 +132,12 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
           if (result) {
             if (result.stdout.length > 0) {
               const outputText = new TextDecoder().decode(result.stdout);
-              addOutputLine(outputText, 'output');
+              addOutputLine(outputText, "output");
             }
 
             if (result.stderr.length > 0) {
               const errorText = new TextDecoder().decode(result.stderr);
-              addOutputLine(errorText, 'error');
+              addOutputLine(errorText, "error");
             }
 
             if (onCommand) {
@@ -144,32 +145,32 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
             }
           }
         } catch (err) {
-          addOutputLine(`Error: ${err}`, 'error');
+          addOutputLine(`Error: ${err}`, "error");
         }
 
-        setInput('');
-      } else if (event.key === 'ArrowUp') {
+        setInput("");
+      } else if (event.key === "ArrowUp") {
         event.preventDefault();
         const prevCommand = getPreviousCommand();
         if (prevCommand) {
           setInput(prevCommand);
         }
-      } else if (event.key === 'ArrowDown') {
+      } else if (event.key === "ArrowDown") {
         event.preventDefault();
         const nextCommand = getNextCommand();
         if (nextCommand !== null) {
           setInput(nextCommand);
         }
-      } else if (event.key === 'Tab') {
+      } else if (event.key === "Tab") {
         event.preventDefault();
         // TODO: Implement tab completion
-      } else if (event.ctrlKey && event.key === 'l') {
+      } else if (event.ctrlKey && event.key === "l") {
         event.preventDefault();
         setOutput([]);
-      } else if (event.ctrlKey && event.key === 'c') {
+      } else if (event.ctrlKey && event.key === "c") {
         event.preventDefault();
-        addOutputLine('^C', 'command');
-        setInput('');
+        addOutputLine("^C", "command");
+        setInput("");
       }
     },
     [
@@ -181,14 +182,14 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
       onCommand,
       getPreviousCommand,
       getNextCommand,
-    ]
+    ],
   );
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setInput(event.target.value);
     },
-    []
+    [],
   );
 
   const focusInput = useCallback(() => {
@@ -199,21 +200,21 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
 
   // Style utilities mit Theme-Integration
   const getTerminalClassName = () => {
-    const baseClass = 'web-console';
+    const baseClass = "web-console";
     const themeClass = currentTheme?.name
       ? `web-console--${currentTheme.name}`
-      : 'web-console--dark';
+      : "web-console--dark";
     return `${baseClass} ${themeClass} ${className}`.trim();
   };
 
-  const getLineClassName = (type: OutputLine['type']) => {
+  const getLineClassName = (type: OutputLine["type"]) => {
     return `web-console__line web-console__line--${type}`;
   };
 
   // CSS Custom Properties für dynamische Werte
   const cssVariables = {
-    '--web-console-height': typeof height === 'number' ? `${height}px` : height,
-    '--web-console-width': typeof width === 'number' ? `${width}px` : width,
+    "--web-console-height": typeof height === "number" ? `${height}px` : height,
+    "--web-console-width": typeof width === "number" ? `${width}px` : width,
   } as React.CSSProperties;
 
   if (error) {

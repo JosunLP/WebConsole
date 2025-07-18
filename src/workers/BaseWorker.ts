@@ -6,6 +6,7 @@ import {
   IWorkerTask,
   IWorkerTaskResult,
 } from "../interfaces/IWorkerTask.interface.js";
+import { generateWorkerId } from "../utils/helpers.js";
 
 export interface WorkerMessage {
   type: "task" | "cancel" | "ping" | "terminate";
@@ -112,7 +113,7 @@ export abstract class BaseWorker {
           success: true,
           result,
           executionTime,
-          workerId: "worker-" + Math.random().toString(36).substr(2, 9),
+          workerId: generateWorkerId(),
         } as IWorkerTaskResult,
       });
     } catch (error) {
@@ -125,7 +126,7 @@ export abstract class BaseWorker {
           success: false,
           error: error instanceof Error ? error : new Error(String(error)),
           executionTime,
-          workerId: "worker-" + Math.random().toString(36).substr(2, 9),
+          workerId: generateWorkerId(),
         } as IWorkerTaskResult,
       });
     } finally {

@@ -159,7 +159,68 @@ export function sleep(ms: number): Promise<void> {
 }
 
 /**
- * UUID v4 Generator (simplified)
+ * Sichere ID-Generierung mit crypto.getRandomValues()
+ */
+export function generateSecureId(): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    // Sichere kryptographische Zufallszahlen verwenden
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  } else {
+    // Fallback für Umgebungen ohne crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+    return generateId();
+  }
+}
+
+/**
+ * Sichere Message-ID-Generierung für Worker-Kommunikation
+ */
+export function generateMessageId(): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    // Kompakte aber sichere Message-ID (8 Bytes = 16 Hex-Zeichen)
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  } else {
+    // Fallback für Umgebungen ohne crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+    return Math.random().toString(36).substr(2, 9);
+  }
+}
+
+/**
+ * Sichere Worker-ID-Generierung
+ */
+export function generateWorkerId(): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint8Array(6);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    return `worker-${randomPart}`;
+  } else {
+    // Fallback für Umgebungen ohne crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+    return "worker-" + Math.random().toString(36).substr(2, 9);
+  }
+}
+
+/**
+ * UUID v4 Generator (simplified) - DEPRECATED, use generateSecureId() instead
+ * @deprecated Use generateSecureId() for better security
  */
 export function generateId(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
