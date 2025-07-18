@@ -28,7 +28,7 @@ export default defineComponent({
           await kernel.start();
         }
 
-        // Erstelle WebConsole Element
+        // Create WebConsole element
         webConsoleElement = document.createElement("web-console");
         webConsoleElement.setAttribute("prompt", props.prompt);
         webConsoleElement.setAttribute("theme", props.theme);

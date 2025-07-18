@@ -13,7 +13,7 @@ interface WorkerSystemArgs {
   demoType: "computation" | "file-processing" | "batch" | "parallel";
 }
 
-// Meta-Konfiguration
+// Meta configuration
 const meta = {
   title: "System/Worker Multithreading",
   tags: ["autodocs"],
@@ -29,7 +29,7 @@ const meta = {
     header.style.margin = "0 0 20px 0";
     header.style.color = "#333";
 
-    // Console-Container
+    // Console container
     const consoleContainer = document.createElement("div");
     consoleContainer.style.background = "#000";
     consoleContainer.style.color = "#0f0";
@@ -40,7 +40,7 @@ const meta = {
     consoleContainer.style.minHeight = "400px";
     consoleContainer.style.overflow = "auto";
 
-    // Status-Display
+    // Status display
     const statusContainer = document.createElement("div");
     statusContainer.style.background = "#e9ecef";
     statusContainer.style.padding = "15px";

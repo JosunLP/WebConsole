@@ -1,5 +1,5 @@
 /**
- * Jobs Command - Zeigt aktive Worker-Tasks
+ * Jobs Command - Shows active worker tasks
  */
 
 import { kernel } from "../../core/Kernel.js";

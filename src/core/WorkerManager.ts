@@ -129,11 +129,11 @@ class WorkerPool implements IWorkerPool {
       this.activeWorkers++;
       this.busyWorkers.add(worker);
 
-      // Task-Tracking aktualisieren
+      // Update task tracking
       const taskData = this.activeTasks.get(task.id)!;
       taskData.worker = worker;
 
-      // Task an Worker senden
+      // Send task to worker
       worker.postMessage({
         type: "task",
         data: task,
@@ -145,7 +145,7 @@ class WorkerPool implements IWorkerPool {
     if (this.taskQueue.length > 0 && this.workers.length < this.maxWorkers) {
       try {
         await this.createWorker();
-        this.processQueue(); // Rekursiv versuchen
+        this.processQueue(); // Try recursively
       } catch (error) {
         // Failed to create additional worker - continue with available workers
       }

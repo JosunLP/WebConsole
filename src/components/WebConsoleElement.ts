@@ -110,7 +110,7 @@ export class WebConsoleElement extends HTMLElement {
         await kernel.start();
       }
 
-      // Erstelle Console-Instanz
+      // Create console instance
       const options: Partial<IConsoleOptions> = {
         prompt: this.getAttribute("prompt") || "$ ",
         cwd: "/home/user",
@@ -199,7 +199,7 @@ export class WebConsoleElement extends HTMLElement {
   }
 }
 
-// Registriere Custom Element
+// Register custom element
 if (!customElements.get("web-console")) {
   customElements.define("web-console", WebConsoleElement);
 }

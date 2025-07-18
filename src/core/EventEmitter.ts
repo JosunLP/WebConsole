@@ -20,7 +20,7 @@ export class EventEmitter implements IEventEmitter {
   private readonly listeners = new Map<string, Set<EventListener>>();
 
   /**
-   * Event-Listener registrieren
+   * Register event listener
    */
   on<T = unknown>(event: string, handler: EventHandler<T>): EventUnsubscriber {
     if (!this.listeners.has(event)) {

@@ -1,5 +1,5 @@
 /**
- * Kernel - Zentrale Event- und Lebenszyklus-Steuerung (Singleton)
+ * Kernel - Central event and lifecycle control (Singleton)
  */
 
 import { ConsoleInstance } from "../console/index.js";

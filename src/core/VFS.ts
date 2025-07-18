@@ -137,7 +137,7 @@ Features:
   // === PATH OPERATIONS ===
 
   /**
-   * Pfad auflösen (normalisieren)
+   * Resolve path (normalize)
    */
   resolve(path: Path): Path {
     if (!path.startsWith("/")) {

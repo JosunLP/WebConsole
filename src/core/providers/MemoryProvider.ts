@@ -1,6 +1,6 @@
 /**
  * Memory VFS Provider
- * Implementiert ein rein im Speicher basiertes virtuelles Dateisystem
+ * Implements a purely memory-based virtual file system
  */
 
 import { FileType, Permission, VfsItemType } from "../../enums/index.js";

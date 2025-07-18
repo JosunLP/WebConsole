@@ -109,7 +109,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Retry-Funktion mit exponential backoff
+ * Retry function with exponential backoff
  */
 export async function retry<T>(
   fn: () => Promise<T>,
@@ -363,7 +363,7 @@ export function relativePath(from: Path, to: Path): Path {
 }
 
 /**
- * Event-Namen validieren
+ * Validate event names
  */
 export function isValidEventName(name: string): boolean {
   return /^[a-zA-Z][a-zA-Z0-9:._-]*$/.test(name);

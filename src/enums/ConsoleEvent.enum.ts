@@ -1,24 +1,24 @@
 /**
- * Console-Events
+ * Console events
  */
 export enum ConsoleEvent {
-  /** Console bereit */
+  /** Console ready */
   READY = "console:ready",
   /** Console destroyed */
   DESTROYED = "console:destroyed",
   /** Console being destroyed */
   DESTROYING = "console:destroying",
-  /** Befehl wurde eingegeben */
+  /** Command was entered */
   COMMAND_ENTERED = "command:entered",
-  /** Befehl startet */
+  /** Command starts */
   COMMAND_START = "command:start",
   /** Command being executed */
   COMMAND_EXECUTING = "command:executing",
-  /** Befehl abgeschlossen */
+  /** Command completed */
   COMMAND_COMPLETED = "command:completed",
-  /** Befehl beendet */
+  /** Command ended */
   COMMAND_END = "command:end",
-  /** Befehl fehlgeschlagen */
+  /** Command failed */
   COMMAND_FAILED = "command:failed",
   /** Command error */
   COMMAND_ERROR = "command:error",

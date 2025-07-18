@@ -1,5 +1,5 @@
 /**
- * Console Instance - Einzelne Konsole mit Parser, Lexer und Executor
+ * Console Instance - Individual console with parser, lexer and executor
  */
 
 import { EventEmitter } from "../core/EventEmitter.js";
@@ -40,7 +40,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
     this._env = new Map(options.env || []);
     this._prompt = options.prompt || "$ ";
 
-    // Erstelle Console-spezifischen State
+    // Create console-specific state
     this._state = new StateManager(`console-${this._id}`);
   }
 
@@ -70,7 +70,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
 
   public async initialize(): Promise<void> {
     try {
-      // Lade persistierten State falls vorhanden
+      // Load persisted state if available
       if (
         this._options.enablePersistence ||
         this._options.history?.persistent
@@ -103,7 +103,7 @@ export class ConsoleInstance extends EventEmitter implements IConsole {
 
   public async destroy(): Promise<void> {
     try {
-      // Speichere State falls Persistenz aktiviert
+      // Save state if persistence is enabled
       if (
         this._options.enablePersistence ||
         this._options.history?.persistent

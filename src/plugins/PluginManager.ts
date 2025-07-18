@@ -30,7 +30,7 @@ export class PluginManager {
   >();
 
   /**
-   * Plugin registrieren
+   * Register plugin
    */
   async registerPlugin(plugin: IPlugin): Promise<void> {
     const { name } = plugin.metadata;
@@ -46,13 +46,13 @@ export class PluginManager {
       }
     }
 
-    // Registriere Plugin
+    // Register plugin
     this.plugins.set(name, plugin);
 
-    // Initialisiere Plugin
+    // Initialize plugin
     await plugin.initialize();
 
-    // Registriere Commands
+    // Register commands
     const commands = plugin.getCommands();
     for (const [commandName, handler] of commands) {
       if (this.loadedCommands.has(commandName)) {
@@ -223,7 +223,7 @@ no changes added to commit
       description: "Show git status (alias for git status)",
       usage: "status",
       execute: async (context: CommandContext): Promise<ExitCode> => {
-        // Rufe git status auf
+        // Call git status
         const gitHandler = this.commands.get("git")!;
         const newContext = {
           ...context,

@@ -16,11 +16,11 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   constructor() {
     super();
 
-    // Lade Standard-Theme
+    // Load default theme
     this.currentTheme = this.createDefaultTheme();
     this.registerTheme(this.currentTheme);
 
-    // Registriere weitere Standard-Themes
+    // Register additional standard themes
     this.registerBuiltInThemes();
   }
 
@@ -37,7 +37,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
     const oldTheme = this.currentTheme.name;
     this.currentTheme = theme;
 
-    // CSS aktualisieren
+    // Update CSS
     this.injectCSS();
 
     this.emit("theme-changed", { oldTheme, newTheme: name });
@@ -168,7 +168,7 @@ web-console {
       this.registerTheme(WindowsTerminalTheme);
     } catch (error) {
       console.warn("Failed to load some themes:", error);
-      // Fallback: Registriere inline-definierte Themes
+      // Fallback: Register inline-defined themes
       this.registerLegacyThemes();
     }
   }

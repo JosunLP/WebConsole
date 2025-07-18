@@ -1,5 +1,5 @@
 /**
- * Light Theme (GitHub-inspiriert)
+ * Light Theme (GitHub-inspired)
  */
 
 import { ThemeMode } from "../enums/index.js";

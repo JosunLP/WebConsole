@@ -198,7 +198,7 @@ export const WebConsole: React.FC<WebConsoleProps> = ({
     }
   }, []);
 
-  // Style utilities mit Theme-Integration
+  // Style utilities with theme integration
   const getTerminalClassName = () => {
     const baseClass = "web-console";
     const themeClass = currentTheme?.name

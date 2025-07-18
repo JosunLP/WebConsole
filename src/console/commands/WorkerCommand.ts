@@ -1,5 +1,5 @@
 /**
- * Worker Command - Verwaltet Worker-Pools und -Konfiguration
+ * Worker Command - Manages worker pools and configuration
  */
 
 import { kernel } from "../../core/Kernel.js";

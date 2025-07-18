@@ -33,15 +33,15 @@ const meta = {
   argTypes: {
     prompt: {
       control: "text",
-      description: "Der Prompt-String der Console",
+      description: "The prompt string of the console",
     },
     height: {
       control: "text",
-      description: "Höhe der Console",
+      description: "Height of the console",
     },
     width: {
       control: "text",
-      description: "Breite der Console",
+      description: "Width of the console",
     },
   },
   args: {

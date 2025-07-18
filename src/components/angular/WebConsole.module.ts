@@ -1,5 +1,5 @@
 /**
- * Angular Module für Web-Console
+ * Angular Module for Web-Console
  */
 
 import { CommonModule } from "@angular/common";

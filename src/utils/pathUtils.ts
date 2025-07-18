@@ -82,7 +82,7 @@ export class PathUtils {
   }
 
   /**
-   * Macht einen Pfad relativ zu einem Basispfad
+   * Makes a path relative to a base path
    */
   static relative(from: Path, to: Path): string {
     const fromParts = PathUtils.normalize(from).split("/").filter(Boolean);

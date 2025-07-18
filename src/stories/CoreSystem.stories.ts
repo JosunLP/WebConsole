@@ -185,7 +185,7 @@ const meta = {
     },
     showLogs: {
       control: "boolean",
-      description: "Detaillierte Logs anzeigen",
+      description: "Show detailed logs",
     },
   },
   args: {

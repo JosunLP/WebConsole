@@ -30,7 +30,7 @@ export class ComponentRegistry
       return this.loaded.get(name)!;
     }
 
-    // Bereits am Laden?
+    // Already loading?
     if (this.initializing.has(name)) {
       return this.initializing.get(name)!;
     }
@@ -126,7 +126,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Debug-Informationen
+   * Debug information
    */
   public debug(): object {
     return {
@@ -137,7 +137,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Ressourcen freigeben
+   * Release resources
    */
   public override dispose(): void {
     this.components.clear();
@@ -147,5 +147,5 @@ export class ComponentRegistry
   }
 }
 
-// Globale Instanz
+// Global instance
 export const componentRegistry = new ComponentRegistry();

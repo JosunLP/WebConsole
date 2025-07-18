@@ -4,7 +4,7 @@
 export enum KernelEvent {
   /** Kernel gestartet */
   STARTED = "kernel:started",
-  /** Kernel wird heruntergefahren */
+  /** Kernel is shutting down */
   SHUTDOWN = "kernel:shutdown",
   /** Kernel error */
   ERROR = "kernel:error",

@@ -75,7 +75,7 @@ export function useConsole(options: Partial<IConsoleOptions> = {}) {
 }
 
 /**
- * Hook für VFS-Zugriff
+ * Hook for VFS access
  */
 export function useVFS() {
   const [vfs, setVFS] = useState<IVFS | null>(null);
@@ -161,7 +161,7 @@ export function useVFS() {
 }
 
 /**
- * Hook für Theme-Management
+ * Hook for theme management
  */
 export function useTheme() {
   const [themeManager, setThemeManager] = useState<IThemeManager | null>(null);
@@ -237,7 +237,7 @@ export function useTheme() {
 }
 
 /**
- * Hook für Command History
+ * Hook for command history
  */
 export function useCommandHistory() {
   const [history, setHistory] = useState<string[]>([]);

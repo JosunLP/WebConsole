@@ -13,7 +13,7 @@ export const Welcome = {
 
         <p>Welcome to the <strong>WebConsole Storybook Test Suite</strong>! This interactive test environment replaces the simple <code>test.html</code> and provides comprehensive tests for all WebConsole components.</p>
 
-        <h2>🎯 Was ist WebConsole?</h2>
+        <h2>🎯 What is WebConsole?</h2>
 
         <p>WebConsole is a <strong>modular, fully browser-based console library</strong> for modern web applications.</p>
 
@@ -35,10 +35,10 @@ export const Welcome = {
           <li><strong>Theme System</strong> - CSS Custom Properties</li>
         </ul>
 
-        <h2>🚀 Verwendung</h2>
-        <p>Navigieren Sie durch die Sidebar links, um verschiedene Components zu testen. Jede Story bietet eine vollständig interaktive WebConsole-Instanz.</p>
+        <h2>🚀 Usage</h2>
+        <p>Navigate through the sidebar on the left to test various components. Each story offers a fully interactive WebConsole instance.</p>
 
-        <h3>💡 Hinweise</h3>
+        <h3>💡 Notes</h3>
         <ul>
           <li>All console instances have a preconfigured VFS with demo files</li>
           <li>Themes can be switched using the <code>theme</code> command</li>

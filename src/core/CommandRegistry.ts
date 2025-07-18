@@ -46,7 +46,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   private readonly aliases = new Map<string, string>();
 
   /**
-   * Registry initialisieren
+   * Initialize registry
    */
   async initialize(): Promise<void> {
     // Registry is ready for command registration
@@ -54,7 +54,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Handler registrieren
+   * Register command handler
    */
   register(handler: ICommandHandler): void {
     if (this.commands.has(handler.name)) {

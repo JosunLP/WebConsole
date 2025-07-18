@@ -1,5 +1,5 @@
 /**
- * Run Command - Führt Commands parallel in Workern aus
+ * Run Command - Executes commands in parallel using workers
  */
 
 import { ExitCode } from "../../enums/index.js";
@@ -8,7 +8,7 @@ import { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
 /**
- * Helper-Funktion für zufällige Simulationszeiten
+ * Helper function for random simulation times
  */
 function getRandomExecutionTime(min: number, max: number): number {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
@@ -68,7 +68,7 @@ export class RunCommand extends BaseCommand {
     // Simulated command execution in worker
     const result = await this.runCommandInWorker(
       () => {
-        // Simuliere Command-Verarbeitung
+        // Simulate command processing
         return {
           command: command.join(" "),
           output: `Executed: ${command.join(" ")}`,

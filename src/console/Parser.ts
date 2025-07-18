@@ -1,6 +1,6 @@
 /**
  * Command Parser for the Web Console
- * Konvertiert Token-Stream in AST
+ * Converts token stream into AST
  */
 
 import {
@@ -31,7 +31,7 @@ export class ParseError extends Error {
 }
 
 /**
- * Parser-Zustand
+ * Parser state
  */
 interface ParserState {
   tokens: Token[];

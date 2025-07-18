@@ -1,6 +1,6 @@
 /**
  * LocalStorage VFS Provider
- * Implementiert ein virtuelles Dateisystem basierend auf localStorage
+ * Implements a virtual file system based on localStorage
  */
 
 import { FileType, Permission, VfsItemType } from "../../enums/index.js";
@@ -152,10 +152,10 @@ export class LocalStorageProvider implements IVFSProvider {
     return this.storage.has(inode);
   }
 
-  // Provider-spezifische Methoden
+  // Provider-specific methods
 
   /**
-   * Füge Eintrag zu Verzeichnis hinzu
+   * Add entry to directory
    */
   async addDirEntry(
     dirInode: InodeNumber,
@@ -338,7 +338,7 @@ export class LocalStorageProvider implements IVFSProvider {
   }
 
   /**
-   * Storage bereinigen
+   * Clean storage
    */
   clear(): void {
     this.storage.clear();
