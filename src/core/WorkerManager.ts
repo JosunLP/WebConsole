@@ -304,7 +304,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   private defaultPermissions: IWorkerPermissions = {
     vfsAccess: false,
     networkAccess: false,
-    maxExecutionTime: 30000, // 30 Sekunden
+    maxExecutionTime: 30000, // 30 seconds
     memoryLimit: 64 * 1024 * 1024, // 64MB
   };
 
