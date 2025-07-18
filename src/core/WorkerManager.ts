@@ -272,7 +272,7 @@ class WorkerPool implements IWorkerPool {
     const taskData = this.activeTasks.get(taskId);
     if (!taskData) return false;
 
-    // Task abbrechen
+    // Cancel task
     taskData.worker.postMessage({
       type: "cancel",
       taskId,
@@ -304,7 +304,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   private defaultPermissions: IWorkerPermissions = {
     vfsAccess: false,
     networkAccess: false,
-    maxExecutionTime: 30000, // 30 Sekunden
+    maxExecutionTime: 30000, // 30 seconds
     memoryLimit: 64 * 1024 * 1024, // 64MB
   };
 
@@ -602,7 +602,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   private getPoolIdForCommand(command: string): string {
-    // Bestimme Pool basierend auf Command
+    // Determine pool based on command
     const commandPools: Record<string, string> = {
       grep: "command",
       find: "command",
