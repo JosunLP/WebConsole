@@ -14,7 +14,7 @@ function getRandomExecutionTime(min: number, max: number): number {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
     const array = new Uint32Array(1);
     crypto.getRandomValues(array);
-    const randomFloat = array[0]! / 0xffffffff; // Konvertiert zu 0-1
+    const randomFloat = array[0]! / 0xffffffff; // Convert to 0-1
     return min + randomFloat * (max - min);
   } else {
     // Fallback for environments without crypto API
