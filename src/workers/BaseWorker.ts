@@ -28,8 +28,12 @@ export interface WorkerResponse {
 export abstract class BaseWorker {
   private taskRegistry = new Map<string, AbortController>();
   private isTerminated = false;
+  private readonly workerId: string;
 
   constructor() {
+    // Generate worker ID once during initialization
+    this.workerId = generateWorkerId();
+
     // Worker-side message handler
     self.addEventListener("message", this.handleMessage.bind(this));
 
@@ -64,11 +68,14 @@ export abstract class BaseWorker {
           throw new Error(`Unknown message type: ${type}`);
       }
     } catch (error) {
-      this.postResponse({
+      const response: WorkerResponse = {
         type: "error",
-        taskId: taskId || undefined,
         error: error instanceof Error ? error.message : String(error),
-      });
+      };
+      if (taskId) {
+        response.taskId = taskId;
+      }
+      this.postResponse(response);
     }
   }
 
@@ -113,7 +120,7 @@ export abstract class BaseWorker {
           success: true,
           result,
           executionTime,
-          workerId: generateWorkerId(),
+          workerId: this.workerId,
         } as IWorkerTaskResult,
       });
     } catch (error) {
@@ -126,7 +133,7 @@ export abstract class BaseWorker {
           success: false,
           error: error instanceof Error ? error : new Error(String(error)),
           executionTime,
-          workerId: generateWorkerId(),
+          workerId: this.workerId,
         } as IWorkerTaskResult,
       });
     } finally {
