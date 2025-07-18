@@ -3,12 +3,16 @@
  */
 
 import { ICommandHandler } from "../interfaces/index.js";
-import { IWorkerTask, WorkerTaskType, WorkerTaskPriority } from "../interfaces/IWorkerTask.interface.js";
+import {
+  IWorkerTask,
+  WorkerTaskPriority,
+  WorkerTaskType,
+} from "../interfaces/IWorkerTask.interface.js";
 
 import { CommandContext, Path } from "../types/index.js";
 
-import { CommandType, ExitCode } from "../enums/index.js";
 import { kernel } from "../core/Kernel.js";
+import { CommandType, ExitCode } from "../enums/index.js";
 
 /**
  * Abstrakte Basis-Klasse für Commands
@@ -301,21 +305,21 @@ export abstract class BaseCommand implements ICommandHandler {
       priority?: WorkerTaskPriority;
       timeout?: number;
       type?: WorkerTaskType;
-    } = {}
+    } = {},
   ): Promise<R> {
     if (!kernel.isStarted) {
       throw new Error("Kernel not started - cannot execute worker tasks");
     }
 
     const workerManager = kernel.getWorkerManager();
-    
+
     const task: IWorkerTask<T, R> = {
       id: this.generateTaskId(),
       payload,
       priority: options.priority || WorkerTaskPriority.NORMAL,
       timeout: options.timeout || 30000, // 30 Sekunden default
       command: options.command || this.name,
-      type: options.type || WorkerTaskType.COMMAND
+      type: options.type || WorkerTaskType.COMMAND,
     };
 
     return workerManager.executeTask(task);
@@ -329,7 +333,7 @@ export abstract class BaseCommand implements ICommandHandler {
     options: {
       priority?: WorkerTaskPriority;
       timeout?: number;
-    } = {}
+    } = {},
   ): Promise<T> {
     if (!kernel.isStarted) {
       throw new Error("Kernel not started - cannot execute worker tasks");
@@ -340,7 +344,7 @@ export abstract class BaseCommand implements ICommandHandler {
       priority: options.priority || WorkerTaskPriority.NORMAL,
       timeout: options.timeout || 30000,
       command: this.name,
-      type: WorkerTaskType.COMMAND
+      type: WorkerTaskType.COMMAND,
     });
   }
 
@@ -352,7 +356,7 @@ export abstract class BaseCommand implements ICommandHandler {
     options: {
       priority?: WorkerTaskPriority;
       timeout?: number;
-    } = {}
+    } = {},
   ): Promise<T[]> {
     if (!kernel.isStarted) {
       throw new Error("Kernel not started - cannot execute worker tasks");
@@ -363,7 +367,7 @@ export abstract class BaseCommand implements ICommandHandler {
       priority: options.priority || WorkerTaskPriority.NORMAL,
       timeout: options.timeout || 30000,
       command: this.name,
-      type: WorkerTaskType.COMMAND
+      type: WorkerTaskType.COMMAND,
     });
   }
 

@@ -2,17 +2,17 @@
  * Run Command - Führt Commands parallel in Workern aus
  */
 
-import { BaseCommand } from "../BaseCommand.js";
-import { CommandContext } from "../../types/index.js";
 import { ExitCode } from "../../enums/index.js";
 import { WorkerTaskPriority } from "../../interfaces/IWorkerTask.interface.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class RunCommand extends BaseCommand {
   constructor() {
     super(
       "run",
       "Execute commands in parallel using workers",
-      "run [--parallel] [--batch] <command...>"
+      "run [--parallel] [--batch] <command...>",
     );
   }
 
@@ -39,83 +39,106 @@ export class RunCommand extends BaseCommand {
       } else {
         return this.runSingleCommand(context, positional);
       }
-
     } catch (error) {
       return this.outputError(context, `Run command failed: ${error}`);
     }
   }
 
-  private async runSingleCommand(context: CommandContext, command: string[]): Promise<ExitCode> {
-    await this.writeToStdout(context, `Running: ${command.join(' ')}\n`);
-    
+  private async runSingleCommand(
+    context: CommandContext,
+    command: string[],
+  ): Promise<ExitCode> {
+    await this.writeToStdout(context, `Running: ${command.join(" ")}\n`);
+
     // Simulierte Command-Ausführung in Worker
     const result = await this.runCommandInWorker(
       () => {
         // Simuliere Command-Verarbeitung
         return {
-          command: command.join(' '),
-          output: `Executed: ${command.join(' ')}`,
-          exitCode: 0
+          command: command.join(" "),
+          output: `Executed: ${command.join(" ")}`,
+          exitCode: 0,
         };
       },
       {
         priority: WorkerTaskPriority.NORMAL,
-        timeout: 30000
-      }
+        timeout: 30000,
+      },
     );
 
     await this.writeToStdout(context, `${result.output}\n`);
     return result.exitCode === 0 ? ExitCode.SUCCESS : ExitCode.ERROR;
   }
 
-  private async runParallelCommand(context: CommandContext, command: string[]): Promise<ExitCode> {
-    await this.writeToStdout(context, `Running in parallel: ${command.join(' ')}\n`);
-    
+  private async runParallelCommand(
+    context: CommandContext,
+    command: string[],
+  ): Promise<ExitCode> {
+    await this.writeToStdout(
+      context,
+      `Running in parallel: ${command.join(" ")}\n`,
+    );
+
     const result = await this.runCommandInWorker(
       () => {
         // Simuliere parallele Verarbeitung
         return {
-          command: command.join(' '),
-          output: `✓ Parallel execution: ${command.join(' ')}`,
+          command: command.join(" "),
+          output: `✓ Parallel execution: ${command.join(" ")}`,
           exitCode: 0,
-          executionTime: Math.random() * 1000 + 500 // 0.5-1.5s
+          executionTime: Math.random() * 1000 + 500, // 0.5-1.5s
         };
       },
       {
         priority: WorkerTaskPriority.HIGH,
-        timeout: 60000
-      }
+        timeout: 60000,
+      },
     );
 
-    await this.writeToStdout(context, `${result.output} (${result.executionTime?.toFixed(0)}ms)\n`);
+    await this.writeToStdout(
+      context,
+      `${result.output} (${result.executionTime?.toFixed(0)}ms)\n`,
+    );
     return result.exitCode === 0 ? ExitCode.SUCCESS : ExitCode.ERROR;
   }
 
-  private async runBatchCommands(context: CommandContext, commands: string[]): Promise<ExitCode> {
-    await this.writeToStdout(context, `Running batch: ${commands.length} commands\n`);
+  private async runBatchCommands(
+    context: CommandContext,
+    commands: string[],
+  ): Promise<ExitCode> {
+    await this.writeToStdout(
+      context,
+      `Running batch: ${commands.length} commands\n`,
+    );
 
     // Simuliere mehrere Commands parallel
-    const taskFunctions = commands.map(cmd => () => ({
+    const taskFunctions = commands.map((cmd) => () => ({
       command: cmd,
       output: `✓ Batch execution: ${cmd}`,
       exitCode: 0,
-      executionTime: Math.random() * 1000 + 200
+      executionTime: Math.random() * 1000 + 200,
     }));
 
     const results = await this.runParallelCommands(taskFunctions, {
       priority: WorkerTaskPriority.NORMAL,
-      timeout: 45000
+      timeout: 45000,
     });
 
     let allSuccessful = true;
     for (const result of results) {
-      await this.writeToStdout(context, `${result.output} (${result.executionTime?.toFixed(0)}ms)\n`);
+      await this.writeToStdout(
+        context,
+        `${result.output} (${result.executionTime?.toFixed(0)}ms)\n`,
+      );
       if (result.exitCode !== 0) {
         allSuccessful = false;
       }
     }
 
-    await this.writeToStdout(context, `\nBatch completed: ${results.length} commands processed\n`);
+    await this.writeToStdout(
+      context,
+      `\nBatch completed: ${results.length} commands processed\n`,
+    );
     return allSuccessful ? ExitCode.SUCCESS : ExitCode.ERROR;
   }
 

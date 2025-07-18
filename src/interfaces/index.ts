@@ -24,14 +24,14 @@ export type { IThemeManager } from "./IThemeManager.interface.js";
 export type { IVFS } from "./IVFS.interface.js";
 export type { IVFSProvider } from "./IVFSProvider.interface.js";
 export type { IWorkerManager } from "./IWorkerManager.interface.js";
+export {
+  WorkerTaskPriority,
+  WorkerTaskStatus,
+  WorkerTaskType,
+} from "./IWorkerTask.interface.js";
 export type {
+  IWorkerPermissions,
+  IWorkerPool,
   IWorkerTask,
   IWorkerTaskResult,
-  IWorkerPool,
-  IWorkerPermissions
-} from "./IWorkerTask.interface.js";
-export {
-  WorkerTaskType,
-  WorkerTaskStatus,
-  WorkerTaskPriority
 } from "./IWorkerTask.interface.js";

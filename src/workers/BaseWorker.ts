@@ -2,19 +2,19 @@
  * Base Worker Class für Web Workers
  */
 
-import { 
-  IWorkerTask, 
-  IWorkerTaskResult
+import {
+  IWorkerTask,
+  IWorkerTaskResult,
 } from "../interfaces/IWorkerTask.interface.js";
 
 export interface WorkerMessage {
-  type: 'task' | 'cancel' | 'ping' | 'terminate';
+  type: "task" | "cancel" | "ping" | "terminate";
   data?: unknown;
   taskId?: string;
 }
 
 export interface WorkerResponse {
-  type: 'result' | 'error' | 'progress' | 'pong';
+  type: "result" | "error" | "progress" | "pong";
   taskId?: string;
   data?: unknown;
   error?: string;
@@ -30,48 +30,50 @@ export abstract class BaseWorker {
 
   constructor() {
     // Worker-seitige Message-Handler
-    self.addEventListener('message', this.handleMessage.bind(this));
-    
+    self.addEventListener("message", this.handleMessage.bind(this));
+
     // Worker bereit signalisieren
-    this.postResponse({ type: 'pong' });
+    this.postResponse({ type: "pong" });
   }
 
-  private async handleMessage(event: MessageEvent<WorkerMessage>): Promise<void> {
+  private async handleMessage(
+    event: MessageEvent<WorkerMessage>,
+  ): Promise<void> {
     const { type, data, taskId } = event.data;
 
     try {
       switch (type) {
-        case 'task':
+        case "task":
           await this.executeTask(data as IWorkerTask, taskId!);
           break;
-          
-        case 'cancel':
+
+        case "cancel":
           this.cancelTask(taskId!);
           break;
-          
-        case 'ping':
-          this.postResponse({ type: 'pong' });
+
+        case "ping":
+          this.postResponse({ type: "pong" });
           break;
-          
-        case 'terminate':
+
+        case "terminate":
           this.terminate();
           break;
-          
+
         default:
           throw new Error(`Unknown message type: ${type}`);
       }
     } catch (error) {
       this.postResponse({
-        type: 'error',
+        type: "error",
         taskId: taskId || undefined,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
 
   private async executeTask(task: IWorkerTask, taskId: string): Promise<void> {
     if (this.isTerminated) {
-      throw new Error('Worker is terminated');
+      throw new Error("Worker is terminated");
     }
 
     const controller = new AbortController();
@@ -86,16 +88,16 @@ export abstract class BaseWorker {
         timeoutId = self.setTimeout(() => {
           controller.abort();
           this.postResponse({
-            type: 'error',
+            type: "error",
             taskId,
-            error: `Task timeout after ${task.timeout}ms`
+            error: `Task timeout after ${task.timeout}ms`,
           });
         }, task.timeout);
       }
 
       // Task ausführen
       const result = await this.processTask(task, controller.signal);
-      
+
       if (timeoutId) {
         self.clearTimeout(timeoutId);
       }
@@ -104,28 +106,27 @@ export abstract class BaseWorker {
 
       // Erfolg zurücksenden
       this.postResponse({
-        type: 'result',
+        type: "result",
         taskId,
         data: {
           success: true,
           result,
           executionTime,
-          workerId: 'worker-' + Math.random().toString(36).substr(2, 9)
-        } as IWorkerTaskResult
+          workerId: "worker-" + Math.random().toString(36).substr(2, 9),
+        } as IWorkerTaskResult,
       });
-
     } catch (error) {
       const executionTime = performance.now() - startTime;
-      
+
       this.postResponse({
-        type: 'result',
+        type: "result",
         taskId,
         data: {
           success: false,
           error: error instanceof Error ? error : new Error(String(error)),
           executionTime,
-          workerId: 'worker-' + Math.random().toString(36).substr(2, 9)
-        } as IWorkerTaskResult
+          workerId: "worker-" + Math.random().toString(36).substr(2, 9),
+        } as IWorkerTaskResult,
       });
     } finally {
       this.taskRegistry.delete(taskId);
@@ -142,13 +143,13 @@ export abstract class BaseWorker {
 
   private terminate(): void {
     this.isTerminated = true;
-    
+
     // Alle laufenden Tasks abbrechen
     for (const controller of this.taskRegistry.values()) {
       controller.abort();
     }
     this.taskRegistry.clear();
-    
+
     // Worker beenden
     self.close();
   }
@@ -161,16 +162,23 @@ export abstract class BaseWorker {
    * Abstrakte Methode zur Task-Verarbeitung
    * Muss von konkreten Worker-Implementierungen überschrieben werden
    */
-  protected abstract processTask(task: IWorkerTask, signal: AbortSignal): Promise<unknown>;
+  protected abstract processTask(
+    task: IWorkerTask,
+    signal: AbortSignal,
+  ): Promise<unknown>;
 
   /**
    * Hilfsmethode für Progress-Updates
    */
-  protected reportProgress(taskId: string, progress: number, message?: string): void {
+  protected reportProgress(
+    taskId: string,
+    progress: number,
+    message?: string,
+  ): void {
     this.postResponse({
-      type: 'progress',
+      type: "progress",
       taskId,
-      data: { progress, message }
+      data: { progress, message },
     });
   }
 
@@ -179,7 +187,7 @@ export abstract class BaseWorker {
    */
   protected checkAborted(signal: AbortSignal): void {
     if (signal.aborted) {
-      throw new Error('Task was cancelled');
+      throw new Error("Task was cancelled");
     }
   }
 }

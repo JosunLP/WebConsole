@@ -17,16 +17,16 @@ import { EnvCommand } from "../console/commands/EnvCommand.js";
 import { ExportCommand } from "../console/commands/ExportCommand.js";
 import { HelpCommand } from "../console/commands/HelpCommand.js";
 import { HistoryCommand } from "../console/commands/HistoryCommand.js";
+import { JobsCommand } from "../console/commands/JobsCommand.js";
+import { KillCommand } from "../console/commands/KillCommand.js";
 import { LsCommand } from "../console/commands/LsCommand.js";
 import { MkdirCommand } from "../console/commands/MkdirCommand.js";
 import { MvCommand } from "../console/commands/MvCommand.js";
 import { PwdCommand } from "../console/commands/PwdCommand.js";
 import { RmCommand } from "../console/commands/RmCommand.js";
-import { ThemeCommand } from "../console/commands/ThemeCommand.js";
-import { JobsCommand } from "../console/commands/JobsCommand.js";
-import { KillCommand } from "../console/commands/KillCommand.js";
-import { WorkerCommand } from "../console/commands/WorkerCommand.js";
 import { RunCommand } from "../console/commands/RunCommand.js";
+import { ThemeCommand } from "../console/commands/ThemeCommand.js";
+import { WorkerCommand } from "../console/commands/WorkerCommand.js";
 
 /**
  * Command Registry Events

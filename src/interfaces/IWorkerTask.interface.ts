@@ -42,16 +42,18 @@ export interface IWorkerManager {
   createPool(id: string, maxWorkers: number): Promise<IWorkerPool>;
   destroyPool(id: string): Promise<void>;
   getPool(id: string): IWorkerPool | undefined;
-  
+
   // Task Execution
   executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R>;
-  executeBatch<T, R>(tasks: IWorkerTask<T, R>[]): Promise<IWorkerTaskResult<R>[]>;
-  
+  executeBatch<T, R>(
+    tasks: IWorkerTask<T, R>[],
+  ): Promise<IWorkerTaskResult<R>[]>;
+
   // Task Management
   cancelTask(taskId: string): Promise<boolean>;
   getTaskStatus(taskId: string): WorkerTaskStatus | undefined;
   listActiveTasks(): string[];
-  
+
   // Worker Management
   getWorkerStatus(): IWorkerPool[];
   terminateAllWorkers(): Promise<void>;
@@ -63,7 +65,7 @@ export enum WorkerTaskType {
   COMPUTATION = "computation",
   FILE_PROCESSING = "file-processing",
   NETWORK = "network",
-  CUSTOM = "custom"
+  CUSTOM = "custom",
 }
 
 export enum WorkerTaskStatus {
@@ -72,12 +74,12 @@ export enum WorkerTaskStatus {
   COMPLETED = "completed",
   FAILED = "failed",
   CANCELLED = "cancelled",
-  TIMEOUT = "timeout"
+  TIMEOUT = "timeout",
 }
 
 export enum WorkerTaskPriority {
   LOW = 1,
   NORMAL = 5,
   HIGH = 8,
-  CRITICAL = 10
+  CRITICAL = 10,
 }

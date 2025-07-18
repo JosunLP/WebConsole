@@ -2,17 +2,17 @@
  * Worker Manager - Zentrale Verwaltung von Web Workers
  */
 
-import { EventEmitter } from "./EventEmitter.js";
-import { 
+import {
   IWorkerManager,
-  IWorkerTask, 
-  IWorkerTaskResult, 
-  IWorkerPool,
   IWorkerPermissions,
-  WorkerTaskType,
+  IWorkerPool,
+  IWorkerTask,
+  IWorkerTaskResult,
+  WorkerTaskPriority,
   WorkerTaskStatus,
-  WorkerTaskPriority
+  WorkerTaskType,
 } from "../interfaces/index.js";
+import { EventEmitter } from "./EventEmitter.js";
 
 /**
  * Worker Pool Implementation
@@ -29,22 +29,25 @@ class WorkerPool implements IWorkerPool {
   private availableWorkers: Worker[] = [];
   private busyWorkers = new Set<Worker>();
   private taskQueue: IWorkerTask[] = [];
-  private activeTasks = new Map<string, {
-    task: IWorkerTask;
-    worker: Worker;
-    resolve: (value: unknown) => void;
-    reject: (error: Error) => void;
-    startTime: number;
-  }>();
+  private activeTasks = new Map<
+    string,
+    {
+      task: IWorkerTask;
+      worker: Worker;
+      resolve: (value: unknown) => void;
+      reject: (error: Error) => void;
+      startTime: number;
+    }
+  >();
 
   private permissions: IWorkerPermissions;
   private workerScript: string;
 
   constructor(
-    id: string, 
-    maxWorkers: number, 
+    id: string,
+    maxWorkers: number,
     permissions: IWorkerPermissions,
-    workerScript: string
+    workerScript: string,
   ) {
     this.id = id;
     this.maxWorkers = maxWorkers;
@@ -62,13 +65,13 @@ class WorkerPool implements IWorkerPool {
 
   private async createWorker(): Promise<Worker> {
     const worker = new Worker(this.workerScript);
-    
+
     // Worker-Events
-    worker.addEventListener('message', (event) => {
+    worker.addEventListener("message", (event) => {
       this.handleWorkerMessage(worker, event);
     });
 
-    worker.addEventListener('error', (error) => {
+    worker.addEventListener("error", (error) => {
       // Use Logger instead of console
       this.handleWorkerError(worker, error);
     });
@@ -76,19 +79,19 @@ class WorkerPool implements IWorkerPool {
     // Worker bereit warten
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Worker initialization timeout'));
+        reject(new Error("Worker initialization timeout"));
       }, 5000);
 
       const handler = (event: MessageEvent) => {
-        if (event.data.type === 'pong') {
-          worker.removeEventListener('message', handler);
+        if (event.data.type === "pong") {
+          worker.removeEventListener("message", handler);
           clearTimeout(timeout);
           resolve();
         }
       };
 
-      worker.addEventListener('message', handler);
-      worker.postMessage({ type: 'ping' });
+      worker.addEventListener("message", handler);
+      worker.postMessage({ type: "ping" });
     });
 
     this.workers.push(worker);
@@ -109,7 +112,7 @@ class WorkerPool implements IWorkerPool {
         worker: null as unknown as Worker,
         resolve: resolve as (value: unknown) => void,
         reject,
-        startTime: performance.now()
+        startTime: performance.now(),
       });
 
       // Versuche Task sofort zu starten
@@ -132,9 +135,9 @@ class WorkerPool implements IWorkerPool {
 
       // Task an Worker senden
       worker.postMessage({
-        type: 'task',
+        type: "task",
         data: task,
-        taskId: task.id
+        taskId: task.id,
       });
     }
 
@@ -153,25 +156,29 @@ class WorkerPool implements IWorkerPool {
     const { type, taskId, data, error } = event.data;
 
     switch (type) {
-      case 'result':
+      case "result":
         this.handleTaskResult(worker, taskId, data);
         break;
 
-      case 'error':
+      case "error":
         this.handleTaskError(worker, taskId, error);
         break;
 
-      case 'progress':
+      case "progress":
         this.handleTaskProgress(taskId, data);
         break;
 
-      case 'vfs-request':
+      case "vfs-request":
         this.handleVFSRequest(worker, event.data);
         break;
     }
   }
 
-  private handleTaskResult(worker: Worker, taskId: string, result: IWorkerTaskResult): void {
+  private handleTaskResult(
+    worker: Worker,
+    taskId: string,
+    result: IWorkerTaskResult,
+  ): void {
     const taskData = this.activeTasks.get(taskId);
     if (!taskData) return;
 
@@ -185,7 +192,7 @@ class WorkerPool implements IWorkerPool {
       taskData.resolve(result.result);
     } else {
       this.failedTasks++;
-      taskData.reject(result.error || new Error('Unknown worker error'));
+      taskData.reject(result.error || new Error("Unknown worker error"));
     }
 
     // Verarbeite nächste Tasks
@@ -208,12 +215,18 @@ class WorkerPool implements IWorkerPool {
     this.processQueue();
   }
 
-  private handleTaskProgress(_taskId: string, _progressData: { progress: number; message?: string }): void {
+  private handleTaskProgress(
+    _taskId: string,
+    _progressData: { progress: number; message?: string },
+  ): void {
     // Progress-Events können hier verarbeitet werden
     // Für zukünftige Erweiterungen
   }
 
-  private async handleVFSRequest(_worker: Worker, _request: unknown): Promise<void> {
+  private async handleVFSRequest(
+    _worker: Worker,
+    _request: unknown,
+  ): Promise<void> {
     // VFS-Proxy für Worker
     // Implementierung würde hier VFS-Calls an das Hauptthread weiterleiten
   }
@@ -250,7 +263,7 @@ class WorkerPool implements IWorkerPool {
 
     // Alle aktiven Tasks abbrechen
     for (const [taskId, taskData] of this.activeTasks) {
-      taskData.reject(new Error('Worker pool terminated'));
+      taskData.reject(new Error("Worker pool terminated"));
     }
     this.activeTasks.clear();
   }
@@ -261,8 +274,8 @@ class WorkerPool implements IWorkerPool {
 
     // Task abbrechen
     taskData.worker.postMessage({
-      type: 'cancel',
-      taskId
+      type: "cancel",
+      taskId,
     });
 
     return true;
@@ -273,7 +286,7 @@ class WorkerPool implements IWorkerPool {
       return WorkerTaskStatus.RUNNING;
     }
 
-    const isQueued = this.taskQueue.some(task => task.id === taskId);
+    const isQueued = this.taskQueue.some((task) => task.id === taskId);
     return isQueued ? WorkerTaskStatus.QUEUED : undefined;
   }
 }
@@ -292,7 +305,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     vfsAccess: false,
     networkAccess: false,
     maxExecutionTime: 30000, // 30 Sekunden
-    memoryLimit: 64 * 1024 * 1024 // 64MB
+    memoryLimit: 64 * 1024 * 1024, // 64MB
   };
 
   private taskIdCounter = 0;
@@ -319,26 +332,28 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     await this.createPool(this.defaultPoolId, 4, this.defaultPermissions);
 
     this._isInitialized = true;
-    this.emit('worker-manager-initialized');
+    this.emit("worker-manager-initialized");
   }
 
   async shutdown(): Promise<void> {
     if (!this._isInitialized) return;
 
     // Alle Pools beenden
-    const promises = Array.from(this.pools.values()).map(pool => pool.terminate());
+    const promises = Array.from(this.pools.values()).map((pool) =>
+      pool.terminate(),
+    );
     await Promise.all(promises);
 
     this.pools.clear();
     this._isInitialized = false;
 
-    this.emit('worker-manager-shutdown');
+    this.emit("worker-manager-shutdown");
   }
 
   async createPool(
-    id: string, 
-    maxWorkers = 4, 
-    permissions = this.defaultPermissions
+    id: string,
+    maxWorkers = 4,
+    permissions = this.defaultPermissions,
   ): Promise<IWorkerPool> {
     if (this.pools.has(id)) {
       throw new Error(`Worker pool '${id}' already exists`);
@@ -351,7 +366,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     await pool.initialize();
 
     this.pools.set(id, pool);
-    this.emit('pool-created', { poolId: id, maxWorkers });
+    this.emit("pool-created", { poolId: id, maxWorkers });
 
     return pool;
   }
@@ -363,13 +378,13 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     }
 
     if (id === this.defaultPoolId) {
-      throw new Error('Cannot destroy default pool');
+      throw new Error("Cannot destroy default pool");
     }
 
     await pool.terminate();
     this.pools.delete(id);
 
-    this.emit('pool-destroyed', { poolId: id });
+    this.emit("pool-destroyed", { poolId: id });
   }
 
   getPool(id: string): IWorkerPool | undefined {
@@ -382,64 +397,70 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
 
   // Vereinfachte API
   async runTask<T, R>(
-    taskFunction: () => T, 
-    options: Partial<IWorkerTask> = {}
+    taskFunction: () => T,
+    options: Partial<IWorkerTask> = {},
   ): Promise<R> {
     const task: IWorkerTask = {
       id: this.generateTaskId(),
       payload: {
         function: taskFunction.toString(),
-        args: []
+        args: [],
       },
       priority: options.priority || WorkerTaskPriority.NORMAL,
       timeout: options.timeout || this.defaultPermissions.maxExecutionTime,
       retry: options.retry || 0,
-      type: options.type || WorkerTaskType.COMPUTATION
+      type: options.type || WorkerTaskType.COMPUTATION,
     };
 
     return this.executeTask<unknown, R>(task);
   }
 
   async runParallel<T>(
-    taskFunction: () => T, 
-    options: Partial<IWorkerTask> = {}
+    taskFunction: () => T,
+    options: Partial<IWorkerTask> = {},
   ): Promise<T> {
     return this.runTask<T, T>(taskFunction, options);
   }
 
   async runParallelBatch<T>(
-    taskFunctions: (() => T)[], 
-    options: Partial<IWorkerTask> = {}
+    taskFunctions: (() => T)[],
+    options: Partial<IWorkerTask> = {},
   ): Promise<T[]> {
-    const tasks = taskFunctions.map(func => this.runTask<T, T>(func, options));
+    const tasks = taskFunctions.map((func) =>
+      this.runTask<T, T>(func, options),
+    );
     return Promise.all(tasks);
   }
 
   async executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R> {
     if (!this._isInitialized) {
-      throw new Error('WorkerManager not initialized');
+      throw new Error("WorkerManager not initialized");
     }
 
-    const poolId = task.command ? this.getPoolIdForCommand(task.command) : this.defaultPoolId;
+    const poolId = task.command
+      ? this.getPoolIdForCommand(task.command)
+      : this.defaultPoolId;
     const pool = this.pools.get(poolId);
 
     if (!pool) {
       throw new Error(`Worker pool '${poolId}' not found`);
     }
 
-    this.emit('task-started', { taskId: task.id, poolId });
+    this.emit("task-started", { taskId: task.id, poolId });
 
     try {
       const result = await pool.executeTask(task);
-      this.emit('task-completed', { taskId: task.id, poolId });
+      this.emit("task-completed", { taskId: task.id, poolId });
       return result;
     } catch (error) {
-      this.emit('task-failed', { taskId: task.id, poolId, error });
+      this.emit("task-failed", { taskId: task.id, poolId, error });
       throw error;
     }
   }
 
-  async executeBatch<T, R>(tasks: IWorkerTask<T, R>[]): Promise<IWorkerTaskResult<R>[]> {
+  async executeBatch<T, R>(
+    tasks: IWorkerTask<T, R>[],
+  ): Promise<IWorkerTaskResult<R>[]> {
     const promises = tasks.map(async (task): Promise<IWorkerTaskResult<R>> => {
       try {
         const result = await this.executeTask(task);
@@ -448,7 +469,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
           success: true,
           result,
           executionTime: 0,
-          workerId: 'batch'
+          workerId: "batch",
         };
       } catch (error) {
         return {
@@ -456,7 +477,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
           success: false,
           error: error instanceof Error ? error : new Error(String(error)),
           executionTime: 0,
-          workerId: 'batch'
+          workerId: "batch",
         };
       }
     });
@@ -467,7 +488,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   async cancelTask(taskId: string): Promise<boolean> {
     for (const pool of this.pools.values()) {
       if (pool.cancelTask(taskId)) {
-        this.emit('task-cancelled', { taskId });
+        this.emit("task-cancelled", { taskId });
         return true;
       }
     }
@@ -491,7 +512,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   clearCompletedTasks(): void {
-    this.emit('tasks-cleared');
+    this.emit("tasks-cleared");
   }
 
   getWorkerStatus(): IWorkerPool[] {
@@ -499,12 +520,16 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   getActiveWorkerCount(): number {
-    return Array.from(this.pools.values())
-      .reduce((total, pool) => total + pool.activeWorkers, 0);
+    return Array.from(this.pools.values()).reduce(
+      (total, pool) => total + pool.activeWorkers,
+      0,
+    );
   }
 
   async terminateAllWorkers(): Promise<void> {
-    const promises = Array.from(this.pools.values()).map(pool => pool.terminate());
+    const promises = Array.from(this.pools.values()).map((pool) =>
+      pool.terminate(),
+    );
     await Promise.all(promises);
   }
 
@@ -523,22 +548,22 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   private getWorkerScript(poolId: string): string {
     // URL zu Worker-Scripts
     switch (poolId) {
-      case 'command':
-        return '/workers/CommandWorker.js';
-      case 'default':
+      case "command":
+        return "/workers/CommandWorker.js";
+      case "default":
       default:
-        return '/workers/TaskWorker.js';
+        return "/workers/TaskWorker.js";
     }
   }
 
   private getPoolIdForCommand(command: string): string {
     // Bestimme Pool basierend auf Command
     const commandPools: Record<string, string> = {
-      'grep': 'command',
-      'find': 'command',
-      'cat': 'command',
-      'sort': 'command',
-      'wc': 'command'
+      grep: "command",
+      find: "command",
+      cat: "command",
+      sort: "command",
+      wc: "command",
     };
 
     return commandPools[command] || this.defaultPoolId;

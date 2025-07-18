@@ -2,18 +2,14 @@
  * Kill Command - Beendet Worker-Tasks
  */
 
-import { BaseCommand } from "../BaseCommand.js";
-import { CommandContext } from "../../types/index.js";
-import { ExitCode } from "../../enums/index.js";
 import { kernel } from "../../core/Kernel.js";
+import { ExitCode } from "../../enums/index.js";
+import { CommandContext } from "../../types/index.js";
+import { BaseCommand } from "../BaseCommand.js";
 
 export class KillCommand extends BaseCommand {
   constructor() {
-    super(
-      "kill",
-      "Terminate a background task",
-      "kill <task-id>"
-    );
+    super("kill", "Terminate a background task", "kill <task-id>");
   }
 
   async execute(context: CommandContext): Promise<ExitCode> {
@@ -42,12 +38,17 @@ export class KillCommand extends BaseCommand {
       const success = await workerManager.cancelTask(taskId);
 
       if (success) {
-        await this.writeToStdout(context, `Task ${taskId} terminated successfully\n`);
+        await this.writeToStdout(
+          context,
+          `Task ${taskId} terminated successfully\n`,
+        );
         return ExitCode.SUCCESS;
       } else {
-        return this.outputError(context, `Task ${taskId} not found or already completed`);
+        return this.outputError(
+          context,
+          `Task ${taskId} not found or already completed`,
+        );
       }
-
     } catch (error) {
       return this.outputError(context, `Failed to terminate task: ${error}`);
     }
