@@ -101,28 +101,28 @@ console.log(result.stdout);
 | --------- | ------ | --------------------- | --------------------------------- |
 | `help`    | ✅     | Help system           | Interactive command reference     |
 | `clear`   | ✅     | Clear terminal        | ANSI escape sequences             |
-| `echo`    | ✅     | Output text           | Variable substitution             |
+| `echo`    | ✅     | Output text           | Variable substitution, escapes    |
 | `test`    | ✅     | System tests          | Core module validation            |
 | `jobs`    | ✅     | Show worker status    | Active tasks, pool management     |
 | `kill`    | ✅     | Terminate tasks       | Task cancellation, worker cleanup |
 | `worker`  | ✅     | Worker management     | Pool ops, status, configuration   |
 | `run`     | ✅     | Parallel execution    | Batch processing, multithreading  |
-| `cat`     | 🔄     | Show file contents    | Basic ✅, syntax highlighting 🔄  |
-| `ls`      | 🔄     | Directory listing     | Basic ✅, colors/icons 🔄         |
-| `cd`      | 🔄     | Change directory      | Basic ✅, tab completion 🔄       |
-| `pwd`     | 🔄     | Current path          | Basic ✅                          |
-| `mkdir`   | 🔄     | Create directory      | Basic ✅, recursive flag 🔄       |
-| `rm`      | 🔄     | Delete files/folders  | Basic ✅, safety prompts 🔄       |
-| `cp`      | 🔄     | Copy                  | Implementation in progress        |
-| `mv`      | 🔄     | Move/rename           | Implementation in progress        |
-| `alias`   | 🔄     | Command aliases       | Basic functionality               |
-| `export`  | 🔄     | Environment variables | Implementation in progress        |
-| `env`     | 🔄     | Show environment      | Implementation in progress        |
-| `date`    | 🔄     | Date/time             | Implementation in progress        |
-| `history` | 🔄     | Command history       | Implementation in progress        |
-| `theme`   | 🔄     | Change theme          | Implementation in progress        |
-| `which`   | 🔄     | Find command path     | Implementation in progress        |
-| `unset`   | 🔄     | Delete variables      | Implementation in progress        |
+| `cat`     | ✅     | Show file contents    | Basic, syntax highlighting        |
+| `ls`      | ✅     | Directory listing     | Basic, colors/icons               |
+| `cd`      | ✅     | Change directory      | Basic, tab completion             |
+| `pwd`     | ✅     | Current path          | Basic                             |
+| `mkdir`   | ✅     | Create directory      | Basic, recursive flag             |
+| `rm`      | ✅     | Delete files/folders  | Basic, safety prompts             |
+| `cp`      | ✅     | Copy                  | Files & directories, recursive    |
+| `mv`      | ✅     | Move/rename           | Files & directories               |
+| `alias`   | ✅     | Command aliases       | Basic functionality               |
+| `export`  | ✅     | Environment variables | Set variables                     |
+| `env`     | ✅     | Show environment      | List variables, run with env      |
+| `date`    | ✅     | Date/time             | Format, UTC, ISO, RFC             |
+| `history` | ✅     | Command history       | Show, limit output                |
+| `theme`   | ✅     | Change theme          | List, set, preview                |
+| `which`   | ✅     | Find command path     | Built-in & PATH search            |
+| `unset`   | ✅     | Delete variables      | Remove env variables              |
 
 ### Framework Integration
 
@@ -433,22 +433,22 @@ ls [-la] [path]         # Verzeichnis-Inhalt auflisten
 cat [file]              # Datei-Inhalt anzeigen
 mkdir [-p] <directory>  # Verzeichnis erstellen
 rm [-rf] <file/dir>     # Dateien/Ordner löschen
-cp [-r] <src> <dest>    # Kopieren (in Entwicklung)
-mv <src> <dest>         # Verschieben/Umbenennen (in Entwicklung)
+cp [-r] <src> <dest>    # Kopieren
+mv <src> <dest>         # Verschieben/Umbenennen
 
 # Environment & Konfiguration
 echo [text]             # Text ausgeben
 export VAR=value        # Umgebungsvariablen setzen
 env                     # Environment anzeigen
 alias name=command      # Command-Aliase erstellen
-unset VAR              # Variablen entfernen
+unset VAR               # Variablen entfernen
 
 # System-Tools
 date                    # Aktuelles Datum/Zeit
 history                 # Befehlshistorie
 which <command>         # Command-Pfad finden
-theme [name]           # Theme wechseln
-test                   # System-Selbsttest
+theme [name]            # Theme wechseln
+test                    # System-Selbsttest
 ```
 
 ### Plugin-System: Eigene Commands

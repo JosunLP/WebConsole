@@ -172,7 +172,8 @@ export class AliasCommand extends BaseCommand {
     try {
       // Get all aliases from state manager
       if (context.state && typeof context.state.get === "function") {
-        const aliases = context.state.get("console.aliases", {});
+        const aliases =
+          context.state.get<Record<string, string>>("console.aliases");
         return aliases || {};
       } else {
         // Fallback: use global aliases object
