@@ -2,6 +2,7 @@
  * Worker Manager Interface
  */
 
+import { TaskResult } from "../types/worker.type.js";
 import { IEventEmitter } from "./IEventEmitter.interface.js";
 import {
   IWorkerPermissions,
@@ -30,24 +31,24 @@ export interface IWorkerManager extends IEventEmitter {
   listPools(): string[];
 
   // Task Execution - Simplified API (Updated for Security)
-  runTask<T, R>(
+  runTask<T>(
     taskFunction: string | (() => T),
     options?: Partial<IWorkerTask> & { args?: unknown[] },
-  ): Promise<R>;
+  ): Promise<TaskResult>;
   runParallel<T>(
     taskFunction: string | (() => T),
     options?: Partial<IWorkerTask> & { args?: unknown[] },
-  ): Promise<T>;
+  ): Promise<TaskResult>;
   runParallelBatch<T>(
     taskFunctions: (string | (() => T))[],
     options?: Partial<IWorkerTask> & { args?: unknown[] },
-  ): Promise<T[]>;
+  ): Promise<TaskResult[]>;
 
   // Advanced Task Execution
-  executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R>;
-  executeBatch<T, R>(
-    tasks: IWorkerTask<T, R>[],
-  ): Promise<IWorkerTaskResult<R>[]>;
+  executeTask<T = unknown>(task: IWorkerTask<T>): Promise<TaskResult>;
+  executeBatch<T = unknown>(
+    tasks: IWorkerTask<T>[],
+  ): Promise<IWorkerTaskResult<TaskResult>[]>;
 
   // Task Management
   cancelTask(taskId: string): Promise<boolean>;

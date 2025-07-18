@@ -6,6 +6,11 @@ import {
   IWorkerTask,
   WorkerTaskType,
 } from "../interfaces/IWorkerTask.interface.js";
+import {
+  TaskResult,
+  WorkerAbortError,
+  WorkerTaskError,
+} from "../types/worker.type.js";
 import { generateMessageId } from "../utils/helpers.js";
 import { BaseWorker } from "./BaseWorker.js";
 
@@ -33,89 +38,151 @@ export class CommandWorker extends BaseWorker {
   protected async processTask(
     task: IWorkerTask,
     signal: AbortSignal,
-  ): Promise<unknown> {
-    this.checkAborted(signal);
+  ): Promise<TaskResult> {
+    try {
+      this.checkAborted(signal);
 
-    switch (task.type) {
-      case WorkerTaskType.COMMAND:
-        return this.executeCommand(task, signal);
+      switch (task.type) {
+        case WorkerTaskType.COMMAND:
+          return await this.executeCommand(task, signal);
 
-      case WorkerTaskType.VFS_OPERATION:
-        return this.executeVFSOperation(task, signal);
+        case WorkerTaskType.VFS_OPERATION:
+          return await this.executeVFSOperation(task, signal);
 
-      default:
-        throw new Error(
-          `Unsupported task type for CommandWorker: ${task.type}`,
-        );
+        default:
+          throw new WorkerTaskError(
+            `Unsupported task type for CommandWorker: ${task.type}`,
+            task.id,
+            task.type.toString(),
+          );
+      }
+    } catch (error) {
+      if (signal.aborted) {
+        throw new WorkerAbortError(task.id);
+      }
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
     }
   }
 
   private async executeCommand(
     task: IWorkerTask,
     signal: AbortSignal,
-  ): Promise<unknown> {
-    this.checkAborted(signal);
+  ): Promise<TaskResult> {
+    try {
+      this.checkAborted(signal);
 
-    const payload = task.payload as CommandWorkerPayload;
-    const { command, args, cwd } = payload;
+      const payload = task.payload as CommandWorkerPayload;
+      const { command, args, cwd } = payload;
 
-    // Simulated command execution
-    switch (command) {
-      case "grep":
-        return this.executeGrep(args, signal);
+      // Simulated command execution
+      switch (command) {
+        case "grep": {
+          const result = await this.executeGrep(args, signal);
+          return { success: true, data: result };
+        }
 
-      case "find":
-        return this.executeFind(args, cwd, signal);
+        case "find": {
+          const result = await this.executeFind(args, cwd, signal);
+          return { success: true, data: result };
+        }
 
-      case "sort":
-        return this.executeSort(args, payload.input || "", signal);
+        case "sort": {
+          const result = await this.executeSort(
+            args,
+            payload.input || "",
+            signal,
+          );
+          return { success: true, data: result };
+        }
 
-      case "wc":
-        return this.executeWordCount(args, payload.input || "", signal);
+        case "wc": {
+          const result = await this.executeWordCount(
+            args,
+            payload.input || "",
+            signal,
+          );
+          return { success: true, data: result };
+        }
 
-      case "cat":
-        return this.executeCat(args, signal);
+        case "cat": {
+          const result = await this.executeCat(args, signal);
+          return { success: true, data: result };
+        }
 
-      default:
-        throw new Error(`Command '${command}' not supported in worker`);
+        default:
+          throw new WorkerTaskError(
+            `Command '${command}' not supported in worker`,
+            task.id,
+            "command",
+          );
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
     }
   }
 
   private async executeVFSOperation(
     task: IWorkerTask,
     signal: AbortSignal,
-  ): Promise<unknown> {
-    this.checkAborted(signal);
+  ): Promise<TaskResult> {
+    try {
+      this.checkAborted(signal);
 
-    if (!this.vfsProxy) {
-      throw new Error("VFS proxy not available");
-    }
+      if (!this.vfsProxy) {
+        throw new Error("VFS proxy not available");
+      }
 
-    const payload = task.payload as {
-      operation: string;
-      path: string;
-      content?: string;
-    };
+      const payload = task.payload as {
+        operation: string;
+        path: string;
+        content?: string;
+      };
 
-    switch (payload.operation) {
-      case "read":
-        return this.vfsProxy.readFile(payload.path);
-
-      case "write":
-        if (!payload.content) {
-          throw new Error("Content required for write operation");
+      switch (payload.operation) {
+        case "read": {
+          const result = await this.vfsProxy.readFile(payload.path);
+          return { success: true, data: result };
         }
-        await this.vfsProxy.writeFile(payload.path, payload.content);
-        return { success: true };
 
-      case "exists":
-        return this.vfsProxy.exists(payload.path);
+        case "write": {
+          if (!payload.content) {
+            throw new Error("Content required for write operation");
+          }
+          await this.vfsProxy.writeFile(payload.path, payload.content);
+          return {
+            success: true,
+            data: { operation: "write", path: payload.path },
+          };
+        }
 
-      case "readdir":
-        return this.vfsProxy.readdir(payload.path);
+        case "exists": {
+          const result = await this.vfsProxy.exists(payload.path);
+          return { success: true, data: result };
+        }
 
-      default:
-        throw new Error(`Unknown VFS operation: ${payload.operation}`);
+        case "readdir": {
+          const result = await this.vfsProxy.readdir(payload.path);
+          return { success: true, data: result };
+        }
+
+        default:
+          throw new WorkerTaskError(
+            `Unknown VFS operation: ${payload.operation}`,
+            task.id,
+            "vfs_operation",
+          );
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
     }
   }
 

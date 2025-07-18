@@ -9,3 +9,4 @@ export * from "./event.type.js";
 export * from "./primitive.type.js";
 export * from "./stream.type.js";
 export * from "./theme.type.js";
+export * from "./worker.type.js";

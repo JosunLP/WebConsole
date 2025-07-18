@@ -97,16 +97,47 @@ export class VFSErrorHandler {
       throw error;
     }
 
-    console.error(`VFS Error during ${operation}:`, error);
+    // Better error categorization
+    if (error instanceof Error) {
+      console.error(`VFS Error during ${operation}:`, error.message);
 
-    if (path) {
-      throw VFSException.notFound(path);
+      if (error.name === "TypeError") {
+        throw new VFSException(
+          VfsError.INVALID_PATH,
+          `Type error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+          path,
+        );
+      }
+
+      if (error.name === "ReferenceError") {
+        throw new VFSException(
+          VfsError.NOT_FOUND,
+          `Reference error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+          path,
+        );
+      }
+
+      // Default error handling
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error.message}`,
+        path,
+      );
     }
 
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    // Handle non-Error objects
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : error && typeof error === "object" && "toString" in error
+          ? String(error)
+          : "Unknown error occurred";
+
+    console.error(`VFS Error during ${operation}:`, errorMessage);
+
     throw new VFSException(
       VfsError.INVALID_PATH,
-      `Unknown error during ${operation}: ${errorMessage}`,
+      `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
       path,
     );
   }

@@ -12,6 +12,7 @@ import {
   WorkerTaskStatus,
   WorkerTaskType,
 } from "../interfaces/index.js";
+import { TaskResult } from "../types/worker.type.js";
 import { EventEmitter } from "./EventEmitter.js";
 import { Logger } from "./Logger.js";
 
@@ -35,7 +36,7 @@ class WorkerPool implements IWorkerPool {
     {
       task: IWorkerTask;
       worker: Worker;
-      resolve: (value: unknown) => void;
+      resolve: (value: TaskResult) => void;
       reject: (error: Error) => void;
       startTime: number;
     }
@@ -103,8 +104,8 @@ class WorkerPool implements IWorkerPool {
     return worker;
   }
 
-  async executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R> {
-    return new Promise<R>((resolve, reject) => {
+  async executeTask<T = unknown>(task: IWorkerTask<T>): Promise<TaskResult> {
+    return new Promise<TaskResult>((resolve, reject) => {
       // Add task to queue
       this.taskQueue.push(task);
       this.queuedTasks++;
@@ -113,7 +114,7 @@ class WorkerPool implements IWorkerPool {
       this.activeTasks.set(task.id, {
         task,
         worker: null as unknown as Worker,
-        resolve: resolve as (value: unknown) => void,
+        resolve: resolve as (value: TaskResult) => void,
         reject,
         startTime: performance.now(),
       });
@@ -192,7 +193,12 @@ class WorkerPool implements IWorkerPool {
 
     if (result.success) {
       this.completedTasks++;
-      taskData.resolve(result.result);
+      // Für TaskResult verwenden wir das result direkt als TaskResult
+      const taskResult: TaskResult = (result.result as TaskResult) || {
+        success: true,
+        data: result.result,
+      };
+      taskData.resolve(taskResult);
     } else {
       this.failedTasks++;
       taskData.reject(result.error || new Error("Unknown worker error"));
@@ -407,10 +413,10 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   // Simplified API with safe predefined functions
-  async runTask<T, R>(
+  async runTask<T>(
     taskFunction: string | (() => T),
     options: Partial<IWorkerTask> & { args?: unknown[] } = {},
-  ): Promise<R> {
+  ): Promise<TaskResult> {
     let functionName: string;
     let args: unknown[] = [];
 
@@ -465,27 +471,25 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
       type: options.type || WorkerTaskType.COMPUTATION,
     };
 
-    return this.executeTask<unknown, R>(task);
+    return this.executeTask(task);
   }
 
   async runParallel<T>(
     taskFunction: string | (() => T),
     options: Partial<IWorkerTask> & { args?: unknown[] } = {},
-  ): Promise<T> {
-    return this.runTask<T, T>(taskFunction, options);
+  ): Promise<TaskResult> {
+    return this.runTask(taskFunction, options);
   }
 
   async runParallelBatch<T>(
     taskFunctions: (string | (() => T))[],
     options: Partial<IWorkerTask> & { args?: unknown[] } = {},
-  ): Promise<T[]> {
-    const tasks = taskFunctions.map((func) =>
-      this.runTask<T, T>(func, options),
-    );
+  ): Promise<TaskResult[]> {
+    const tasks = taskFunctions.map((func) => this.runTask(func, options));
     return Promise.all(tasks);
   }
 
-  async executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R> {
+  async executeTask<T = unknown>(task: IWorkerTask<T>): Promise<TaskResult> {
     if (!this._isInitialized) {
       throw new Error("WorkerManager not initialized");
     }
@@ -504,36 +508,38 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     try {
       const result = await pool.executeTask(task);
       this.emit("task-completed", { taskId: task.id, poolId });
-      return result;
+      return result as TaskResult;
     } catch (error) {
       this.emit("task-failed", { taskId: task.id, poolId, error });
       throw error;
     }
   }
 
-  async executeBatch<T, R>(
-    tasks: IWorkerTask<T, R>[],
-  ): Promise<IWorkerTaskResult<R>[]> {
-    const promises = tasks.map(async (task): Promise<IWorkerTaskResult<R>> => {
-      try {
-        const result = await this.executeTask(task);
-        return {
-          id: task.id,
-          success: true,
-          result,
-          executionTime: 0,
-          workerId: "batch",
-        };
-      } catch (error) {
-        return {
-          id: task.id,
-          success: false,
-          error: error instanceof Error ? error : new Error(String(error)),
-          executionTime: 0,
-          workerId: "batch",
-        };
-      }
-    });
+  async executeBatch<T = unknown>(
+    tasks: IWorkerTask<T>[],
+  ): Promise<IWorkerTaskResult<TaskResult>[]> {
+    const promises = tasks.map(
+      async (task): Promise<IWorkerTaskResult<TaskResult>> => {
+        try {
+          const result = await this.executeTask(task);
+          return {
+            id: task.id,
+            success: true,
+            result,
+            executionTime: 0,
+            workerId: "batch",
+          };
+        } catch (error) {
+          return {
+            id: task.id,
+            success: false,
+            error: error instanceof Error ? error : new Error(String(error)),
+            executionTime: 0,
+            workerId: "batch",
+          };
+        }
+      },
+    );
 
     return Promise.all(promises);
   }
