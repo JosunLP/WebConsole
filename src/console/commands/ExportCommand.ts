@@ -106,15 +106,8 @@ export class ExportCommand extends BaseCommand {
     // In a real implementation, this would update the environment in the state manager
     // For now, we'll just update the context environment (which might be read-only)
     try {
-      // Try to update the environment through the state manager
-      if (context.state && typeof context.state.setEnvironment === "function") {
-        const currentEnv = context.environment;
-        const newEnv = { ...currentEnv, [name]: value };
-        context.state.setEnvironment(newEnv);
-      } else {
-        // Fallback: try to modify the context environment directly
-        (context.environment as any)[name] = value;
-      }
+      // Direct modification of environment since state manager doesn't have setEnvironment
+      (context.environment as Record<string, string>)[name] = value;
     } catch (error) {
       // If we can't modify the environment, at least log the attempt
       await this.writeToStderr(
@@ -163,16 +156,8 @@ export class ExportCommand extends BaseCommand {
     name: string,
   ): Promise<boolean> {
     try {
-      if (context.state && typeof context.state.setEnvironment === "function") {
-        const currentEnv = context.environment;
-        const newEnv = { ...currentEnv };
-        delete newEnv[name];
-        context.state.setEnvironment(newEnv);
-        return true;
-      } else {
-        delete (context.environment as any)[name];
-        return true;
-      }
+      delete (context.environment as Record<string, string>)[name];
+      return true;
     } catch {
       return false;
     }

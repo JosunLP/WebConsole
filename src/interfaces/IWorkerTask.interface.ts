@@ -2,7 +2,7 @@
  * Worker Task Interface
  */
 
-export interface IWorkerTask<T = any, R = any> {
+export interface IWorkerTask<T = unknown> {
   id: string;
   payload: T;
   priority: number;
@@ -12,7 +12,7 @@ export interface IWorkerTask<T = any, R = any> {
   type: WorkerTaskType;
 }
 
-export interface IWorkerTaskResult<R = any> {
+export interface IWorkerTaskResult<R = unknown> {
   id: string;
   success: boolean;
   result?: R;
@@ -44,10 +44,8 @@ export interface IWorkerManager {
   getPool(id: string): IWorkerPool | undefined;
 
   // Task Execution
-  executeTask<T, R>(task: IWorkerTask<T, R>): Promise<R>;
-  executeBatch<T, R>(
-    tasks: IWorkerTask<T, R>[],
-  ): Promise<IWorkerTaskResult<R>[]>;
+  executeTask<T, R>(task: IWorkerTask<T>): Promise<R>;
+  executeBatch<T, R>(tasks: IWorkerTask<T>[]): Promise<IWorkerTaskResult<R>[]>;
 
   // Task Management
   cancelTask(taskId: string): Promise<boolean>;

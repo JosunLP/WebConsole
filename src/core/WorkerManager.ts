@@ -262,7 +262,7 @@ class WorkerPool implements IWorkerPool {
     this.busyWorkers.clear();
 
     // Alle aktiven Tasks abbrechen
-    for (const [taskId, taskData] of this.activeTasks) {
+    for (const [, taskData] of this.activeTasks) {
       taskData.reject(new Error("Worker pool terminated"));
     }
     this.activeTasks.clear();
@@ -549,9 +549,10 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
 
   listActiveTasks(): string[] {
     const tasks: string[] = [];
-    for (const pool of this.pools.values()) {
-      // Implementation würde hier alle aktiven Task-IDs sammeln
-    }
+    // Implementation würde hier alle aktiven Task-IDs sammeln
+    // for (const pool of this.pools.values()) {
+    //   tasks.push(...pool.getActiveTaskIds());
+    // }
     return tasks;
   }
 
