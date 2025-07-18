@@ -1,5 +1,5 @@
 /**
- * Virtual File System für Web-Console
+ * Virtual File System for Web Console
  * Implements a complete virtual file system with mount points
  */
 
@@ -541,7 +541,7 @@ Features:
       await this.stat(normalizedLink);
       throw new Error(`Link already exists: ${linkPath}`);
     } catch {
-      // Link existiert nicht, gut
+      // Link does not exist, good
     }
 
     const parentPath = this.dirname(normalizedLink);
@@ -620,7 +620,7 @@ Features:
   }
 
   /**
-   * Alle Mount-Points abrufen
+   * Get all mount points
    */
   getMounts(): MountConfig[] {
     return Array.from(this.mountPoints.values()).map((mp) => mp.config);

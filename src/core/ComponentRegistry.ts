@@ -1,5 +1,5 @@
 /**
- * Component Registry - Verwaltung von Framework-Komponenten
+ * Component Registry - Management of framework components
  */
 
 import type { IComponentRegistry } from "../interfaces/IComponentRegistry.interface.js";
@@ -81,7 +81,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Alle registrierten Framework-Komponenten automatisch registrieren
+   * Automatically register all registered framework components
    */
   public async registerBuiltInComponents(): Promise<void> {
     // React Component
@@ -103,7 +103,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Alle Framework-Komponenten vorladen
+   * Preload all framework components
    */
   public async preloadAllComponents(): Promise<void> {
     const components = this.list();
@@ -117,7 +117,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Framework-spezifischen Loader abrufen
+   * Get framework-specific loader
    */
   public getFrameworkLoader(
     framework: string,

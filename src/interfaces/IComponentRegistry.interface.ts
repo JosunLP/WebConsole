@@ -23,7 +23,7 @@ export interface IComponentRegistry {
 }
 
 /**
- * Component Interface - Basis für alle Komponenten
+ * Component Interface - Base for all components
  */
 export interface IComponent {
   readonly name: string;
@@ -32,7 +32,7 @@ export interface IComponent {
   initialize?(): Promise<void>;
   destroy?(): Promise<void>;
 
-  // Framework-spezifische Properties
+  // Framework-specific properties
   element?: HTMLElement;
   instance?: unknown;
 }

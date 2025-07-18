@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/html";
 
-// Simple HTML-based stories ohne TypeScript-Parsing-Probleme
+// Simple HTML-based stories without TypeScript parsing issues
 const meta: Meta = {
   title: "WebConsole/Complete System",
   tags: ["autodocs"],

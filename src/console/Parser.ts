@@ -1,5 +1,5 @@
 /**
- * Command-Parser für die Web-Console
+ * Command Parser for the Web Console
  * Konvertiert Token-Stream in AST
  */
 
@@ -40,7 +40,7 @@ interface ParserState {
 }
 
 /**
- * Command-Parser Implementierung
+ * Command Parser Implementation
  */
 export class Parser {
   private state: ParserState;
@@ -65,7 +65,7 @@ export class Parser {
   }
 
   /**
-   * Kommandozeile parsen
+   * Parse command line
    */
   parse(): ParsedCommand {
     const environment: Environment = {};
@@ -101,7 +101,7 @@ export class Parser {
   }
 
   /**
-   * Pipeline parsen (Command | Command | ...)
+   * Parse pipeline (Command | Command | ...)
    */
   private parsePipeline(): PipelineSegment[] {
     const segments: PipelineSegment[] = [];
@@ -117,7 +117,7 @@ export class Parser {
   }
 
   /**
-   * Einzelnen Befehl parsen
+   * Parse single command
    */
   private parseCommand(): PipelineSegment {
     let command = "";
@@ -140,7 +140,7 @@ export class Parser {
       );
     }
 
-    // Argumente und Redirections
+    // Arguments and redirections
     while (!this.isCommandEnd()) {
       if (this.isRedirection()) {
         redirections.push(this.parseRedirection());
@@ -173,7 +173,7 @@ export class Parser {
   }
 
   /**
-   * Redirection parsen
+   * Parse redirection
    */
   private parseRedirection(): Redirection {
     const token = this.current();
@@ -211,7 +211,7 @@ export class Parser {
         );
     }
 
-    // Target (Dateiname oder File-Descriptor)
+    // Target (filename or file descriptor)
     if (
       this.current().type !== TokenType.WORD &&
       this.current().type !== TokenType.STRING
@@ -259,7 +259,7 @@ export class Parser {
   }
 
   /**
-   * Nächstes Token konsumieren
+   * Consume next token
    */
   private advance(): void {
     if (this.state.position < this.state.tokens.length - 1) {
@@ -275,14 +275,14 @@ export class Parser {
   }
 
   /**
-   * Aktuelles Token
+   * Current token
    */
   private current(): Token {
     return this.state.current;
   }
 
   /**
-   * Nächstes Token (ohne zu konsumieren)
+   * Next token (without consuming)
    */
   private peek(): Token {
     if (this.state.position < this.state.tokens.length - 1) {
@@ -300,14 +300,14 @@ export class Parser {
   }
 
   /**
-   * Prüft ob am Ende des Token-Streams
+   * Check if at end of token stream
    */
   private isAtEnd(): boolean {
     return this.current().type === TokenType.EOF;
   }
 
   /**
-   * Prüft ob aktuelles Token eine Redirection ist
+   * Check if current token is a redirection
    */
   private isRedirection(): boolean {
     const type = this.current().type;
@@ -321,7 +321,7 @@ export class Parser {
   }
 
   /**
-   * Prüft ob Command zu Ende ist
+   * Check if command is at end
    */
   private isCommandEnd(): boolean {
     const type = this.current().type;
@@ -337,7 +337,7 @@ export class Parser {
   }
 
   /**
-   * Erwartet Ende des Inputs
+   * Expect end of input
    */
   private expectEnd(): void {
     if (!this.isAtEnd() && this.current().type !== TokenType.EOF) {
@@ -350,7 +350,7 @@ export class Parser {
   }
 
   /**
-   * Erwartetes Token-Type prüfen
+   * Check expected token type
    */
   private expect(expectedType: TokenType): Token {
     if (this.current().type !== expectedType) {
@@ -366,15 +366,15 @@ export class Parser {
   }
 
   /**
-   * Environment-Variable-Substitution
+   * Environment variable substitution
    */
   private substituteVariables(value: string, environment: Environment): string {
-    // Einfache Variable: $VAR
+    // Simple variable: $VAR
     let result = value.replace(/\$(\w+)/g, (match, varName) => {
       return environment[varName] || "";
     });
 
-    // Erweiterte Variable: ${VAR} oder ${VAR:-default}
+    // Extended variable: ${VAR} or ${VAR:-default}
     result = result.replace(/\$\{([^}]+)\}/g, (match, expression) => {
       if (expression.includes(":-")) {
         const [varName, defaultValue] = expression.split(":-", 2);
@@ -388,7 +388,7 @@ export class Parser {
   }
 
   /**
-   * Glob-Pattern expandieren
+   * Expand glob patterns
    */
   private expandGlob(pattern: string): string[] {
     // Vereinfachte Glob-Expansion
@@ -400,7 +400,7 @@ export class Parser {
   }
 
   /**
-   * Tilde-Expansion (~)
+   * Tilde expansion (~)
    */
   private expandTilde(path: string): string {
     if (path.startsWith("~/")) {
@@ -412,7 +412,7 @@ export class Parser {
   }
 
   /**
-   * Command-Substitution $(command) oder `command`
+   * Command substitution $(command) or `command`
    */
   private substituteCommands(value: string): string {
     // $(command) syntax
@@ -431,7 +431,7 @@ export class Parser {
   }
 
   /**
-   * Erweiterte Argument-Verarbeitung mit allen Shell-Features
+   * Advanced argument processing with all shell features
    */
   private processAdvancedArguments(
     args: CommandArgs,
@@ -442,16 +442,16 @@ export class Parser {
     for (const arg of args) {
       let processedArg = arg;
 
-      // 1. Tilde-Expansion
+      // 1. Tilde expansion
       processedArg = this.expandTilde(processedArg);
 
-      // 2. Variable-Substitution
+      // 2. Variable substitution
       processedArg = this.substituteVariables(processedArg, environment);
 
-      // 3. Command-Substitution
+      // 3. Command substitution
       processedArg = this.substituteCommands(processedArg);
 
-      // 4. Glob-Expansion
+      // 4. Glob expansion
       const globExpanded = this.expandGlob(processedArg);
       processed.push(...globExpanded);
     }
@@ -460,7 +460,7 @@ export class Parser {
   }
 
   /**
-   * Debug-Information für Token-Stream
+   * Debug information for token stream
    */
   debug(): object {
     return {

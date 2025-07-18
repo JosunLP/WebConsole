@@ -11,7 +11,7 @@ export interface VFSMetrics {
 }
 
 /**
- * Performance Monitor für VFS-Operationen
+ * Performance Monitor for VFS operations
  */
 export class VFSPerformanceMonitor {
   private metrics: VFSMetrics = {
@@ -115,7 +115,7 @@ export class VFSPerformanceMonitor {
 }
 
 /**
- * LRU Cache für VFS-Operationen
+ * LRU Cache for VFS operations
  */
 export class LRUCache<K, V> {
   private cache = new Map<K, V>();

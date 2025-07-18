@@ -1,5 +1,5 @@
 /**
- * Stream-bezogene Typdefinitionen
+ * Stream-related type definitions
  */
 
 /**

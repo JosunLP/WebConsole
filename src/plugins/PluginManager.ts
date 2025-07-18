@@ -1,5 +1,5 @@
 /**
- * Plugin System für Web Console Commands
+ * Plugin System for Web Console Commands
  */
 
 import { CommandType, ExitCode } from "../enums/index.js";
@@ -68,7 +68,7 @@ export class PluginManager {
   }
 
   /**
-   * Plugin deregistrieren
+   * Unregister plugin
    */
   async unregisterPlugin(name: string): Promise<void> {
     const plugin = this.plugins.get(name);
@@ -79,7 +79,7 @@ export class PluginManager {
     // Cleanup Plugin
     await plugin.cleanup();
 
-    // Entferne Commands
+    // Remove commands
     for (const commandName of plugin.metadata.commands) {
       this.loadedCommands.delete(commandName);
     }
@@ -89,21 +89,21 @@ export class PluginManager {
   }
 
   /**
-   * Command-Handler abrufen
+   * Get command handler
    */
   getCommandHandler(command: string): ICommandHandler | undefined {
     return this.loadedCommands.get(command)?.handler;
   }
 
   /**
-   * Alle verfügbaren Commands auflisten
+   * List all available commands
    */
   getAvailableCommands(): string[] {
     return Array.from(this.loadedCommands.keys()).sort();
   }
 
   /**
-   * Plugin-Informationen abrufen
+   * Get plugin information
    */
   getPluginInfo(name: string): PluginMetadata | undefined {
     return this.plugins.get(name)?.metadata;
@@ -118,7 +118,7 @@ export class PluginManager {
 }
 
 /**
- * Helper-Funktion für Stream-Output
+ * Helper function for stream output
  */
 async function writeToStream(
   stream: WritableStream<Uint8Array>,
@@ -135,7 +135,7 @@ async function writeToStream(
 }
 
 /**
- * Beispiel-Plugin: Git Commands
+ * Example Plugin: Git Commands
  */
 export class GitPlugin implements IPlugin {
   metadata: PluginMetadata = {

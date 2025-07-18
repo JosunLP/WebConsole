@@ -272,7 +272,7 @@ export const AngularComponent = {
   },
 };
 
-// Vue Story (zeigt Web Component, da Vue-Integration im Storybook nicht trivial)
+// Vue Story (shows Web Component since Vue integration in Storybook is not trivial)
 export const VueComponent = {
   name: "🟦 Vue WebConsole",
   render: (args: WebConsoleArgs) => {
@@ -291,7 +291,7 @@ export const VueComponent = {
   },
 };
 
-// Svelte Story (zeigt Web Component, da Svelte-Integration im Storybook nicht trivial)
+// Svelte Story (shows Web Component since Svelte integration in Storybook is not trivial)
 export const SvelteComponent = {
   name: "🟩 Svelte WebConsole",
   render: (args: WebConsoleArgs) => {

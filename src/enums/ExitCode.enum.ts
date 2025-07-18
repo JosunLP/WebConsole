@@ -1,5 +1,5 @@
 /**
- * Exit-Codes für Befehlsausführung
+ * Exit codes for command execution
  */
 export enum ExitCode {
   /** Successful */
@@ -16,6 +16,6 @@ export enum ExitCode {
   COMMAND_NOT_FOUND = 127,
   /** Invalid argument for exit */
   INVALID_EXIT_ARGUMENT = 128,
-  /** Befehl durch Signal beendet */
+  /** Command terminated by signal */
   TERMINATED_BY_SIGNAL = 130,
 }

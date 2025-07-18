@@ -252,7 +252,7 @@ class WorkerPool implements IWorkerPool {
   }
 
   async terminate(): Promise<void> {
-    // Alle Worker beenden
+    // Terminate all workers
     for (const worker of this.workers) {
       worker.terminate();
     }
@@ -261,7 +261,7 @@ class WorkerPool implements IWorkerPool {
     this.availableWorkers = [];
     this.busyWorkers.clear();
 
-    // Alle aktiven Tasks abbrechen
+    // Cancel all active tasks
     for (const [, taskData] of this.activeTasks) {
       taskData.reject(new Error("Worker pool terminated"));
     }
@@ -338,7 +338,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   async shutdown(): Promise<void> {
     if (!this._isInitialized) return;
 
-    // Alle Pools beenden
+    // Terminate all pools
     const promises = Array.from(this.pools.values()).map((pool) =>
       pool.terminate(),
     );

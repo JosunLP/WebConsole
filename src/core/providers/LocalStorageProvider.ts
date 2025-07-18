@@ -177,7 +177,7 @@ export class LocalStorageProvider implements IVFSProvider {
   }
 
   /**
-   * Entferne Eintrag aus Verzeichnis
+   * Remove entry from directory
    */
   async removeDirEntry(dirInode: InodeNumber, name: string): Promise<void> {
     const entry = this.storage.get(dirInode);
@@ -195,7 +195,7 @@ export class LocalStorageProvider implements IVFSProvider {
   }
 
   /**
-   * Finde Inode für Pfad
+   * Find inode for path
    */
   async findInode(
     dirInode: InodeNumber,
@@ -320,7 +320,7 @@ export class LocalStorageProvider implements IVFSProvider {
   }
 
   /**
-   * Provider-Statistiken abrufen
+   * Get provider statistics
    */
   getProviderStats(): {
     provider: string;

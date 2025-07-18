@@ -11,22 +11,22 @@ export const Welcome = {
       <div style="font-family: system-ui, sans-serif; max-width: 1200px; margin: 0 auto; padding: 2rem;">
         <h1>🖥️ WebConsole Test Suite</h1>
 
-        <p>Willkommen zur <strong>WebConsole Storybook Test Suite</strong>! Diese interaktive Testumgebung ersetzt die einfache <code>test.html</code> und bietet umfassende Tests für alle WebConsole-Components.</p>
+        <p>Welcome to the <strong>WebConsole Storybook Test Suite</strong>! This interactive test environment replaces the simple <code>test.html</code> and provides comprehensive tests for all WebConsole components.</p>
 
         <h2>🎯 Was ist WebConsole?</h2>
 
-        <p>WebConsole ist eine <strong>modulare, vollständig im Browser laufende Console-Bibliothek</strong> für moderne Web-Anwendungen.</p>
+        <p>WebConsole is a <strong>modular, fully browser-based console library</strong> for modern web applications.</p>
 
         <h3>✨ Features</h3>
         <ul>
-          <li>🔧 <strong>Modulare Architektur</strong> - Kernel, VFS, StateManager, Parser</li>
+          <li>🔧 <strong>Modular Architecture</strong> - Kernel, VFS, StateManager, Parser</li>
           <li>🗂️ <strong>Virtual File System</strong> - POSIX-like with localStorage backend</li>
-          <li>🎨 <strong>Framework-agnostisch</strong> - Angular, React, Vue, Svelte, Web Components</li>
-          <li>🔒 <strong>Sicherheit</strong> - Sandbox, CSP-kompatibel, keine eval()-Nutzung</li>
+          <li>🎨 <strong>Framework-agnostic</strong> - Angular, React, Vue, Svelte, Web Components</li>
+          <li>🔒 <strong>Security</strong> - Sandbox, CSP-compatible, no eval() usage</li>
           <li>📦 <strong>Tree-Shaking</strong> - Minimal bundle size through modular structure</li>
         </ul>
 
-        <h2>🧪 Test-Kategorien</h2>
+        <h2>🧪 Test Categories</h2>
         <ul>
           <li><strong>Core System</strong> - Kernel, VFS, CommandRegistry</li>
           <li><strong>Framework Components</strong> - React, Angular, Vue, Svelte</li>

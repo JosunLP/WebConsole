@@ -4,7 +4,7 @@
 export enum VfsError {
   /** File or directory not found */
   NOT_FOUND = "ENOENT",
-  /** Zugriff verweigert */
+  /** Access denied */
   ACCESS_DENIED = "EACCES",
   /** Is a directory */
   IS_DIRECTORY = "EISDIR",
@@ -16,8 +16,8 @@ export enum VfsError {
   NOT_EMPTY = "ENOTEMPTY",
   /** Invalid path */
   INVALID_PATH = "EINVAL",
-  /** Kein Speicherplatz */
+  /** No space left */
   NO_SPACE = "ENOSPC",
-  /** Zu viele Links */
+  /** Too many links */
   TOO_MANY_LINKS = "EMLINK",
 }

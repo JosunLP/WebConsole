@@ -1,5 +1,5 @@
 /**
- * React Hooks für Web-Console
+ * React Hooks for Web Console
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import type { IVFS } from "../../interfaces/IVFS.interface.js";
 import type { CommandResult } from "../../types/index.js";
 
 /**
- * Hook für Console-Instanz-Management
+ * Hook for console instance management
  */
 export function useConsole(options: Partial<IConsoleOptions> = {}) {
   const [console, setConsole] = useState<IConsole | null>(null);

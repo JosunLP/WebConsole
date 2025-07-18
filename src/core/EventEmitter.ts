@@ -1,12 +1,12 @@
 /**
- * Event-Emitter Implementierung für das Web-Console-System
+ * Event-Emitter implementation for the Web-Console system
  */
 
 import { IEventEmitter } from "../interfaces/index.js";
 import { EventHandler, EventUnsubscriber } from "../types/index.js";
 
 /**
- * Interne Event-Listener-Struktur
+ * Internal event listener structure
  */
 interface EventListener {
   handler: EventHandler<unknown>;
@@ -14,7 +14,7 @@ interface EventListener {
 }
 
 /**
- * Typsichere Event-Emitter Implementierung
+ * Type-safe Event Emitter implementation
  */
 export class EventEmitter implements IEventEmitter {
   private readonly listeners = new Map<string, Set<EventListener>>();
@@ -40,7 +40,7 @@ export class EventEmitter implements IEventEmitter {
   }
 
   /**
-   * Event-Listener für einmalige Ausführung registrieren
+   * Register event listener for one-time execution
    */
   once<T = unknown>(
     event: string,
@@ -62,7 +62,7 @@ export class EventEmitter implements IEventEmitter {
   }
 
   /**
-   * Event-Listener entfernen
+   * Remove event listener
    */
   off(event: string, handler: EventHandler): void {
     const eventListeners = this.listeners.get(event);
@@ -101,7 +101,7 @@ export class EventEmitter implements IEventEmitter {
   }
 
   /**
-   * Alle Listener für ein Event entfernen
+   * Remove all listeners for an event
    */
   removeAllListeners(event?: string): void {
     if (event) {
@@ -112,7 +112,7 @@ export class EventEmitter implements IEventEmitter {
   }
 
   /**
-   * Prüfen ob Listener für ein Event vorhanden sind
+   * Check if listeners exist for an event
    */
   hasListeners(event: string): boolean {
     const eventListeners = this.listeners.get(event);
@@ -120,21 +120,21 @@ export class EventEmitter implements IEventEmitter {
   }
 
   /**
-   * Anzahl der Listener für ein Event
+   * Number of listeners for an event
    */
   listenerCount(event: string): number {
     return this.listeners.get(event)?.size ?? 0;
   }
 
   /**
-   * Alle registrierten Events
+   * All registered events
    */
   eventNames(): string[] {
     return Array.from(this.listeners.keys());
   }
 
   /**
-   * Alle Listener für ein Event (für Debugging)
+   * All listeners for an event (for debugging)
    */
   getListeners(event: string): EventHandler[] {
     const eventListeners = this.listeners.get(event);

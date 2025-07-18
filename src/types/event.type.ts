@@ -58,7 +58,7 @@ export type TypedEvent<K extends keyof EventData> = {
 };
 
 /**
- * Union aller möglichen Events
+ * Union of all possible events
  */
 export type AnyEvent = {
   [K in keyof EventData]: TypedEvent<K>;

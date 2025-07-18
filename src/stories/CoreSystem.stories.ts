@@ -181,7 +181,7 @@ const meta = {
   argTypes: {
     autoStart: {
       control: "boolean",
-      description: "Automatisch alle Tests starten",
+      description: "Automatically start all tests",
     },
     showLogs: {
       control: "boolean",

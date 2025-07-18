@@ -62,7 +62,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   }
 
   public injectCSS(): void {
-    // Entferne vorhandenes CSS
+    // Remove existing CSS
     this.removeCSS();
 
     // Create new style element

@@ -1,5 +1,5 @@
 /**
- * Command Registry für die Verwaltung von Built-in und Custom Commands
+ * Command Registry for management of built-in and custom commands
  */
 
 import { EventEmitter } from "../core/EventEmitter.js";
@@ -69,7 +69,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Handler entfernen
+   * Remove command handler
    */
   unregister(name: string): void {
     const handler = this.commands.get(name);
@@ -85,7 +85,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Handler abrufen
+   * Get command handler
    */
   get(name: string): ICommandHandler | undefined {
     // Zuerst nach Alias suchen
@@ -94,7 +94,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Prüfen ob Command existiert
+   * Check if command exists
    */
   has(name: string): boolean {
     const resolvedName = this.aliases.get(name) || name;
@@ -102,14 +102,14 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle registrierten Commands auflisten
+   * List all registered commands
    */
   list(): string[] {
     return Array.from(this.commands.keys()).sort();
   }
 
   /**
-   * Alias für Command erstellen
+   * Create alias for command
    */
   alias(alias: string, command: string): void {
     if (this.commands.has(alias)) {

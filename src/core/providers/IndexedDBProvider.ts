@@ -13,7 +13,7 @@ interface IndexedDBEntry {
 }
 
 /**
- * IndexedDB-basierter VFS Provider für persistente Speicherung
+ * IndexedDB-based VFS Provider for persistent storage
  */
 export class IndexedDBProvider implements IVFSProvider {
   public readonly name = "indexedDB";

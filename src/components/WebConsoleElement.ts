@@ -1,5 +1,5 @@
 /**
- * Native Web Component für Web-Console
+ * Native Web Component for Web Console
  */
 
 import { kernel } from "../core/Kernel.js";
@@ -105,7 +105,7 @@ export class WebConsoleElement extends HTMLElement {
 
   private async initialize() {
     try {
-      // Starte Kernel falls noch nicht gestartet
+      // Start kernel if not already started
       if (!kernel.isStarted) {
         await kernel.start();
       }
