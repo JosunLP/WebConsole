@@ -1,6 +1,6 @@
 /**
  * Memory VFS Provider
- * Implementiert ein rein im Speicher basiertes virtuelles Dateisystem
+ * Implements a purely memory-based virtual file system
  */
 
 import { FileType, Permission, VfsItemType } from "../../enums/index.js";
@@ -27,7 +27,7 @@ export class MemoryProvider implements IVFSProvider {
   private nextInode = 1;
 
   constructor() {
-    // Root-Verzeichnis erstellen
+    // Create root directory
     this.createRootDirectory();
   }
 
@@ -47,7 +47,7 @@ export class MemoryProvider implements IVFSProvider {
 
     entry.data = data;
 
-    // Erstelle neues INode mit aktualisierten Werten
+    // Create new INode with updated values
     const updatedInode: INode = {
       ...entry.inode,
       size: data.length,
@@ -97,7 +97,7 @@ export class MemoryProvider implements IVFSProvider {
       throw new Error(`Inode not found: ${inode}`);
     }
 
-    // Rekursiv Verzeichnisinhalte löschen
+    // Recursively delete directory contents
     if (entry.inode.type === FileType.DIRECTORY && entry.children) {
       for (const childInode of entry.children.values()) {
         await this.deleteInode(childInode);
@@ -116,7 +116,7 @@ export class MemoryProvider implements IVFSProvider {
       throw new Error(`Inode not found: ${inode}`);
     }
 
-    // Erstelle neues INode mit Updates
+    // Create new INode with updates
     const updatedInode: INode = {
       ...entry.inode,
       ...updates,
@@ -156,7 +156,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Hilfsmethode: Kind zu Verzeichnis hinzufügen
+   * Helper method: add child to directory
    */
   async addChild(
     parentInode: InodeNumber,
@@ -176,7 +176,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Hilfsmethode: Kind aus Verzeichnis entfernen
+   * Helper method: remove child from directory
    */
   async removeChild(parentInode: InodeNumber, name: string): Promise<void> {
     const parentEntry = this.storage.get(parentInode);
@@ -190,7 +190,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Hilfsmethode: Kind in Verzeichnis finden
+   * Helper method: find child in directory
    */
   async findChild(
     parentInode: InodeNumber,
@@ -205,7 +205,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Debug-Informationen abrufen
+   * Get debug information
    */
   debug(): object {
     return {
@@ -222,7 +222,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Root-Verzeichnis erstellen
+   * Create root directory
    */
   private createRootDirectory(): void {
     const now = Date.now();
@@ -237,7 +237,7 @@ export class MemoryProvider implements IVFSProvider {
       atime: now,
       ctime: now,
       blocks: 0,
-      linkCount: 2, // '.' und '..'
+      linkCount: 2, // '.' and '..'
     };
 
     const rootEntry: MemoryEntry = {
@@ -249,7 +249,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Speicher leeren
+   * Clear memory
    */
   clear(): void {
     this.storage.clear();
@@ -258,7 +258,7 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Statistiken abrufen
+   * Get statistics
    */
   getStats(): {
     totalInodes: number;
@@ -288,13 +288,13 @@ export class MemoryProvider implements IVFSProvider {
   }
 
   /**
-   * Speicher-Nutzung optimieren
+   * Optimize memory usage
    */
   public optimize(): void {
-    // Entferne nicht referenzierte Inodes (vereinfacht)
+    // Remove unreferenced inodes (simplified)
     const referencedInodes = new Set<InodeNumber>();
 
-    // Sammle alle referenzierten Inodes aus Verzeichnissen
+    // Collect all referenced inodes from directories
     for (const entry of this.storage.values()) {
       if (entry.inode.type === FileType.DIRECTORY && entry.children) {
         for (const childInode of entry.children.values()) {
@@ -303,10 +303,10 @@ export class MemoryProvider implements IVFSProvider {
       }
     }
 
-    // Entferne nicht referenzierte Inodes
+    // Remove unreferenced inodes
     for (const [inode] of this.storage) {
       if (!referencedInodes.has(inode) && inode !== 1) {
-        // Root behalten
+        // Keep root
         this.storage.delete(inode);
       }
     }

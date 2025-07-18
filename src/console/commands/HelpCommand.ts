@@ -77,7 +77,9 @@ export class HelpCommand extends BaseCommand {
       "getDetailedHelp" in command &&
       typeof command.getDetailedHelp === "function"
     ) {
-      const detailedHelp = (command as any).getDetailedHelp();
+      const detailedHelp = (
+        command as { getDetailedHelp: () => string }
+      ).getDetailedHelp();
       if (detailedHelp) {
         output += detailedHelp + "\n";
       }

@@ -1,5 +1,5 @@
 /**
- * Plugin System für Web Console Commands
+ * Plugin System for Web Console Commands
  */
 
 import { CommandType, ExitCode } from "../enums/index.js";
@@ -30,7 +30,7 @@ export class PluginManager {
   >();
 
   /**
-   * Plugin registrieren
+   * Register plugin
    */
   async registerPlugin(plugin: IPlugin): Promise<void> {
     const { name } = plugin.metadata;
@@ -39,20 +39,20 @@ export class PluginManager {
       throw new Error(`Plugin '${name}' is already registered`);
     }
 
-    // Prüfe Dependencies
+    // Check dependencies
     for (const dep of plugin.metadata.dependencies || []) {
       if (!this.plugins.has(dep)) {
         throw new Error(`Plugin '${name}' requires dependency '${dep}'`);
       }
     }
 
-    // Registriere Plugin
+    // Register plugin
     this.plugins.set(name, plugin);
 
-    // Initialisiere Plugin
+    // Initialize plugin
     await plugin.initialize();
 
-    // Registriere Commands
+    // Register commands
     const commands = plugin.getCommands();
     for (const [commandName, handler] of commands) {
       if (this.loadedCommands.has(commandName)) {
@@ -68,7 +68,7 @@ export class PluginManager {
   }
 
   /**
-   * Plugin deregistrieren
+   * Unregister plugin
    */
   async unregisterPlugin(name: string): Promise<void> {
     const plugin = this.plugins.get(name);
@@ -79,7 +79,7 @@ export class PluginManager {
     // Cleanup Plugin
     await plugin.cleanup();
 
-    // Entferne Commands
+    // Remove commands
     for (const commandName of plugin.metadata.commands) {
       this.loadedCommands.delete(commandName);
     }
@@ -89,28 +89,28 @@ export class PluginManager {
   }
 
   /**
-   * Command-Handler abrufen
+   * Get command handler
    */
   getCommandHandler(command: string): ICommandHandler | undefined {
     return this.loadedCommands.get(command)?.handler;
   }
 
   /**
-   * Alle verfügbaren Commands auflisten
+   * List all available commands
    */
   getAvailableCommands(): string[] {
     return Array.from(this.loadedCommands.keys()).sort();
   }
 
   /**
-   * Plugin-Informationen abrufen
+   * Get plugin information
    */
   getPluginInfo(name: string): PluginMetadata | undefined {
     return this.plugins.get(name)?.metadata;
   }
 
   /**
-   * Alle geladenen Plugins auflisten
+   * List all loaded plugins
    */
   getLoadedPlugins(): PluginMetadata[] {
     return Array.from(this.plugins.values()).map((p) => p.metadata);
@@ -118,7 +118,7 @@ export class PluginManager {
 }
 
 /**
- * Helper-Funktion für Stream-Output
+ * Helper function for stream output
  */
 async function writeToStream(
   stream: WritableStream<Uint8Array>,
@@ -135,7 +135,7 @@ async function writeToStream(
 }
 
 /**
- * Beispiel-Plugin: Git Commands
+ * Example Plugin: Git Commands
  */
 export class GitPlugin implements IPlugin {
   metadata: PluginMetadata = {
@@ -223,7 +223,7 @@ no changes added to commit
       description: "Show git status (alias for git status)",
       usage: "status",
       execute: async (context: CommandContext): Promise<ExitCode> => {
-        // Rufe git status auf
+        // Call git status
         const gitHandler = this.commands.get("git")!;
         const newContext = {
           ...context,
@@ -312,7 +312,7 @@ export class SystemPlugin implements IPlugin {
 
         let output: string;
         if (format && format.startsWith("+")) {
-          // Einfache Format-Unterstützung
+          // Simple format support
           output = format
             .replace(/%Y/g, now.getFullYear().toString())
             .replace(/%m/g, (now.getMonth() + 1).toString().padStart(2, "0"))

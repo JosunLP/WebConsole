@@ -1,21 +1,21 @@
 /**
- * Exit-Codes für Befehlsausführung
+ * Exit codes for command execution
  */
 export enum ExitCode {
-  /** Erfolgreich */
+  /** Successful */
   SUCCESS = 0,
-  /** Allgemeiner Fehler */
+  /** General error */
   ERROR = 1,
-  /** Allgemeiner Fehler (Alias für ERROR) */
+  /** General error (alias for ERROR) */
   FAILURE = 1,
-  /** Allgemeiner Fehler */
+  /** General error */
   GENERAL_ERROR = 1,
-  /** Ungültige Verwendung eines Shell-Builtins */
+  /** Invalid use of a shell builtin */
   MISUSE = 2,
-  /** Befehl nicht gefunden */
+  /** Command not found */
   COMMAND_NOT_FOUND = 127,
-  /** Ungültiges Argument für Exit */
+  /** Invalid argument for exit */
   INVALID_EXIT_ARGUMENT = 128,
-  /** Befehl durch Signal beendet */
+  /** Command terminated by signal */
   TERMINATED_BY_SIGNAL = 130,
 }

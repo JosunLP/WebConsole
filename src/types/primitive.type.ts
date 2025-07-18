@@ -1,58 +1,58 @@
 /**
- * Grundlegende primitive Typdefinitionen
+ * Basic primitive type definitions
  */
 
 /**
- * Eindeutige ID für verschiedene Entitäten
+ * Unique ID for various entities
  */
 export type ID = string;
 
 /**
- * Unix-Timestamp in Millisekunden
+ * Unix timestamp in milliseconds
  */
 export type Timestamp = number;
 
 /**
- * POSIX-ähnlicher Dateipfad
+ * POSIX-like file path
  */
 export type Path = string;
 
 /**
- * Mime-Type für Dateien
+ * MIME type for files
  */
 export type MimeType = string;
 
 /**
- * Color-Value (CSS-kompatibel)
+ * Color value (CSS-compatible)
  */
 export type ColorValue = string;
 
 /**
- * CSS-Custom-Property Name
+ * CSS custom property name
  */
 export type CSSCustomProperty = `--${string}`;
 
 /**
- * Glob-Pattern für Dateisuche
+ * Glob pattern for file search
  */
 export type GlobPattern = string;
 
 /**
- * Permissions als Oktal-Zahl (z.B. 0o755)
+ * Permissions as octal number (e.g. 0o755)
  */
 export type PermissionMask = number;
 
 /**
- * Inode-Nummer im VFS
+ * Inode number in VFS
  */
 export type InodeNumber = number;
 
 /**
- * Block-Adresse im Storage
+ * Block address in storage
  */
 export type BlockAddress = number;
 
 /**
- * Umgebungsvariablen
+ * Environment variables
  */
 export type Environment = Record<string, string>;

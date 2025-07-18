@@ -1,11 +1,11 @@
 /**
- * Theme-bezogene Typdefinitionen
+ * Theme-related type definitions
  */
 
 import { ColorValue } from "./primitive.type.js";
 
 /**
- * Vordefinierte Theme-Token
+ * Predefined theme tokens
  */
 export interface ThemeTokens {
   // Colors
@@ -30,6 +30,6 @@ export interface ThemeTokens {
   "spacing-md": string;
   "spacing-lg": string;
 
-  // Zusätzliche benutzerdefinierte Tokens
+  // Additional custom tokens
   [key: string]: string;
 }

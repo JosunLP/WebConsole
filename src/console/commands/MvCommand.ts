@@ -1,4 +1,5 @@
 import { ExitCode } from "../../enums/ExitCode.enum.js";
+import { VfsItemType } from "../../enums/VfsItemType.enum.js";
 import type { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
@@ -66,7 +67,7 @@ export class MvCommand extends BaseCommand {
 
       // If multiple sources, destination must be a directory
       if (sources.length > 1) {
-        if (!destStat || !destStat.isDirectory()) {
+        if (!destStat || destStat.type !== VfsItemType.DIRECTORY) {
           await this.writeToStderr(
             context,
             `mv: target '${destination}' is not a directory\n`,
@@ -96,7 +97,7 @@ export class MvCommand extends BaseCommand {
           }
 
           // If destination is a directory, move into it
-          if (destStat && destStat.isDirectory()) {
+          if (destStat && destStat.type === VfsItemType.DIRECTORY) {
             const sourceName = sourcePath.split("/").pop();
             finalDestPath =
               destPath === "/" ? `/${sourceName}` : `${destPath}/${sourceName}`;
@@ -113,7 +114,7 @@ export class MvCommand extends BaseCommand {
           }
 
           // Perform the move operation
-          if (sourceStat.isDirectory()) {
+          if (sourceStat.type === VfsItemType.DIRECTORY) {
             await this.moveDirectory(
               vfs,
               sourcePath,
@@ -150,7 +151,7 @@ export class MvCommand extends BaseCommand {
   }
 
   private async moveFile(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     sourcePath: string,
     destPath: string,
     verbose: boolean,
@@ -171,7 +172,7 @@ export class MvCommand extends BaseCommand {
   }
 
   private async moveDirectory(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     sourcePath: string,
     destPath: string,
     verbose: boolean,
@@ -191,14 +192,14 @@ export class MvCommand extends BaseCommand {
   }
 
   private async copyDirectoryRecursive(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     sourcePath: string,
     destPath: string,
     verbose: boolean,
     context: CommandContext,
   ): Promise<void> {
     // Create destination directory
-    await vfs.createDirectory(destPath);
+    await vfs.createDir(destPath);
 
     if (verbose) {
       await this.writeToStdout(context, `'${sourcePath}' -> '${destPath}'\n`);
@@ -213,7 +214,7 @@ export class MvCommand extends BaseCommand {
       const destEntryPath =
         destPath === "/" ? `/${entry.name}` : `${destPath}/${entry.name}`;
 
-      if (entry.isDirectory()) {
+      if (entry.type === VfsItemType.DIRECTORY) {
         await this.copyDirectoryRecursive(
           vfs,
           sourceEntryPath,
@@ -229,7 +230,7 @@ export class MvCommand extends BaseCommand {
   }
 
   private async removeDirectoryRecursive(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     dirPath: string,
   ): Promise<void> {
     const entries = await vfs.readDir(dirPath);
@@ -239,7 +240,7 @@ export class MvCommand extends BaseCommand {
       const entryPath =
         dirPath === "/" ? `/${entry.name}` : `${dirPath}/${entry.name}`;
 
-      if (entry.isDirectory()) {
+      if (entry.type === VfsItemType.DIRECTORY) {
         await this.removeDirectoryRecursive(vfs, entryPath);
       } else {
         await vfs.deleteFile(entryPath);
@@ -247,6 +248,6 @@ export class MvCommand extends BaseCommand {
     }
 
     // Remove the directory itself
-    await vfs.deleteDirectory(dirPath);
+    await vfs.deleteDir(dirPath);
   }
 }

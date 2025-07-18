@@ -1,22 +1,22 @@
 /**
- * Kommando-bezogene Typdefinitionen
+ * Command-related type definitions
  */
 
 import { ExitCode, RedirectionType } from "../enums/index.js";
 import { Environment, Path } from "./primitive.type.js";
 
 /**
- * Befehlsargumente
+ * Command arguments
  */
 export type CommandArgs = string[];
 
 /**
- * Exit-Handler für Befehle
+ * Exit handler for commands
  */
 export type ExitHandler = (code: ExitCode) => void;
 
 /**
- * Command-Ergebnis
+ * Command result
  */
 export interface CommandResult {
   readonly exitCode: ExitCode;
@@ -26,7 +26,7 @@ export interface CommandResult {
 }
 
 /**
- * Command-Kontext
+ * Command context
  */
 export interface CommandContext {
   readonly args: CommandArgs;
@@ -35,12 +35,12 @@ export interface CommandContext {
   readonly stdin: ReadableStream<Uint8Array>;
   readonly stdout: WritableStream<Uint8Array>;
   readonly stderr: WritableStream<Uint8Array>;
-  readonly vfs: any; // VirtualFileSystem
-  readonly state: any; // StateManager with cwd property
+  readonly vfs: import("../interfaces/IVFS.interface.js").IVFS;
+  readonly state: import("../interfaces/IStateManager.interface.js").IStateManager;
 }
 
 /**
- * Redirection-Definiton
+ * Redirection definition
  */
 export interface Redirection {
   readonly type: RedirectionType;
@@ -49,17 +49,17 @@ export interface Redirection {
 }
 
 /**
- * Pipeline-Segment
+ * Pipeline segment
  */
 export interface PipelineSegment {
   readonly command: string;
   readonly args: CommandArgs;
   readonly redirections: Redirection[];
-  readonly environment?: Environment; // Lokale Environment-Variablen für diesen Befehl
+  readonly environment?: Environment; // Local environment variables for this command
 }
 
 /**
- * Komplett geparste Kommandozeile
+ * Completely parsed command line
  */
 export interface ParsedCommand {
   readonly segments: PipelineSegment[];

@@ -1,4 +1,5 @@
 import { ExitCode } from "../../enums/ExitCode.enum.js";
+import { VfsItemType } from "../../enums/VfsItemType.enum.js";
 import type { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
@@ -81,7 +82,7 @@ export class MkdirCommand extends BaseCommand {
             // Directory doesn't exist, create it
           }
 
-          await vfs.createDirectory(absolutePath);
+          await vfs.createDir(absolutePath);
 
           if (verbose) {
             await this.writeToStdout(
@@ -104,7 +105,7 @@ export class MkdirCommand extends BaseCommand {
   }
 
   private async createDirectoryRecursive(
-    vfs: any,
+    vfs: import("../../interfaces/IVFS.interface.js").IVFS,
     path: string,
     verbose: boolean,
     context: CommandContext,
@@ -117,12 +118,12 @@ export class MkdirCommand extends BaseCommand {
 
       try {
         const stat = await vfs.stat(currentPath);
-        if (!stat.isDirectory()) {
+        if (stat.type !== VfsItemType.DIRECTORY) {
           throw new Error(`'${currentPath}' exists but is not a directory`);
         }
       } catch (error) {
         // Directory doesn't exist, create it
-        await vfs.createDirectory(currentPath);
+        await vfs.createDir(currentPath);
 
         if (verbose) {
           await this.writeToStdout(

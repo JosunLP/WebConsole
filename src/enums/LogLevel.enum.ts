@@ -1,5 +1,5 @@
 /**
- * Log-Level für das interne Logging
+ * Log levels for internal logging
  */
 export enum LogLevel {
   DEBUG = "debug",

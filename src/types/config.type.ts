@@ -1,12 +1,12 @@
 /**
- * Konfigurations-bezogene Typdefinitionen
+ * Configuration-related type definitions
  */
 
 import { PersistenceMode } from "../enums/index.js";
 import { Path } from "./primitive.type.js";
 
 /**
- * Mount-Point Konfiguration
+ * Mount point configuration
  */
 export interface MountConfig {
   readonly path: Path;
@@ -16,7 +16,7 @@ export interface MountConfig {
 }
 
 /**
- * State-Konfiguration
+ * State configuration
  */
 export interface StateConfig<T = unknown> {
   readonly key: string;

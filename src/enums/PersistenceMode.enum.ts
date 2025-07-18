@@ -1,11 +1,11 @@
 /**
- * Verschiedene Persistenz-Modi für State-Management
+ * Different persistence modes for state management
  */
 export enum PersistenceMode {
-  /** Nur im RAM, nicht persistent */
+  /** RAM only, not persistent */
   VOLATILE = "volatile",
-  /** SessionStorage - persistiert für die Session */
+  /** SessionStorage - persists for the session */
   SESSION = "session",
-  /** LocalStorage - dauerhaft persistent */
+  /** LocalStorage - permanently persistent */
   PERSISTENT = "persistent",
 }

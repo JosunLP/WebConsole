@@ -1,4 +1,5 @@
 import { ExitCode } from "../../enums/ExitCode.enum.js";
+import type { IVFS } from "../../interfaces/IVFS.interface.js";
 import type { CommandContext } from "../../types/index.js";
 import { BaseCommand } from "../BaseCommand.js";
 
@@ -63,7 +64,7 @@ export class CpCommand extends BaseCommand {
 
       // If multiple sources, destination must be a directory
       if (sources.length > 1) {
-        if (!destStat || !destStat.isDirectory()) {
+        if (!destStat || destStat.type !== "directory") {
           await this.writeToStderr(
             context,
             `cp: target '${destination}' is not a directory\n`,
@@ -93,13 +94,13 @@ export class CpCommand extends BaseCommand {
           }
 
           // If destination is a directory, copy into it
-          if (destStat && destStat.isDirectory()) {
+          if (destStat && destStat.type === "directory") {
             const sourceName = sourcePath.split("/").pop();
             finalDestPath =
               destPath === "/" ? `/${sourceName}` : `${destPath}/${sourceName}`;
           }
 
-          if (sourceStat.isDirectory()) {
+          if (sourceStat.type === "directory") {
             if (!recursive) {
               await this.writeToStderr(
                 context,
@@ -148,7 +149,7 @@ export class CpCommand extends BaseCommand {
   }
 
   private async copyDirectoryRecursive(
-    vfs: any,
+    vfs: IVFS,
     sourcePath: string,
     destPath: string,
     verbose: boolean,
@@ -156,7 +157,7 @@ export class CpCommand extends BaseCommand {
   ): Promise<void> {
     // Create destination directory
     try {
-      await vfs.createDirectory(destPath);
+      await vfs.createDir(destPath);
     } catch (error) {
       // Directory might already exist
     }
@@ -174,7 +175,7 @@ export class CpCommand extends BaseCommand {
       const destEntryPath =
         destPath === "/" ? `/${entry.name}` : `${destPath}/${entry.name}`;
 
-      if (entry.isDirectory()) {
+      if (entry.type === "directory") {
         await this.copyDirectoryRecursive(
           vfs,
           sourceEntryPath,

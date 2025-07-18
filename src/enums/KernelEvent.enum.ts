@@ -2,14 +2,14 @@
  * Kernel Events
  */
 export enum KernelEvent {
-  /** Kernel gestartet */
+  /** Kernel started */
   STARTED = "kernel:started",
-  /** Kernel wird heruntergefahren */
+  /** Kernel is shutting down */
   SHUTDOWN = "kernel:shutdown",
-  /** Fehler im Kernel */
+  /** Kernel error */
   ERROR = "kernel:error",
-  /** Console erstellt */
+  /** Console created */
   CONSOLE_CREATED = "kernel:console:created",
-  /** Console zerstört */
+  /** Console destroyed */
   CONSOLE_DESTROYED = "kernel:console:destroyed",
 }

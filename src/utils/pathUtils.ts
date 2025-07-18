@@ -6,19 +6,7 @@ import { Path } from "../types/index.js";
 
 export class PathUtils {
   /**
-   * Normalisiert einen Pfad und entfernt red  static sanitizeFilename(name: string): string {
-    // Remove invalid characters using character codes instead of control chars
-    return name
-      .replace(/[<>:"/\\|?*]/g, "_")
-      .split("")
-      .map(char => {
-        const code = char.charCodeAt(0);
-        return code >= 0 && code <= 31 ? "_" : char;
-      })
-      .join("")
-      .replace(/^\.+$/, "_")
-      .substring(0, 255);
-  }Segmente
+   * Normalize a path and remove redundant segments
    */
   static normalize(path: Path): Path {
     if (!path || path === "") {
@@ -45,7 +33,7 @@ export class PathUtils {
   }
 
   /**
-   * Verbindet mehrere Pfad-Segmente
+   * Join multiple path segments
    */
   static join(...paths: string[]): Path {
     const joined = paths.filter((p) => p).join("/");
@@ -53,7 +41,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt das Verzeichnis eines Pfades zurück
+   * Returns the directory of a path
    */
   static dirname(path: Path): Path {
     const resolved = PathUtils.normalize(path);
@@ -63,7 +51,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt den Dateinamen eines Pfades zurück
+   * Returns the filename of a path
    */
   static basename(path: Path, ext?: string): string {
     const resolved = PathUtils.normalize(path);
@@ -78,7 +66,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt die Dateierweiterung zurück
+   * Returns the file extension
    */
   static extname(path: Path): string {
     const basename = PathUtils.basename(path);
@@ -87,14 +75,14 @@ export class PathUtils {
   }
 
   /**
-   * Prüft ob ein Pfad absolut ist
+   * Check if a path is absolute
    */
   static isAbsolute(path: Path): boolean {
     return path.startsWith("/");
   }
 
   /**
-   * Macht einen Pfad relativ zu einem Basispfad
+   * Makes a path relative to a base path
    */
   static relative(from: Path, to: Path): string {
     const fromParts = PathUtils.normalize(from).split("/").filter(Boolean);
@@ -124,7 +112,7 @@ export class PathUtils {
   }
 
   /**
-   * Auflösung eines Pfades relativ zu einem Basispfad
+   * Resolve a path relative to a base path
    */
   static resolve(basePath: Path, ...paths: string[]): Path {
     let resolved = PathUtils.normalize(basePath);
@@ -141,7 +129,7 @@ export class PathUtils {
   }
 
   /**
-   * Prüft ob ein Pfad ein Unterpfad eines anderen ist
+   * Check if a path is a subpath of another
    */
   static isSubPath(parent: Path, child: Path): boolean {
     const normalizedParent = PathUtils.normalize(parent);
@@ -175,7 +163,7 @@ export class PathUtils {
   }
 
   /**
-   * Glob-Pattern zu RegExp konvertieren (vereinfacht)
+   * Convert glob pattern to RegExp (simplified)
    */
   static globToRegex(pattern: string): RegExp {
     const escaped = pattern
@@ -187,7 +175,7 @@ export class PathUtils {
   }
 
   /**
-   * Pfad-Tiefe ermitteln
+   * Get path depth
    */
   static depth(path: Path): number {
     const normalized = PathUtils.normalize(path);

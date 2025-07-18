@@ -1,5 +1,5 @@
 /**
- * Console Interface (Hauptklasse)
+ * Console Interface (Main class)
  */
 
 import { CommandResult, Environment, ID, Path } from "../types/index.js";

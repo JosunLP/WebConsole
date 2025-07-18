@@ -1,5 +1,5 @@
 /**
- * Event-bezogene Typdefinitionen
+ * Event-related type definitions
  */
 
 import { ConsoleEvent, KernelEvent, VFSEvent } from "../enums/index.js";
@@ -8,22 +8,22 @@ import { MountConfig } from "./config.type.js";
 import { ID, InodeNumber, Path, Timestamp } from "./primitive.type.js";
 
 /**
- * Event-Handler generisch
+ * Event handler generic
  */
 export type EventHandler<T = unknown> = (data: T) => void;
 
 /**
- * Async Event-Handler
+ * Async event handler
  */
 export type AsyncEventHandler<T = unknown> = (data: T) => Promise<void>;
 
 /**
- * Observable-Pattern für Events
+ * Observable pattern for events
  */
 export type EventUnsubscriber = () => void;
 
 /**
- * Event-Daten für verschiedene Events
+ * Event data for various events
  */
 export interface EventData {
   [ConsoleEvent.COMMAND_ENTERED]: { command: string; args: CommandArgs };
@@ -49,7 +49,7 @@ export interface EventData {
 }
 
 /**
- * Generic Event mit Type-Safety
+ * Generic event with type safety
  */
 export type TypedEvent<K extends keyof EventData> = {
   readonly type: K;
@@ -58,7 +58,7 @@ export type TypedEvent<K extends keyof EventData> = {
 };
 
 /**
- * Union aller möglichen Events
+ * Union of all possible events
  */
 export type AnyEvent = {
   [K in keyof EventData]: TypedEvent<K>;

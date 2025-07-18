@@ -1,46 +1,46 @@
 /**
- * Utility-Funktionen für das Web-Console-System
+ * Utility functions for the Web Console system
  */
 
 import { Path } from "../types/index.js";
 
 /**
- * Prüft ob ein Wert definiert und nicht null ist
+ * Check if a value is defined and not null
  */
 export function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
 }
 
 /**
- * Prüft ob ein Wert eine Funktion ist
+ * Check if a value is a function
  */
 export function isFunction(value: unknown): value is Function {
   return typeof value === "function";
 }
 
 /**
- * Prüft ob ein Wert ein String ist
+ * Check if a value is a string
  */
 export function isString(value: unknown): value is string {
   return typeof value === "string";
 }
 
 /**
- * Prüft ob ein Wert eine Zahl ist
+ * Check if a value is a number
  */
 export function isNumber(value: unknown): value is number {
   return typeof value === "number" && !isNaN(value);
 }
 
 /**
- * Prüft ob ein Wert ein Objekt ist (aber kein Array)
+ * Check if a value is an object (but not an array)
  */
 export function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
- * Deep-Clone eines Objekts
+ * Deep clone of an object
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== "object") {
@@ -59,7 +59,7 @@ export function deepClone<T>(obj: T): T {
     const cloned = {} as Record<string, unknown>;
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        cloned[key] = deepClone((obj as any)[key]);
+        cloned[key] = deepClone((obj as Record<string, unknown>)[key]);
       }
     }
     return cloned as T;
@@ -69,9 +69,9 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * Debounce-Funktion
+ * Debounce function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
 ): (...args: Parameters<T>) => void {
@@ -89,9 +89,9 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
- * Throttle-Funktion
+ * Throttle function
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): (...args: Parameters<T>) => void {
@@ -109,7 +109,7 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 /**
- * Retry-Funktion mit exponential backoff
+ * Retry function with exponential backoff
  */
 export async function retry<T>(
   fn: () => Promise<T>,
@@ -152,25 +152,100 @@ export async function retry<T>(
 }
 
 /**
- * Sleep-Funktion
+ * Sleep function
  */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
- * UUID v4 Generator (simplified)
+ * Secure ID generation with crypto.getRandomValues()
+ */
+export function generateSecureId(): string {
+  try {
+    if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+      // Use secure cryptographic random numbers
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) =>
+        byte.toString(16).padStart(2, "0"),
+      ).join("");
+    }
+  } catch {
+    // Fallback for environments without crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+  }
+  return generateId();
+}
+
+/**
+ * Secure message ID generation for worker communication
+ */
+export function generateMessageId(): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    // Compact but secure message ID (8 bytes = 16 hex characters)
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  } else {
+    // Fallback for environments without crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+    return Math.random().toString(36).substr(2, 9);
+  }
+}
+
+/**
+ * Secure worker ID generation
+ */
+export function generateWorkerId(): string {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    const array = new Uint8Array(6);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    return `worker-${randomPart}`;
+  } else {
+    // Fallback for environments without crypto API
+    console.warn(
+      "crypto.getRandomValues not available, falling back to Math.random()",
+    );
+    return "worker-" + Math.random().toString(36).substr(2, 9);
+  }
+}
+
+/**
+ * UUID v4 Generator (simplified) - DEPRECATED, use generateSecureId() instead
+ * @deprecated Use generateSecureId() for better security
  */
 export function generateId(): string {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  } else {
+    return generateFallbackUUID();
+  }
+}
+
+/**
+ * Generate a UUID v4 in the format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+ * Used as a fallback when crypto.randomUUID() is unavailable
+ */
+function generateFallbackUUID(): string {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
+    const random = (Math.random() * 16) | 0;
+    const value = char === "x" ? random : (random & 0x3) | 0x8;
+    return value.toString(16);
   });
 }
 
 /**
- * Formatiert Bytes in menschenlesbare Form
+ * Format bytes into human-readable form
  */
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return "0 Bytes";
@@ -185,7 +260,7 @@ export function formatBytes(bytes: number, decimals = 2): string {
 }
 
 /**
- * Formatiert eine Zeitspanne in menschenlesbare Form
+ * Format time duration into human-readable form
  */
 export function formatDuration(ms: number): string {
   if (ms < 1000) {
@@ -207,7 +282,7 @@ export function formatDuration(ms: number): string {
 }
 
 /**
- * Escapen von HTML-Zeichen
+ * Escape HTML characters
  */
 export function escapeHtml(text: string): string {
   const div = document.createElement("div");
@@ -216,7 +291,7 @@ export function escapeHtml(text: string): string {
 }
 
 /**
- * Unescapen von HTML-Zeichen
+ * Unescape HTML characters
  */
 export function unescapeHtml(html: string): string {
   const div = document.createElement("div");
@@ -225,7 +300,7 @@ export function unescapeHtml(html: string): string {
 }
 
 /**
- * ANSI-Farbcodes entfernen
+ * Remove ANSI color codes
  */
 export function stripAnsi(text: string): string {
   // eslint-disable-next-line no-control-regex
@@ -233,19 +308,19 @@ export function stripAnsi(text: string): string {
 }
 
 /**
- * Pfad-Validierung
+ * Path validation
  */
 export function isValidPath(path: string): boolean {
   if (!path || typeof path !== "string") {
     return false;
   }
 
-  // Muss mit / beginnen
+  // Must start with /
   if (!path.startsWith("/")) {
     return false;
   }
 
-  // Keine ungültigen Zeichen
+  // No invalid characters
   // eslint-disable-next-line no-control-regex
   const invalidChars = /[<>:"|?*\x00-\x1f]/;
   if (invalidChars.test(path)) {
@@ -256,7 +331,7 @@ export function isValidPath(path: string): boolean {
 }
 
 /**
- * Normalisiert einen Pfad
+ * Normalize a path
  */
 export function normalizePath(path: Path): Path {
   if (!isValidPath(path)) {
@@ -278,13 +353,13 @@ export function normalizePath(path: Path): Path {
 }
 
 /**
- * Relative Pfade berechnen
+ * Calculate relative paths
  */
 export function relativePath(from: Path, to: Path): Path {
   const fromParts = normalizePath(from).split("/").filter(Boolean);
   const toParts = normalizePath(to).split("/").filter(Boolean);
 
-  // Gemeinsamen Prefix finden
+  // Find common prefix
   let commonLength = 0;
   for (let i = 0; i < Math.min(fromParts.length, toParts.length); i++) {
     if (fromParts[i] === toParts[i]) {
@@ -294,7 +369,7 @@ export function relativePath(from: Path, to: Path): Path {
     }
   }
 
-  // Rückwärts-Navigation + Vorwärts-Navigation
+  // Backward navigation + forward navigation
   const upSteps = fromParts.length - commonLength;
   const downSteps = toParts.slice(commonLength);
 
@@ -304,7 +379,7 @@ export function relativePath(from: Path, to: Path): Path {
 }
 
 /**
- * Event-Namen validieren
+ * Validate event names
  */
 export function isValidEventName(name: string): boolean {
   return /^[a-zA-Z][a-zA-Z0-9:._-]*$/.test(name);

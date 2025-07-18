@@ -75,17 +75,20 @@ export class WebConsoleComponent implements OnInit, OnDestroy {
       typeof this.height === "number" ? `${this.height}px` : this.height;
 
     // Event-Listener
-    this.element.addEventListener("command", (event: any) => {
-      this.command.emit(event.detail);
+    this.element.addEventListener("command", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      this.command.emit(customEvent.detail);
     });
 
-    this.element.addEventListener("ready", (event: any) => {
-      this.consoleInstance = event.detail;
-      this.ready.emit(event.detail);
+    this.element.addEventListener("ready", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      this.consoleInstance = customEvent.detail;
+      this.ready.emit(customEvent.detail);
     });
 
-    this.element.addEventListener("error", (event: any) => {
-      this.error.emit(event.detail);
+    this.element.addEventListener("error", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      this.error.emit(customEvent.detail);
     });
 
     this.containerRef.nativeElement.appendChild(this.element);
@@ -101,7 +104,7 @@ export class WebConsoleComponent implements OnInit, OnDestroy {
 
   public clear(): void {
     if (this.element && "clear" in this.element) {
-      (this.element as any).clear();
+      (this.element as HTMLElement & { clear(): void }).clear();
     }
   }
 

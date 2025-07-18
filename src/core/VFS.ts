@@ -1,6 +1,6 @@
 /**
- * Virtual File System für Web-Console
- * Implementiert ein vollständiges virtuelles Dateisystem mit Mount-Points
+ * Virtual File System for Web Console
+ * Implements a complete virtual file system with mount points
  */
 
 import {
@@ -29,7 +29,7 @@ interface MountPoint {
 }
 
 /**
- * Pfad-Resolution Ergebnis
+ * Path resolution result
  */
 interface PathResolution {
   mountPoint: MountPoint;
@@ -38,7 +38,7 @@ interface PathResolution {
 }
 
 /**
- * Virtual File System Implementierung
+ * Virtual File System Implementation
  */
 export class VFS extends EventEmitter implements IVFS {
   private readonly mountPoints = new Map<Path, MountPoint>();
@@ -48,21 +48,21 @@ export class VFS extends EventEmitter implements IVFS {
 
   constructor() {
     super();
-    // Root-Mount immer verfügbar
+    // Root mount always available
   }
 
   /**
-   * VFS initialisieren
+   * Initialize VFS
    */
   public async initialize(): Promise<void> {
     await this.initializeRoot();
   }
 
   /**
-   * Root-Filesystem initialisieren
+   * Initialize root filesystem
    */
   private async initializeRoot(): Promise<void> {
-    // Default LocalStorage Provider für Root-Filesystem
+    // Default LocalStorage provider for root filesystem
     const { LocalStorageProvider } = await import(
       "./providers/LocalStorageProvider.js"
     );
@@ -77,12 +77,12 @@ export class VFS extends EventEmitter implements IVFS {
 
     this.mountPoints.set("/", { config, provider: rootProvider });
 
-    // Standard-Verzeichnisse erstellen falls nicht vorhanden
+    // Create standard directories if they don't exist
     await this.ensureStandardDirectories();
   }
 
   /**
-   * Standard-Verzeichnisse erstellen
+   * Create standard directories
    */
   private async ensureStandardDirectories(): Promise<void> {
     const standardDirs = [
@@ -99,17 +99,17 @@ export class VFS extends EventEmitter implements IVFS {
       try {
         await this.stat(dir);
       } catch {
-        // Verzeichnis existiert nicht, erstelle es
+        // Directory doesn't exist, create it
         await this.mkdir(dir, { recursive: true });
       }
     }
 
-    // Standard-Dateien erstellen
+    // Create standard files
     await this.createStandardFiles();
   }
 
   /**
-   * Standard-Dateien erstellen
+   * Create standard files
    */
   private async createStandardFiles(): Promise<void> {
     const welcomeContent = `Welcome to Web Console!
@@ -137,7 +137,7 @@ Features:
   // === PATH OPERATIONS ===
 
   /**
-   * Pfad auflösen (normalisieren)
+   * Resolve path (normalize)
    */
   resolve(path: Path): Path {
     if (!path.startsWith("/")) {
@@ -159,7 +159,7 @@ Features:
   }
 
   /**
-   * Pfade zusammenfügen
+   * Join paths together
    */
   join(...paths: Path[]): Path {
     const joined = paths.join("/");
@@ -167,7 +167,7 @@ Features:
   }
 
   /**
-   * Verzeichnis-Teil eines Pfades
+   * Directory part of a path
    */
   dirname(path: Path): Path {
     const resolved = this.resolve(path);
@@ -177,7 +177,7 @@ Features:
   }
 
   /**
-   * Dateiname ohne Verzeichnis
+   * Filename without directory
    */
   basename(path: Path, ext?: string): string {
     const resolved = this.resolve(path);
@@ -192,7 +192,7 @@ Features:
   }
 
   /**
-   * Datei-Erweiterung
+   * File extension
    */
   extname(path: Path): string {
     const normalized = this.resolve(path);
@@ -203,7 +203,7 @@ Features:
   // === FILE OPERATIONS ===
 
   /**
-   * Datei lesen
+   * Read file
    */
   async readFile(path: Path): Promise<Uint8Array> {
     const resolution = await this.resolvePath(path);
@@ -220,7 +220,7 @@ Features:
   }
 
   /**
-   * Datei schreiben
+   * Write file
    */
   async writeFile(
     path: Path,
@@ -231,11 +231,11 @@ Features:
       const resolution = await this.resolvePath(path);
 
       if (resolution.inode) {
-        // Existierende Datei überschreiben
+        // Overwrite existing file
         await resolution.mountPoint.provider.writeFile(resolution.inode, data);
         this.emit(VFSEvent.FILE_CHANGED, { path, inode: resolution.inode });
       } else {
-        // Neue Datei erstellen
+        // Create new file
         const inode = await this.createFile(path, data, options);
         this.emit(VFSEvent.FILE_CREATED, { path, inode: inode.inode });
       }
@@ -245,7 +245,7 @@ Features:
   }
 
   /**
-   * Daten an Datei anhängen
+   * Append data to file
    */
   async appendFile(path: Path, data: Uint8Array): Promise<void> {
     try {
@@ -256,7 +256,7 @@ Features:
       await this.writeFile(path, combined);
     } catch (error) {
       if (error instanceof Error && error.message.includes("File not found")) {
-        // Datei existiert nicht, neu erstellen
+        // File doesn't exist, create new
         await this.writeFile(path, data);
       } else {
         throw error;
@@ -265,7 +265,7 @@ Features:
   }
 
   /**
-   * Datei löschen
+   * Delete file
    */
   async deleteFile(path: Path): Promise<void> {
     const resolution = await this.resolvePath(path);
@@ -286,24 +286,24 @@ Features:
   }
 
   /**
-   * Prüfen ob Pfad existiert
-   * Optimierte Version mit besserer Cache-Nutzung
+   * Check if path exists
+   * Optimized version with better cache usage
    */
   exists(path: Path): boolean {
     try {
       const normalizedPath = this.resolve(path);
 
-      // Prüfe Cache zuerst - schnellster Weg
+      // Check cache first - fastest way
       if (this.pathCache.has(normalizedPath)) {
         const inode = this.pathCache.get(normalizedPath)!;
         return this.inodeCache.has(inode);
       }
 
-      // Versuche den Pfad zu resolven durch Parent-Verzeichnisse
+      // Try to resolve the path through parent directories
       const segments = normalizedPath.split("/").filter(Boolean);
       let currentPath = "/";
 
-      // Root-Verzeichnis existiert immer
+      // Root directory always exists
       if (segments.length === 0) {
         return true;
       }
@@ -330,7 +330,7 @@ Features:
   }
 
   /**
-   * Datei-/Verzeichnis-Metadaten abrufen
+   * Get file/directory metadata
    */
   async stat(path: Path): Promise<INode> {
     const resolution = await this.resolvePath(path);
@@ -343,7 +343,7 @@ Features:
   // === DIRECTORY OPERATIONS ===
 
   /**
-   * Verzeichnis erstellen
+   * Create directory
    */
   async mkdir(
     path: Path,
@@ -360,7 +360,7 @@ Features:
 
     const parentPath = this.dirname(normalizedPath);
 
-    // Recursive erstellen falls gewünscht
+    // Create recursively if desired
     if (options?.recursive && parentPath !== normalizedPath) {
       try {
         await this.stat(parentPath);
@@ -369,7 +369,7 @@ Features:
       }
     }
 
-    // Erstelle Verzeichnis über Provider
+    // Create directory via provider
     const resolution = await this.resolvePath(parentPath);
     if (!resolution.mountPoint) {
       throw new Error(`Parent directory not found: ${parentPath}`);
@@ -385,7 +385,7 @@ Features:
   }
 
   /**
-   * Verzeichnis löschen
+   * Delete directory
    */
   async rmdir(path: Path, options?: { recursive?: boolean }): Promise<void> {
     const normalizedPath = this.resolve(path);
@@ -402,7 +402,7 @@ Features:
     }
 
     if (options?.recursive) {
-      // Rekursiv alle Inhalte löschen
+      // Recursively delete all contents
       for (const entry of entries) {
         const fullPath = this.join(normalizedPath, entry.name);
         if (entry.type === FileType.DIRECTORY) {
@@ -427,7 +427,7 @@ Features:
   }
 
   /**
-   * Verzeichnis-Inhalt auflisten
+   * List directory contents
    */
   async readDir(path: Path): Promise<IDirEntry[]> {
     const normalizedPath = this.resolve(path);
@@ -446,7 +446,7 @@ Features:
   }
 
   /**
-   * Verzeichnis erstellen
+   * Create directory
    */
   async createDir(path: Path, permissions?: PermissionMask): Promise<void> {
     const normalizedPath = this.resolve(path);
@@ -460,7 +460,7 @@ Features:
 
     const parentPath = this.dirname(normalizedPath);
 
-    // Prüfe ob Parent-Verzeichnis existiert (nicht rekursiv)
+    // Check if parent directory exists (not recursive)
     try {
       const parentNode = await this.stat(parentPath);
       if (parentNode.type !== FileType.DIRECTORY) {
@@ -479,7 +479,7 @@ Features:
   }
 
   /**
-   * Verzeichnis löschen
+   * Delete directory
    */
   async deleteDir(path: Path, recursive?: boolean): Promise<void> {
     const normalizedPath = this.resolve(path);
@@ -496,7 +496,7 @@ Features:
     }
 
     if (recursive) {
-      // Rekursiv alle Inhalte löschen
+      // Recursively delete all contents
       for (const entry of entries) {
         const fullPath = this.join(normalizedPath, entry.name);
         if (entry.type === FileType.DIRECTORY) {
@@ -523,25 +523,25 @@ Features:
   // === LINK OPERATIONS ===
 
   /**
-   * Symbolischen Link erstellen
+   * Create symbolic link
    */
   async symlink(target: Path, linkPath: Path): Promise<void> {
     const normalizedTarget = this.resolve(target);
     const normalizedLink = this.resolve(linkPath);
 
-    // Prüfe ob Target existiert
+    // Check if target exists
     try {
       await this.stat(normalizedTarget);
     } catch {
       throw new Error(`Target does not exist: ${target}`);
     }
 
-    // Prüfe ob Link bereits existiert
+    // Check if link already exists
     try {
       await this.stat(normalizedLink);
       throw new Error(`Link already exists: ${linkPath}`);
     } catch {
-      // Link existiert nicht, gut
+      // Link does not exist, good
     }
 
     const parentPath = this.dirname(normalizedLink);
@@ -550,7 +550,7 @@ Features:
       throw new Error(`Parent directory not found: ${parentPath}`);
     }
 
-    // Erstelle Symlink als speziellen Inode
+    // Create symlink as special inode
     const targetData = new TextEncoder().encode(normalizedTarget);
     const inode = await resolution.mountPoint.provider.createInode(
       FileType.SYMLINK,
@@ -569,7 +569,7 @@ Features:
   }
 
   /**
-   * Symbolischen Link auflösen
+   * Resolve symbolic link
    */
   async readlink(path: Path): Promise<Path> {
     const normalizedPath = this.resolve(path);
@@ -593,14 +593,14 @@ Features:
   // === MOUNT OPERATIONS ===
 
   /**
-   * Filesystem mounten
+   * Mount filesystem
    */
   async mount(config: MountConfig): Promise<void> {
     if (this.mountPoints.has(config.path)) {
       throw new Error(`Mount point already exists: ${config.path}`);
     }
 
-    // Provider laden (hier vereinfacht)
+    // Load provider (simplified here)
     const provider = await this.loadProvider(config.provider, config.options);
 
     this.mountPoints.set(config.path, { config, provider });
@@ -608,7 +608,7 @@ Features:
   }
 
   /**
-   * Filesystem unmounten
+   * Unmount filesystem
    */
   async unmount(path: Path): Promise<void> {
     if (!this.mountPoints.has(path)) {
@@ -620,7 +620,7 @@ Features:
   }
 
   /**
-   * Alle Mount-Points abrufen
+   * Get all mount points
    */
   getMounts(): MountConfig[] {
     return Array.from(this.mountPoints.values()).map((mp) => mp.config);
@@ -629,14 +629,17 @@ Features:
   // === WATCH OPERATIONS ===
 
   /**
-   * Pfad auf Änderungen überwachen
+   * Watch path for changes
    */
   watch(path: Path, handler: EventHandler): EventUnsubscriber {
-    // Vereinfachte Implementation - lauscht auf alle VFS-Events
-    // und filtert nach Pfad
-    const wrappedHandler = (data: any) => {
-      if (data.path === path || data.path.startsWith(path + "/")) {
-        handler(data);
+    // Simplified implementation - listens to all VFS events
+    // and filters by path
+    const wrappedHandler = (data: unknown) => {
+      if (typeof data === "object" && data !== null && "path" in data) {
+        const eventData = data as { path: string };
+        if (eventData.path === path || eventData.path.startsWith(path + "/")) {
+          handler(data);
+        }
       }
     };
 
@@ -660,7 +663,7 @@ Features:
    */
   async glob(pattern: GlobPattern, cwd = "/"): Promise<Path[]> {
     // Vereinfachte Glob-Implementation
-    // Würde in echter Implementation minimatch oder ähnliche Bibliothek verwenden
+    // Would use minimatch or similar library in real implementation
     const results: Path[] = [];
 
     const searchDir = async (dir: Path) => {
@@ -669,7 +672,7 @@ Features:
         for (const entry of entries) {
           const fullPath = this.join(dir, entry.name);
 
-          // Einfacher * Wildcard-Support
+          // Simple * wildcard support
           if (pattern.includes("*")) {
             const regex = new RegExp(pattern.replace(/\*/g, ".*"));
             if (regex.test(fullPath)) {
@@ -679,13 +682,13 @@ Features:
             results.push(fullPath);
           }
 
-          // Rekursiv in Unterverzeichnissen suchen
+          // Recursively search in subdirectories
           if (entry.type === FileType.DIRECTORY) {
             await searchDir(fullPath);
           }
         }
       } catch {
-        // Verzeichnis kann nicht gelesen werden, ignorieren
+        // Directory cannot be read, ignore
       }
     };
 
@@ -696,7 +699,7 @@ Features:
   // === PERMISSION OPERATIONS ===
 
   /**
-   * Dateiberechtigungen ändern
+   * Change file permissions
    */
   async chmod(path: Path, permissions: PermissionMask): Promise<void> {
     const resolution = await this.resolvePath(path);
@@ -714,7 +717,7 @@ Features:
   }
 
   /**
-   * Besitzer ändern
+   * Change owner
    */
   async chown(path: Path, owner: string, group?: string): Promise<void> {
     const resolution = await this.resolvePath(path);
@@ -722,10 +725,7 @@ Features:
       throw new Error(`Path not found: ${path}`);
     }
 
-    const updates: Partial<INode> = { owner };
-    if (group) {
-      (updates as any).group = group;
-    }
+    const updates: Partial<INode> = { owner, ...(group && { group }) };
 
     const updatedInode = await resolution.mountPoint.provider.updateInode(
       resolution.inode,
@@ -738,15 +738,15 @@ Features:
   // === PRIVATE HELPER METHODS ===
 
   /**
-   * Pfad zu Mount-Point und Inode auflösen
+   * Resolve path to mount point and inode
    */
   private async resolvePath(path: Path): Promise<PathResolution> {
     const resolvedPath = this.resolve(path);
 
-    // Cache prüfen
+    // Check cache
     const cachedInode = this.pathCache.get(resolvedPath);
 
-    // Mount-Point finden
+    // Find mount point
     let bestMatch: MountPoint | undefined;
     let bestMatchPath = "";
 
@@ -774,22 +774,22 @@ Features:
   }
 
   /**
-   * Inode aus Cache oder Provider laden
+   * Load inode from cache or provider
    */
   private async getInode(inodeNumber: InodeNumber): Promise<INode> {
     const inode = this.inodeCache.get(inodeNumber);
     if (!inode) {
-      // Versuche von Provider zu laden
+      // Try to load from provider
       for (const mountPoint of this.mountPoints.values()) {
         try {
           const exists = await mountPoint.provider.exists(inodeNumber);
           if (exists) {
-            // Provider müsste eine Methode haben, um Inode zu laden
-            // Für jetzt werfen wir einen Fehler
+            // Provider should have a method to load inode
+            // For now we throw an error
             throw new Error(`Inode ${inodeNumber} not found in cache`);
           }
         } catch {
-          // Provider unterstützt möglicherweise keine exists-Methode
+          // Provider might not support exists method
         }
       }
       throw new Error(`Inode ${inodeNumber} not found`);
@@ -798,7 +798,7 @@ Features:
   }
 
   /**
-   * Neue Datei erstellen
+   * Create new file
    */
   private async createFile(
     path: Path,
@@ -808,7 +808,7 @@ Features:
     const normalizedPath = this.resolve(path);
     const parentPath = this.dirname(normalizedPath);
 
-    // Prüfe ob Parent-Verzeichnis existiert
+    // Check if parent directory exists
     try {
       const parentNode = await this.stat(parentPath);
       if (parentNode.type !== FileType.DIRECTORY) {
@@ -823,13 +823,13 @@ Features:
       throw new Error(`Cannot resolve parent directory: ${parentPath}`);
     }
 
-    // Erstelle Inode über Provider
+    // Create inode via provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.FILE,
       0o644,
     );
 
-    // Schreibe Daten
+    // Write data
     await resolution.mountPoint.provider.writeFile(createdInode.inode, data);
 
     this.inodeCache.set(createdInode.inode, createdInode);
@@ -839,7 +839,7 @@ Features:
   }
 
   /**
-   * Hilfsmethode: Verzeichnis erstellen
+   * Helper method: Create directory
    */
   private async createDirectory(
     path: Path,
@@ -849,7 +849,7 @@ Features:
     const parentPath = this.dirname(normalizedPath);
 
     if (parentPath !== normalizedPath) {
-      // Prüfe ob Parent-Verzeichnis existiert
+      // Check if parent directory exists
       try {
         const parentNode = await this.stat(parentPath);
         if (parentNode.type !== FileType.DIRECTORY) {
@@ -865,7 +865,7 @@ Features:
       throw new Error(`Cannot resolve parent directory: ${parentPath}`);
     }
 
-    // Erstelle Inode über Provider
+    // Create inode via provider
     const createdInode = await resolution.mountPoint.provider.createInode(
       FileType.DIRECTORY,
       mode || 0o755,
@@ -878,7 +878,7 @@ Features:
   }
 
   /**
-   * VFS-Provider laden
+   * Load VFS provider
    */
   private async loadProvider(
     name: string,
@@ -911,14 +911,14 @@ Features:
   }
 
   /**
-   * Nächste verfügbare Inode-Nummer
+   * Next available inode number
    */
   private getNextInodeNumber(): InodeNumber {
     return this.nextInodeNumber++;
   }
 
   /**
-   * Cache-Statistiken abrufen (für Debugging)
+   * Get cache statistics (for debugging)
    */
   public getCacheStats(): {
     pathCacheSize: number;
@@ -935,7 +935,7 @@ Features:
   }
 
   /**
-   * Cache leeren (für Tests oder Debugging)
+   * Clear cache (for tests or debugging)
    */
   public clearCache(): void {
     this.pathCache.clear();

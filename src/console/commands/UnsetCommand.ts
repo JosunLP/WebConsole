@@ -68,15 +68,8 @@ export class UnsetCommand extends BaseCommand {
     name: string,
   ): Promise<void> {
     try {
-      if (
-        context.state &&
-        typeof context.state.unsetEnvironment === "function"
-      ) {
-        context.state.unsetEnvironment(name);
-      } else {
-        // Fallback: try to modify the context environment directly
-        delete (context.environment as any)[name];
-      }
+      // Direct modification of environment since state manager doesn't have unsetEnvironment
+      delete (context.environment as Record<string, string>)[name];
     } catch (error) {
       await this.writeToStderr(
         context,

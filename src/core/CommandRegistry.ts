@@ -1,5 +1,5 @@
 /**
- * Command Registry für die Verwaltung von Built-in und Custom Commands
+ * Command Registry for management of built-in and custom commands
  */
 
 import { EventEmitter } from "../core/EventEmitter.js";
@@ -17,12 +17,16 @@ import { EnvCommand } from "../console/commands/EnvCommand.js";
 import { ExportCommand } from "../console/commands/ExportCommand.js";
 import { HelpCommand } from "../console/commands/HelpCommand.js";
 import { HistoryCommand } from "../console/commands/HistoryCommand.js";
+import { JobsCommand } from "../console/commands/JobsCommand.js";
+import { KillCommand } from "../console/commands/KillCommand.js";
 import { LsCommand } from "../console/commands/LsCommand.js";
 import { MkdirCommand } from "../console/commands/MkdirCommand.js";
 import { MvCommand } from "../console/commands/MvCommand.js";
 import { PwdCommand } from "../console/commands/PwdCommand.js";
 import { RmCommand } from "../console/commands/RmCommand.js";
+import { RunCommand } from "../console/commands/RunCommand.js";
 import { ThemeCommand } from "../console/commands/ThemeCommand.js";
+import { WorkerCommand } from "../console/commands/WorkerCommand.js";
 
 /**
  * Command Registry Events
@@ -35,22 +39,22 @@ export const CommandRegistryEvents = {
 } as const;
 
 /**
- * Command Registry Implementierung
+ * Command Registry Implementation
  */
 export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   private readonly commands = new Map<string, ICommandHandler>();
   private readonly aliases = new Map<string, string>();
 
   /**
-   * Registry initialisieren
+   * Initialize registry
    */
   async initialize(): Promise<void> {
-    // Registry ist bereit für die Registrierung von Commands
-    // Built-in Commands werden später vom Kernel mit VFS registriert
+    // Registry is ready for command registration
+    // Built-in commands will be registered later by the kernel with VFS
   }
 
   /**
-   * Command-Handler registrieren
+   * Register command handler
    */
   register(handler: ICommandHandler): void {
     if (this.commands.has(handler.name)) {
@@ -65,7 +69,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Handler entfernen
+   * Remove command handler
    */
   unregister(name: string): void {
     const handler = this.commands.get(name);
@@ -81,16 +85,16 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Handler abrufen
+   * Get command handler
    */
   get(name: string): ICommandHandler | undefined {
-    // Zuerst nach Alias suchen
+    // First search for alias
     const resolvedName = this.aliases.get(name) || name;
     return this.commands.get(resolvedName);
   }
 
   /**
-   * Prüfen ob Command existiert
+   * Check if command exists
    */
   has(name: string): boolean {
     const resolvedName = this.aliases.get(name) || name;
@@ -98,14 +102,14 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle registrierten Commands auflisten
+   * List all registered commands
    */
   list(): string[] {
     return Array.from(this.commands.keys()).sort();
   }
 
   /**
-   * Alias für Command erstellen
+   * Create alias for command
    */
   alias(alias: string, command: string): void {
     if (this.commands.has(alias)) {
@@ -123,7 +127,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alias entfernen
+   * Remove alias
    */
   unalias(alias: string): void {
     const command = this.aliases.get(alias);
@@ -134,14 +138,14 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle Aliases abrufen
+   * Get all aliases
    */
   getAliases(): Record<string, string> {
     return Object.fromEntries(this.aliases);
   }
 
   /**
-   * Commands nach Typ filtern
+   * Filter commands by type
    */
   getByType(type: CommandType): ICommandHandler[] {
     return Array.from(this.commands.values()).filter(
@@ -150,7 +154,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Details abrufen
+   * Get command details
    */
   getDetails(
     name: string,
@@ -180,17 +184,17 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle Commands und Aliases als Map
+   * Get all commands and aliases as Map
    */
   getAllCommands(): Map<string, string> {
     const result = new Map<string, string>();
 
-    // Direkte Commands hinzufügen
+    // Add direct commands
     for (const name of this.commands.keys()) {
       result.set(name, name);
     }
 
-    // Aliases hinzufügen
+    // Add aliases
     for (const [alias, command] of this.aliases) {
       result.set(alias, command);
     }
@@ -199,7 +203,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Vervollständigung für Tab-Completion
+   * Command completion for tab completion
    */
   getCompletions(prefix: string): string[] {
     const completions: string[] = [];
@@ -222,7 +226,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Registry-Statistiken
+   * Registry statistics
    */
   getStats(): {
     totalCommands: number;
@@ -243,7 +247,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Registry zurücksetzen
+   * Reset registry
    */
   clear(): void {
     this.commands.clear();
@@ -253,7 +257,9 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   /**
    * Register all built-in commands
    */
-  registerBuiltinCommands(vfs: any): void {
+  registerBuiltinCommands(
+    vfs: import("../interfaces/IVFS.interface.js").IVFS,
+  ): void {
     // Commands that work without VFS
     this.register(new EchoCommand() as ICommandHandler);
     this.register(new ClearCommand() as ICommandHandler);
@@ -268,6 +274,12 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
 
     // Theme commands
     this.register(new ThemeCommand() as ICommandHandler);
+
+    // Worker management commands
+    this.register(new JobsCommand() as ICommandHandler);
+    this.register(new KillCommand() as ICommandHandler);
+    this.register(new WorkerCommand() as ICommandHandler);
+    this.register(new RunCommand() as ICommandHandler);
 
     // VFS-dependent commands (register only if VFS is available)
     if (vfs) {
@@ -284,14 +296,16 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   /**
    * Create default registry with all built-in commands
    */
-  static createDefault(vfs: any): CommandRegistry {
+  static createDefault(
+    vfs: import("../interfaces/IVFS.interface.js").IVFS,
+  ): CommandRegistry {
     const registry = new CommandRegistry();
     registry.registerBuiltinCommands(vfs);
     return registry;
   }
 
   /**
-   * Debug-Informationen
+   * Debug information
    */
   debug(): object {
     return {

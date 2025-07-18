@@ -1,5 +1,5 @@
 /**
- * Globale Interface-Exporte für das Web-Console-System
+ * Global interface exports for the Web Console system
  */
 
 // Interface Exports
@@ -23,3 +23,15 @@ export type { ITheme } from "./ITheme.interface.js";
 export type { IThemeManager } from "./IThemeManager.interface.js";
 export type { IVFS } from "./IVFS.interface.js";
 export type { IVFSProvider } from "./IVFSProvider.interface.js";
+export type { IWorkerManager } from "./IWorkerManager.interface.js";
+export {
+  WorkerTaskPriority,
+  WorkerTaskStatus,
+  WorkerTaskType,
+} from "./IWorkerTask.interface.js";
+export type {
+  IWorkerPermissions,
+  IWorkerPool,
+  IWorkerTask,
+  IWorkerTaskResult,
+} from "./IWorkerTask.interface.js";

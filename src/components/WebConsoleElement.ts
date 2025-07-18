@@ -1,5 +1,5 @@
 /**
- * Native Web Component für Web-Console
+ * Native Web Component for Web Console
  */
 
 import { kernel } from "../core/Kernel.js";
@@ -105,12 +105,12 @@ export class WebConsoleElement extends HTMLElement {
 
   private async initialize() {
     try {
-      // Starte Kernel falls noch nicht gestartet
+      // Start kernel if not already started
       if (!kernel.isStarted) {
         await kernel.start();
       }
 
-      // Erstelle Console-Instanz
+      // Create console instance
       const options: Partial<IConsoleOptions> = {
         prompt: this.getAttribute("prompt") || "$ ",
         cwd: "/home/user",
@@ -188,7 +188,7 @@ export class WebConsoleElement extends HTMLElement {
     return "/home/user";
   }
 
-  public getConsoleState(): any {
+  public getConsoleState(): unknown {
     return this._console?.getState() || {};
   }
 
@@ -199,7 +199,7 @@ export class WebConsoleElement extends HTMLElement {
   }
 }
 
-// Registriere Custom Element
+// Register custom element
 if (!customElements.get("web-console")) {
   customElements.define("web-console", WebConsoleElement);
 }

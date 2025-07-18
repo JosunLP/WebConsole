@@ -1,13 +1,13 @@
 /**
- * Command-Typen
+ * Command types
  */
 export enum CommandType {
-  /** Built-in Befehl */
+  /** Built-in command */
   BUILTIN = "builtin",
-  /** Externer Befehl */
+  /** External command */
   EXTERNAL = "external",
   /** Alias */
   ALIAS = "alias",
-  /** Funktion */
+  /** Function */
   FUNCTION = "function",
 }
