@@ -4,15 +4,15 @@
 export enum ConsoleEvent {
   /** Console bereit */
   READY = "console:ready",
-  /** Console zerstört */
+  /** Console destroyed */
   DESTROYED = "console:destroyed",
-  /** Console wird zerstört */
+  /** Console being destroyed */
   DESTROYING = "console:destroying",
   /** Befehl wurde eingegeben */
   COMMAND_ENTERED = "command:entered",
   /** Befehl startet */
   COMMAND_START = "command:start",
-  /** Befehl wird ausgeführt */
+  /** Command being executed */
   COMMAND_EXECUTING = "command:executing",
   /** Befehl abgeschlossen */
   COMMAND_COMPLETED = "command:completed",
@@ -22,11 +22,11 @@ export enum ConsoleEvent {
   COMMAND_FAILED = "command:failed",
   /** Befehl Fehler */
   COMMAND_ERROR = "command:error",
-  /** Working Directory geändert */
+  /** Working directory changed */
   DIRECTORY_CHANGED = "directory:changed",
-  /** CWD geändert */
+  /** CWD changed */
   CWD_CHANGED = "cwd:changed",
-  /** Environment Variable geändert */
+  /** Environment variable changed */
   ENV_CHANGED = "env:changed",
   /** Prompt geändert */
   PROMPT_CHANGED = "prompt:changed",

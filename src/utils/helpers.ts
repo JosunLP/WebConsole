@@ -1,46 +1,46 @@
 /**
- * Utility-Funktionen für das Web-Console-System
+ * Utility functions for the Web Console system
  */
 
 import { Path } from "../types/index.js";
 
 /**
- * Prüft ob ein Wert definiert und nicht null ist
+ * Check if a value is defined and not null
  */
 export function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
 }
 
 /**
- * Prüft ob ein Wert eine Funktion ist
+ * Check if a value is a function
  */
 export function isFunction(value: unknown): value is Function {
   return typeof value === "function";
 }
 
 /**
- * Prüft ob ein Wert ein String ist
+ * Check if a value is a string
  */
 export function isString(value: unknown): value is string {
   return typeof value === "string";
 }
 
 /**
- * Prüft ob ein Wert eine Zahl ist
+ * Check if a value is a number
  */
 export function isNumber(value: unknown): value is number {
   return typeof value === "number" && !isNaN(value);
 }
 
 /**
- * Prüft ob ein Wert ein Objekt ist (aber kein Array)
+ * Check if a value is an object (but not an array)
  */
 export function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
- * Deep-Clone eines Objekts
+ * Deep clone of an object
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== "object") {
@@ -69,7 +69,7 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * Debounce-Funktion
+ * Debounce function
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
@@ -159,23 +159,25 @@ export function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Sichere ID-Generierung mit crypto.getRandomValues()
+ * Secure ID generation with crypto.getRandomValues()
  */
 export function generateSecureId(): string {
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    // Sichere kryptographische Zufallszahlen verwenden
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Array.from(array)
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-  } else {
-    // Fallback für Umgebungen ohne crypto API
+  try {
+    if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+      // Use secure cryptographic random numbers
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) =>
+        byte.toString(16).padStart(2, "0"),
+      ).join("");
+    }
+  } catch {
+    // Fallback for environments without crypto API
     console.warn(
       "crypto.getRandomValues not available, falling back to Math.random()",
     );
-    return generateId();
   }
+  return generateId();
 }
 
 /**
@@ -351,7 +353,7 @@ export function relativePath(from: Path, to: Path): Path {
     }
   }
 
-  // Rückwärts-Navigation + Vorwärts-Navigation
+  // Backward navigation + forward navigation
   const upSteps = fromParts.length - commonLength;
   const downSteps = toParts.slice(commonLength);
 

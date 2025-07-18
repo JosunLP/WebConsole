@@ -1,5 +1,5 @@
 /**
- * Globale Interface-Exporte für das Web-Console-System
+ * Global interface exports for the Web Console system
  */
 
 // Interface Exports

@@ -2,19 +2,19 @@
  * VFS-Fehlercodes
  */
 export enum VfsError {
-  /** Datei oder Verzeichnis nicht gefunden */
+  /** File or directory not found */
   NOT_FOUND = "ENOENT",
   /** Zugriff verweigert */
   ACCESS_DENIED = "EACCES",
-  /** Ist ein Verzeichnis */
+  /** Is a directory */
   IS_DIRECTORY = "EISDIR",
-  /** Ist keine Datei */
+  /** Is not a file */
   NOT_A_FILE = "ENOTFILE",
-  /** Datei existiert bereits */
+  /** File already exists */
   FILE_EXISTS = "EEXIST",
-  /** Verzeichnis nicht leer */
+  /** Directory not empty */
   NOT_EMPTY = "ENOTEMPTY",
-  /** Ungültiger Pfad */
+  /** Invalid path */
   INVALID_PATH = "EINVAL",
   /** Kein Speicherplatz */
   NO_SPACE = "ENOSPC",

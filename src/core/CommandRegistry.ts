@@ -39,7 +39,7 @@ export const CommandRegistryEvents = {
 } as const;
 
 /**
- * Command Registry Implementierung
+ * Command Registry Implementation
  */
 export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   private readonly commands = new Map<string, ICommandHandler>();
@@ -127,7 +127,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alias entfernen
+   * Remove alias
    */
   unalias(alias: string): void {
     const command = this.aliases.get(alias);
@@ -138,14 +138,14 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle Aliases abrufen
+   * Get all aliases
    */
   getAliases(): Record<string, string> {
     return Object.fromEntries(this.aliases);
   }
 
   /**
-   * Commands nach Typ filtern
+   * Filter commands by type
    */
   getByType(type: CommandType): ICommandHandler[] {
     return Array.from(this.commands.values()).filter(
@@ -154,7 +154,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Details abrufen
+   * Get command details
    */
   getDetails(
     name: string,
@@ -184,17 +184,17 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Alle Commands und Aliases als Map
+   * Get all commands and aliases as Map
    */
   getAllCommands(): Map<string, string> {
     const result = new Map<string, string>();
 
-    // Direkte Commands hinzufügen
+    // Add direct commands
     for (const name of this.commands.keys()) {
       result.set(name, name);
     }
 
-    // Aliases hinzufügen
+    // Add aliases
     for (const [alias, command] of this.aliases) {
       result.set(alias, command);
     }
@@ -203,7 +203,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Command-Vervollständigung für Tab-Completion
+   * Command completion for tab completion
    */
   getCompletions(prefix: string): string[] {
     const completions: string[] = [];
@@ -226,7 +226,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Registry-Statistiken
+   * Registry statistics
    */
   getStats(): {
     totalCommands: number;
@@ -247,7 +247,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Registry zurücksetzen
+   * Reset registry
    */
   clear(): void {
     this.commands.clear();
@@ -305,7 +305,7 @@ export class CommandRegistry extends EventEmitter implements ICommandRegistry {
   }
 
   /**
-   * Debug-Informationen
+   * Debug information
    */
   debug(): object {
     return {

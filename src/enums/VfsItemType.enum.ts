@@ -3,9 +3,9 @@
  * This replaces FileType to avoid conflicts and provides a single source of truth
  */
 export enum VfsItemType {
-  /** Reguläre Datei */
+  /** Regular file */
   FILE = "file",
-  /** Verzeichnis */
+  /** Directory */
   DIRECTORY = "directory",
   /** Symbolischer Link */
   SYMLINK = "symlink",

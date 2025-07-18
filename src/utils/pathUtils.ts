@@ -53,7 +53,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt das Verzeichnis eines Pfades zurück
+   * Returns the directory of a path
    */
   static dirname(path: Path): Path {
     const resolved = PathUtils.normalize(path);
@@ -63,7 +63,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt den Dateinamen eines Pfades zurück
+   * Returns the filename of a path
    */
   static basename(path: Path, ext?: string): string {
     const resolved = PathUtils.normalize(path);
@@ -78,7 +78,7 @@ export class PathUtils {
   }
 
   /**
-   * Gibt die Dateierweiterung zurück
+   * Returns the file extension
    */
   static extname(path: Path): string {
     const basename = PathUtils.basename(path);

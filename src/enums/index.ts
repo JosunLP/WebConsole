@@ -1,7 +1,7 @@
 /**
  * Globale Enums für das Web-Console-System
  *
- * Diese Datei re-exportiert alle Enums aus den separaten Enum-Dateien
+ * This file re-exports all enums from the separate enum files
  * für eine saubere API und Rückwärtskompatibilität.
  */
 

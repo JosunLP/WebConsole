@@ -13,12 +13,12 @@ export type ID = string;
 export type Timestamp = number;
 
 /**
- * POSIX-ähnlicher Dateipfad
+ * POSIX-like file path
  */
 export type Path = string;
 
 /**
- * Mime-Type für Dateien
+ * MIME type for files
  */
 export type MimeType = string;
 
@@ -33,7 +33,7 @@ export type ColorValue = string;
 export type CSSCustomProperty = `--${string}`;
 
 /**
- * Glob-Pattern für Dateisuche
+ * Glob pattern for file search
  */
 export type GlobPattern = string;
 

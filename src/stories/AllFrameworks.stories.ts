@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/html";
 import { WebConsoleElement } from "../components/WebConsoleElement.js";
 
-// Stelle sicher, dass das Custom Element registriert ist
+// Make sure the custom element is registered
 if (!customElements.get("web-console")) {
   customElements.define("web-console", WebConsoleElement);
 }
@@ -19,7 +19,7 @@ const meta: Meta = {
   argTypes: {
     prompt: {
       control: "text",
-      description: "Das Command-Prompt-Zeichen",
+      description: "The command prompt character",
     },
     theme: {
       control: { type: "select" },
@@ -30,15 +30,15 @@ const meta: Meta = {
         "solarized-dark",
         "light",
       ],
-      description: "Das zu verwendende Theme",
+      description: "The theme to use",
     },
     width: {
       control: "text",
-      description: "Breite der Console",
+      description: "Width of the console",
     },
     height: {
       control: "number",
-      description: "Höhe der Console",
+      description: "Height of the console",
     },
   },
   tags: ["autodocs"],

@@ -2,17 +2,17 @@
  * VFS Events
  */
 export enum VFSEvent {
-  /** Datei erstellt */
+  /** File created */
   FILE_CREATED = "file:created",
-  /** Datei geändert */
+  /** File changed */
   FILE_CHANGED = "file:changed",
-  /** Datei gelöscht */
+  /** File deleted */
   FILE_DELETED = "file:deleted",
-  /** Verzeichnis erstellt */
+  /** Directory created */
   DIRECTORY_CREATED = "directory:created",
-  /** Verzeichnis gelöscht */
+  /** Directory deleted */
   DIRECTORY_DELETED = "directory:deleted",
-  /** Mount-Point hinzugefügt */
+  /** Mount point added */
   MOUNT_ADDED = "mount:added",
   /** Mount-Point entfernt */
   MOUNT_REMOVED = "mount:removed",

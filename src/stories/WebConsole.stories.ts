@@ -1,13 +1,13 @@
 import "../components/WebConsoleElement.js";
 
-// Story-Argumente Interface
+// Story arguments interface
 interface WebConsoleArgs {
   prompt: string;
   height: string;
   width: string;
 }
 
-// Meta-Konfiguration
+// Meta configuration
 const meta = {
   title: "Components/WebConsole",
   tags: ["autodocs"],
@@ -53,7 +53,7 @@ const meta = {
 
 export default meta;
 
-// Standard-Story
+// Standard story
 export const Default = {
   name: "🖥️ Standard Console",
 };
@@ -66,7 +66,7 @@ export const CustomPrompt = {
   },
 };
 
-// Große Console
+// Large console
 export const LargeConsole = {
   name: "📺 Large Console",
   args: {
@@ -75,7 +75,7 @@ export const LargeConsole = {
   },
 };
 
-// Kleine Console
+// Small console
 export const SmallConsole = {
   name: "📱 Compact Console",
   args: {
@@ -84,7 +84,7 @@ export const SmallConsole = {
   },
 };
 
-// Interactive Demo mit Test-Buttons
+// Interactive demo with test buttons
 export const InteractiveDemo = {
   name: "🎮 Interactive Demo",
   render: (args: WebConsoleArgs) => {
@@ -93,7 +93,7 @@ export const InteractiveDemo = {
     container.style.background = "#f8f9fa";
     container.style.fontFamily = "Arial, sans-serif";
 
-    // Info-Box
+    // Info box
     const infoBox = document.createElement("div");
     infoBox.style.marginBottom = "20px";
     infoBox.style.padding = "15px";
@@ -103,10 +103,10 @@ export const InteractiveDemo = {
     infoBox.innerHTML = `
       <h4 style="margin: 0 0 10px 0; color: #1976d2;">🎯 Test Commands</h4>
       <div style="font-size: 14px; line-height: 1.5;">
-        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">echo [text]</code> - Text ausgeben<br>
-        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">help</code> - Hilfe anzeigen<br>
-        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">clear</code> - Console leeren<br>
-        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">test</code> - System-Test
+        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">echo [text]</code> - Output text<br>
+        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">help</code> - Show help<br>
+        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">clear</code> - Clear console<br>
+        <code style="background: #fff; padding: 2px 4px; border-radius: 3px;">test</code> - System test
       </div>
     `;
 
@@ -120,7 +120,7 @@ export const InteractiveDemo = {
     console.style.borderRadius = "6px";
     console.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
 
-    // Test-Buttons
+    // Test buttons
     const buttonContainer = document.createElement("div");
     buttonContainer.style.marginTop = "20px";
     buttonContainer.style.display = "flex";
@@ -186,7 +186,7 @@ export const InteractiveDemo = {
   },
 };
 
-// Pre-filled Commands Demo
+// Pre-filled commands demo
 export const PrefilledDemo = {
   name: "🚀 Auto Commands",
   render: (args: WebConsoleArgs) => {
@@ -205,7 +205,7 @@ export const PrefilledDemo = {
 
     container.appendChild(console);
 
-    // Demo commands nach kurzer Verzögerung
+    // Demo commands after short delay
     setTimeout(async () => {
       if (console.executeCommand) {
         try {
@@ -236,7 +236,7 @@ export const PrefilledDemo = {
 export const ReactComponent = {
   name: "⚛️ React WebConsole",
   render: (args: WebConsoleArgs) => {
-    // Dynamischer Import, um Probleme mit JSX zu vermeiden
+    // Dynamic import to avoid JSX problems
     const container = document.createElement("div");
     container.id = "react-root";
     import("../components/react/WebConsole").then(({ WebConsole }) => {
@@ -253,7 +253,7 @@ export const ReactComponent = {
   },
 };
 
-// Angular Story (zeigt Web Component, da Angular-Integration im Storybook nicht trivial)
+// Angular story (shows web component since Angular integration in Storybook is not trivial)
 export const AngularComponent = {
   name: "🅰️ Angular WebConsole",
   render: (args: WebConsoleArgs) => {

@@ -161,9 +161,9 @@ const meta = {
       try {
         const workerManager = kernel.getWorkerManager();
 
-        // Verwende vordefinierte Batch-Processing Funktion
+        // Use predefined batch processing function
         const result = await workerManager.runTask("batchProcess", {
-          args: [[1, 2, 3, 4, 5], "square"], // Zahlen und Operation
+          args: [[1, 2, 3, 4, 5], "square"], // Numbers and operation
           timeout: 5000,
           type: WorkerTaskType.COMPUTATION,
         });

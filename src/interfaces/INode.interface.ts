@@ -14,13 +14,13 @@ export interface INode {
   type: VfsItemType;
   size: number;
   readonly nlink?: number;
-  readonly linkCount?: number; // Für ls-Command
+  readonly linkCount?: number; // For ls command
   readonly blocks?: number;
   readonly atime?: Timestamp;
   mtime?: Timestamp;
   readonly ctime?: Timestamp;
-  readonly modified?: number; // Für Sortierung in ls
-  readonly owner?: string; // Für ls-Command
-  readonly group?: string; // Für ls-Command
-  readonly target?: string; // Für Symlinks
+  readonly modified?: number; // For sorting in ls
+  readonly owner?: string; // For ls command
+  readonly group?: string; // For ls command
+  readonly target?: string; // For symlinks
 }

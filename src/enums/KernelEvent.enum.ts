@@ -10,6 +10,6 @@ export enum KernelEvent {
   ERROR = "kernel:error",
   /** Console erstellt */
   CONSOLE_CREATED = "kernel:console:created",
-  /** Console zerstört */
+  /** Console destroyed */
   CONSOLE_DESTROYED = "kernel:console:destroyed",
 }

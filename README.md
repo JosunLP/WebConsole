@@ -9,7 +9,7 @@
 
 ## 🌟 Highlights
 
-**WebConsole** allows developers to integrate a Windows Terminal-like console into any web application in seconds – **no backend, no build steps, no external dependencies**.
+**WebConsole** allows developers to integrate a Windows Terminal-like console into any web application in seconds – **no backend, no build steps, no external 2. **🌿 Feature branch** create: `git checkout -b feature/amazing-command` 3. **✨ Implementation** with tests 4. **📝 Commit** with conventional commits: `feat: add amazing command with auto-completion` 5. **🚀 Push** to branch: `git push origin feature/amazing-command` 6. **📬 Pull request** createdencies**.
 
 ### ✨ Core Features
 
@@ -423,35 +423,35 @@ await VFS.mount(
 
 ```bash
 # System & Navigation
-help                    # Interaktive Befehlsreferenz
-clear                   # Terminal-Bildschirm leeren
-pwd                     # Aktuelles Arbeitsverzeichnis
-cd [directory]          # Verzeichnis wechseln
-ls [-la] [path]         # Verzeichnis-Inhalt auflisten
+help                    # Interactive command reference
+clear                   # Clear terminal screen
+pwd                     # Current working directory
+cd [directory]          # Change directory
+ls [-la] [path]         # List directory contents
 
-# Dateisystem-Operationen
-cat [file]              # Datei-Inhalt anzeigen
-mkdir [-p] <directory>  # Verzeichnis erstellen
+# File system operations
+cat [file]              # Display file contents
+mkdir [-p] <directory>  # Create directory
 rm [-rf] <file/dir>     # Delete files/folders
-cp [-r] <src> <dest>    # Kopieren
-mv <src> <dest>         # Verschieben/Umbenennen
+cp [-r] <src> <dest>    # Copy
+mv <src> <dest>         # Move/rename
 
-# Environment & Konfiguration
-echo [text]             # Text ausgeben
-export VAR=value        # Umgebungsvariablen setzen
-env                     # Environment anzeigen
-alias name=command      # Command-Aliase erstellen
-unset VAR               # Variablen entfernen
+# Environment & Configuration
+echo [text]             # Output text
+export VAR=value        # Set environment variables
+env                     # Show environment
+alias name=command      # Create command aliases
+unset VAR               # Remove variables
 
-# System-Tools
-date                    # Aktuelles Datum/Zeit
-history                 # Befehlshistorie
-which <command>         # Command-Pfad finden
-theme [name]            # Theme wechseln
-test                    # System-Selbsttest
+# System tools
+date                    # Current date/time
+history                 # Command history
+which <command>         # Find command path
+theme [name]            # Switch theme
+test                    # System self-test
 ```
 
-### Plugin-System: Eigene Commands
+### Plugin System: Custom Commands
 
 ```typescript
 import { CommandRegistry, BaseCommand } from "web-console";
@@ -563,7 +563,7 @@ kernel.on("console:created", (console) => {
 await kernel.shutdown();
 ```
 
-### State Management mit Persistierung
+### State Management with Persistence
 
 ```typescript
 import { StateManager, PersistenceMode } from "web-console";
@@ -603,7 +603,7 @@ appState.set("userPreferences", { ...currentPrefs, theme: "monokai" });
 const prefs = appState.get("userPreferences");
 ```
 
-### Event-System & Hooks
+### Event System & Hooks
 
 ```typescript
 import { ConsoleEvent, KernelEvent } from "web-console";
@@ -773,7 +773,7 @@ chore: Build-System, Dependencies
 ### 🆘 Support
 
 - **🚀 Quick-Start-Probleme?** → Schau in die [Examples](./examples/) oder [Storybook](http://localhost:6006)
-- **🐛 Bug gefunden?** → [Issue erstellen](https://github.com/JosunLP/WebConsole/issues/new)
+- **🐛 Bug found?** → [Create issue](https://github.com/JosunLP/WebConsole/issues/new)
 - **💡 Feature-Idee?** → [Discussion starten](https://github.com/JosunLP/WebConsole/discussions)
 - **🤝 Contributing?** → [Contributing Guide](./CONTRIBUTING.md) lesen
 

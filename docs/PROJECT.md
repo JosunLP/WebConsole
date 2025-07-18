@@ -1,4 +1,4 @@
-# Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
+# Concept: Browser Console Library "Web-Console" Concept: Browser Console Library "Web-Console" Konzept: Browser-Konsolen-Bibliothek „Web-Console“
 
 ## 1. Vision & Goals
 
@@ -9,32 +9,32 @@ The library provides ready-made components for Angular, React, Svelte and Vue as
 
 ## 2. Architecture Overview
 
-### 2.1 Kern-Module
+### 2.1 Core Modules
 
-| Module                    | Responsibility                                           | Singleton | Persistence |
-| ------------------------- | -------------------------------------------------------- | --------- | ----------- |
-| Kernel                    | zentrale Event- und Lebenszyklus-Steuerung               | ja        | nein        |
-| VFS (Virtual File System) | virtual file system based on `localStorage`              | yes       | yes         |
-| Console                   | Parser, Lexer, Executor for commands                     | no        | no          |
-| Theme & Styling           | Design-System, Token, CSS-Custom-Properties              | ja        | ja          |
-| StateManager              | globale und pro-Console-State-Hierarchie                 | nein      | optional    |
-| ComponentRegistry         | Registrierung und Lazy-Loading der Framework-Komponenten | ja        | nein        |
-| WorkerManager             | Web Worker Multithreading-System                         | ja        | nein        |
+| Module                    | Responsibility                                        | Singleton | Persistence |
+| ------------------------- | ----------------------------------------------------- | --------- | ----------- |
+| Kernel                    | central event and lifecycle control                   | yes       | no          |
+| VFS (Virtual File System) | virtual file system based on `localStorage`           | yes       | yes         |
+| Console                   | Parser, Lexer, Executor for commands                  | no        | no          |
+| Theme & Styling           | Design system, tokens, CSS custom properties          | yes       | yes         |
+| StateManager              | global and per-console state hierarchy                | no        | optional    |
+| ComponentRegistry         | registration and lazy loading of framework components | yes       | no          |
+| WorkerManager             | Web Worker multithreading system                      | yes       | no          |
 
 ### 2.2 Directory Structure (OOP-first)
 
 ```bash
 Web-Console/
 ├─ src/
-│  ├─ types/          (globale Typdefinitionen)
-│  ├─ enums/          (globale Enums)
-│  ├─ interfaces/     (globale Interfaces)
+│  ├─ types/          (global type definitions)
+│  ├─ enums/          (global enums)
+│  ├─ interfaces/     (global interfaces)
 │  ├─ core/           (Kernel, VFS, StateManager, Theme, WorkerManager)
 │  ├─ Console/          (Parser, Lexer, Executor, Built-ins)
 │  ├─ workers/        (BaseWorker, CommandWorker, TaskWorker)
-│  ├─ components/     (Framework-spezifische Adapter)
-│  ├─ themes/         (vordefinierte Themes)
-│  └─ utils/          (Helfer, Logger, Validatoren)
+│  ├─ components/     (Framework-specific adapters)
+│  ├─ themes/         (predefined themes)
+│  └─ utils/          (helpers, logger, validators)
 ```
 
 ---
@@ -44,18 +44,18 @@ Web-Console/
 ### 3.1 Concept
 
 - POSIX-like paths (`/home/user/.config`)
-- Inodes statt echter Dateien
-- Symlinks, Hardlinks, Permissions (rwx)
-- Mount-Points für externe Provider (z. B. IndexedDB, Cloud)
+- Inodes instead of real files
+- Symlinks, hardlinks, permissions (rwx)
+- Mount points for external providers (e.g. IndexedDB, Cloud)
 
-### 3.2 Persistenz-Strategie
+### 3.2 Persistence Strategy
 
-- `localStorage` als Block-Device
-- Copy-on-Write für effiziente Updates
-- Garbage-Collection bei Löschungen
-- Optionale Kompression via LZ-String
+- `localStorage` as block device
+- Copy-on-write for efficient updates
+- Garbage collection on deletions
+- Optional compression via LZ-String
 
-### 3.3 API (vereinfacht)
+### 3.3 API (simplified)
 
 - `VFS.mount(path, provider)`
 - `VFS.readFile(path): Promise<Uint8Array>`
@@ -66,27 +66,27 @@ Web-Console/
 
 ## 4. Worker Multithreading System
 
-### 4.1 Konzept
+### 4.1 Concept
 
-Das Worker-System ermöglicht echtes Multithreading im Browser und ist **einfacher zu verwenden als async/await**. Es nutzt Web Workers für CPU-intensive Tasks und bietet automatisches Pool-Management.
+The worker system enables true multithreading in the browser and is **easier to use than async/await**. It uses Web Workers for CPU-intensive tasks and provides automatic pool management.
 
-### 4.2 Architektur
+### 4.2 Architecture
 
-| Komponente    | Verantwortung                                     | Features                                |
-| ------------- | ------------------------------------------------- | --------------------------------------- |
-| WorkerManager | Zentraler Hub für Worker-Pool-Management          | Singleton, Task-Queuing, Load-Balancing |
-| BaseWorker    | Abstrakte Basis für alle Worker-Implementierungen | VFS-Proxy, Error-Handling, Lifecycle    |
-| CommandWorker | Spezialisiert für Command-Ausführung              | Shell-Integration, Pipe-Support         |
-| TaskWorker    | Allgemeine Task-Verarbeitung                      | Function-Execution, Batch-Processing    |
+| Component     | Responsibility                               | Features                                |
+| ------------- | -------------------------------------------- | --------------------------------------- |
+| WorkerManager | Central hub for worker pool management       | Singleton, task queuing, load balancing |
+| BaseWorker    | Abstract base for all worker implementations | VFS proxy, error handling, lifecycle    |
+| CommandWorker | Specialized for command execution            | Shell integration, pipe support         |
+| TaskWorker    | General task processing                      | Function execution, batch processing    |
 
-### 4.3 CLI-Integration
+### 4.3 CLI Integration
 
-| Command  | Beschreibung           | Beispiel                        |
+| Command  | Description            | Example                         |
 | -------- | ---------------------- | ------------------------------- |
-| `jobs`   | Aktive Tasks anzeigen  | `jobs`                          |
-| `kill`   | Task beenden           | `kill task_001`                 |
-| `worker` | Worker-Pool Management | `worker create pool 4`          |
-| `run`    | Parallel-Ausführung    | `run --parallel cmd1 cmd2 cmd3` |
+| `jobs`   | Show active tasks      | `jobs`                          |
+| `kill`   | Terminate task         | `kill task_001`                 |
+| `worker` | Worker pool management | `worker create pool 4`          |
+| `run`    | Parallel execution     | `run --parallel cmd1 cmd2 cmd3` |
 
 ### 4.4 Programmier-API
 

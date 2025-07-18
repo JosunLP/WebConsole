@@ -195,7 +195,7 @@ class WorkerPool implements IWorkerPool {
       taskData.reject(result.error || new Error("Unknown worker error"));
     }
 
-    // Verarbeite nächste Tasks
+    // Process next tasks
     this.processQueue();
   }
 
@@ -211,7 +211,7 @@ class WorkerPool implements IWorkerPool {
 
     taskData.reject(new Error(error));
 
-    // Verarbeite nächste Tasks
+    // Process next tasks
     this.processQueue();
   }
 
@@ -219,20 +219,20 @@ class WorkerPool implements IWorkerPool {
     _taskId: string,
     _progressData: { progress: number; message?: string },
   ): void {
-    // Progress-Events können hier verarbeitet werden
-    // Für zukünftige Erweiterungen
+    // Progress events can be processed here
+    // For future extensions
   }
 
   private async handleVFSRequest(
     _worker: Worker,
     _request: unknown,
   ): Promise<void> {
-    // VFS-Proxy für Worker
-    // Implementierung würde hier VFS-Calls an das Hauptthread weiterleiten
+    // VFS proxy for worker
+    // Implementation would forward VFS calls to the main thread here
   }
 
   private handleWorkerError(worker: Worker, _error: ErrorEvent): void {
-    // Entferne fehlerhaften Worker
+    // Remove faulty worker
     const index = this.workers.indexOf(worker);
     if (index >= 0) {
       this.workers.splice(index, 1);
@@ -245,7 +245,7 @@ class WorkerPool implements IWorkerPool {
 
     this.busyWorkers.delete(worker);
 
-    // Erstelle Ersatz-Worker
+    // Create replacement worker
     this.createWorker().catch(() => {
       // Failed to create replacement worker
     });
@@ -292,7 +292,7 @@ class WorkerPool implements IWorkerPool {
 }
 
 /**
- * WorkerManager - Hauptklasse für Worker-Verwaltung
+ * WorkerManager - Main class for worker management
  */
 export class WorkerManager extends EventEmitter implements IWorkerManager {
   private static _instance: WorkerManager | null = null;
@@ -359,7 +359,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
       throw new Error(`Worker pool '${id}' already exists`);
     }
 
-    // Bestimme Worker-Script basierend auf Pool-ID
+    // Determine worker script based on pool ID
     const workerScript = this.getWorkerScript(id);
 
     const pool = new WorkerPool(id, maxWorkers, permissions, workerScript);
@@ -395,7 +395,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     return Array.from(this.pools.keys());
   }
 
-  // Vereinfachte API mit sicheren vordefinierten Funktionen
+  // Simplified API with safe predefined functions
   async runTask<T, R>(
     taskFunction: string | (() => T),
     options: Partial<IWorkerTask> & { args?: unknown[] } = {},
@@ -404,14 +404,14 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
     let args: unknown[] = [];
 
     if (typeof taskFunction === "string") {
-      // Sichere vordefinierte Funktion verwenden
+      // Use safe predefined function
       functionName = taskFunction;
       args = options.args || [];
     } else {
-      // Legacy-Support: Funktion anhand von Inhalten erkennen
+      // Legacy support: recognize function based on contents
       const funcString = taskFunction.toString();
 
-      // Versuche bekannte Funktions-Pattern zu erkennen
+      // Try to recognize known function patterns
       if (funcString.includes("fibonacci")) functionName = "fibonacci";
       else if (
         funcString.includes("Math.sin") &&
@@ -549,7 +549,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
 
   listActiveTasks(): string[] {
     const tasks: string[] = [];
-    // Implementation würde hier alle aktiven Task-IDs sammeln
+    // Implementation would collect all active task IDs here
     // for (const pool of this.pools.values()) {
     //   tasks.push(...pool.getActiveTaskIds());
     // }
@@ -591,7 +591,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   }
 
   private getWorkerScript(poolId: string): string {
-    // URL zu Worker-Scripts
+    // URL to worker scripts
     switch (poolId) {
       case "command":
         return "/workers/CommandWorker.js";
