@@ -19,6 +19,7 @@ Die Bibliothek liefert fertige Komponenten für Angular, React, Svelte und Vue s
 | Theme & Styling           | Design-System, Token, CSS-Custom-Properties              | ja        | ja         |
 | StateManager              | globale und pro-Console-State-Hierarchie                 | nein      | optional   |
 | ComponentRegistry         | Registrierung und Lazy-Loading der Framework-Komponenten | ja        | nein       |
+| WorkerManager             | Web Worker Multithreading-System                         | ja        | nein       |
 
 ### 2.2 Verzeichnis-Struktur (OOP-first)
 
@@ -28,8 +29,9 @@ Web-Console/
 │  ├─ types/          (globale Typdefinitionen)
 │  ├─ enums/          (globale Enums)
 │  ├─ interfaces/     (globale Interfaces)
-│  ├─ core/           (Kernel, VFS, StateManager, Theme)
+│  ├─ core/           (Kernel, VFS, StateManager, Theme, WorkerManager)
 │  ├─ Console/          (Parser, Lexer, Executor, Built-ins)
+│  ├─ workers/        (BaseWorker, CommandWorker, TaskWorker)
 │  ├─ components/     (Framework-spezifische Adapter)
 │  ├─ themes/         (vordefinierte Themes)
 │  └─ utils/          (Helfer, Logger, Validatoren)
@@ -62,15 +64,61 @@ Web-Console/
 
 ---
 
-## 4. State Management
+## 4. Worker Multithreading System
 
-### 4.1 Hierarchie
+### 4.1 Konzept
+
+Das Worker-System ermöglicht echtes Multithreading im Browser und ist **einfacher zu verwenden als async/await**. Es nutzt Web Workers für CPU-intensive Tasks und bietet automatisches Pool-Management.
+
+### 4.2 Architektur
+
+| Komponente    | Verantwortung                                     | Features                                |
+| ------------- | ------------------------------------------------- | --------------------------------------- |
+| WorkerManager | Zentraler Hub für Worker-Pool-Management          | Singleton, Task-Queuing, Load-Balancing |
+| BaseWorker    | Abstrakte Basis für alle Worker-Implementierungen | VFS-Proxy, Error-Handling, Lifecycle    |
+| CommandWorker | Spezialisiert für Command-Ausführung              | Shell-Integration, Pipe-Support         |
+| TaskWorker    | Allgemeine Task-Verarbeitung                      | Function-Execution, Batch-Processing    |
+
+### 4.3 CLI-Integration
+
+| Command  | Beschreibung           | Beispiel                        |
+| -------- | ---------------------- | ------------------------------- |
+| `jobs`   | Aktive Tasks anzeigen  | `jobs`                          |
+| `kill`   | Task beenden           | `kill task_001`                 |
+| `worker` | Worker-Pool Management | `worker create pool 4`          |
+| `run`    | Parallel-Ausführung    | `run --parallel cmd1 cmd2 cmd3` |
+
+### 4.4 Programmier-API
+
+```typescript
+// Einfache Task-Ausführung
+const result = await workerManager.runTask(() => heavyComputation());
+
+// Batch-Verarbeitung
+const tasks = [() => process(1), () => process(2), () => process(3)];
+const results = await workerManager.runParallelBatch(tasks);
+
+// Command-Integration
+class MyCommand extends BaseCommand {
+  async execute(context: CommandContext): Promise<ExitCode> {
+    const result = await this.runInWorker(() => processData(context.args));
+    await this.writeToStdout(context, `Result: ${result}`);
+    return ExitCode.SUCCESS;
+  }
+}
+```
+
+---
+
+## 5. State Management
+
+### 5.1 Hierarchie
 
 - Globaler State (Kernel, Theme, VFS-Metadaten)
 - Pro-Console-State (History, CWD, Env-Variablen)
 - Prozess-State (laufende Befehle, Pipes)
 
-### 4.2 Persistenz-Flags
+### 5.2 Persistenz-Flags
 
 - `volatile` – nur im RAM
 - `session` – `sessionStorage`
@@ -78,9 +126,9 @@ Web-Console/
 
 ---
 
-## 5. Console & Befehlsverarbeitung
+## 6. Console & Befehlsverarbeitung
 
-### 5.1 Parser
+### 6.1 Parser
 
 - LL(1)-ähnlicher Parser für POSIX-Console-Syntax
 - Unterstützt:
@@ -90,7 +138,7 @@ Web-Console/
   - Environment-Variablen `$VAR`, `${VAR:-default}`
   - Globbing `*.js`
 
-### 5.2 Built-ins
+### 6.2 Built-ins
 
 | Befehl   | Beschreibung                    |
 | -------- | ------------------------------- |
@@ -101,29 +149,38 @@ Web-Console/
 | `theme`  | Theme zur Laufzeit wechseln     |
 | `alias`  | Kommandoverknüpfungen           |
 
-### 5.3 Erweiterbarkeit
+### 6.3 Erweiterbarkeit
 
 - Plugin-System über `registerCommand(name, handler)`
 - Async-Ausführung via `Promise<ExitCode>`
 - Streaming-Output (ReadableStream)
 
+### 6.4 Worker-Commands
+
+| Command  | Beschreibung           |
+| -------- | ---------------------- |
+| `jobs`   | Worker-Status anzeigen |
+| `kill`   | Tasks beenden          |
+| `worker` | Worker-Pool Management |
+| `run`    | Parallel-Ausführung    |
+
 ---
 
-## 6. Design-System & Anpassbarkeit
+## 7. Design-System & Anpassbarkeit
 
-### 6.1 Token-System
+### 7.1 Token-System
 
 - CSS-Custom-Properties für Farben, Abstände, Fonts
 - Design-Tokens in JSON definierbar
 - Hot-Reload via `theme reload`
 
-### 6.2 Themes
+### 7.2 Themes
 
 - Standard: `windows-terminal`, `monokai`, `solarized`
 - Custom-Themes via JSON oder TypeScript-API
 - Unterstützung für Hintergrundbilder, GIFs, Shader (WebGL)
 
-### 6.3 Layout-System
+### 7.3 Layout-System
 
 - Tabs, Panes, Splits (wie tmux)
 - Resize-Handles via Pointer-Events
@@ -131,30 +188,30 @@ Web-Console/
 
 ---
 
-## 7. Framework-Integration
+## 8. Framework-Integration
 
-### 7.1 Angular
+### 8.1 Angular
 
 - `Web-ConsoleModule` mit `Web-ConsoleComponent`
 - DI-Token für Kernel und VFS
 - Lazy-Loading über `import('Web-Console/ng')`
 
-### 7.2 React
+### 8.2 React
 
 - `Web-Console` als Function-Component mit Hooks
 - `useConsole()`, `useVFS()`, `useTheme()`
 
-### 7.3 Vue
+### 8.3 Vue
 
 - `Web-Console` als Composition-API-Component
 - `provide/inject` für Kernel
 
-### 7.4 Svelte
+### 8.4 Svelte
 
 - `Web-Console` als Svelte-Component
 - Stores für Kernel, VFS, Theme
 
-### 7.5 Native Web Components
+### 8.5 Native Web Components
 
 - `<web-console>` Custom-Element
 - Attribute für Theme, Prompt, Height
@@ -162,19 +219,19 @@ Web-Console/
 
 ---
 
-## 8. Ressourcen-Optimierung
+## 9. Ressourcen-Optimierung
 
-### 8.1 Tree-Shaking
+### 9.1 Tree-Shaking
 
 - Jede Framework-Integration ist eigenes NPM-Paket
 - Core-Bundle < 50 kB (gzipped)
 
-### 8.2 Lazy Loading
+### 9.2 Lazy Loading
 
 - Befehle werden erst bei erstmaligem Aufruf geladen
 - Themes werden asynchron nachgeladen
 
-### 8.3 Memory-Management
+### 9.3 Memory-Management
 
 - WeakRefs für Event-Listener
 - Offscreen-Canvas für Rendering
@@ -182,29 +239,30 @@ Web-Console/
 
 ---
 
-## 9. Sicherheit
+## 10. Sicherheit
 
-### 9.1 Sandbox
+### 10.1 Sandbox
 
 - Kein `eval`, kein `new Function`
 - Befehle laufen in isolierten Web-Workern
 - CSP-kompatibel
 
-### 9.2 Permissions
+### 10.2 Permissions
 
 - ACLs im VFS
 - Read-Only Mounts möglich
 
 ---
 
-## 10. Aktueller Stand & ToDos (Stand: Juli 2025)
+## 11. Aktueller Stand & ToDos (Stand: Juli 2025)
 
 ### Implementiert
 
 - **Core-Architektur:** Kernel, VFS, StateManager, EventEmitter, CommandRegistry
+- **Worker-System:** WorkerManager, BaseWorker, CommandWorker, TaskWorker mit CLI-Integration
 - **WebComponent:** `<web-console>` als native Komponente
 - **Test-Infrastruktur:** Storybook mit interaktiven Demos und Core-Tests
-- **Built-in Commands:** echo, help, clear, test (weitere in Planung)
+- **Built-in Commands:** echo, help, clear, test, jobs, kill, worker, run (weitere in Planung)
 - **Parser/Lexer:** Grundfunktionalität, aber noch ohne Pipes/Redirections
 
 ### Teilweise implementiert
@@ -247,7 +305,7 @@ Weitere Details und aktuellen Status siehe auch [STATUS_CURRENT.md].
 
 ---
 
-## 11. Lizenz & Community
+## 12. Lizenz & Community
 
 - MIT-Lizenz
 - GitHub-Monorepo mit Issues, Discussions
@@ -255,7 +313,7 @@ Weitere Details und aktuellen Status siehe auch [STATUS_CURRENT.md].
 
 ---
 
-## 11. Nächste Schritte
+## 13. Nächste Schritte
 
 1. Repository anlegen
 2. Core-Module skizzieren (Interfaces, Enums, Typen)

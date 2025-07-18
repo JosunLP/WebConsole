@@ -23,6 +23,7 @@
 - 📚 **Full TypeScript** - Vollständige Type-Unterstützung mit strikten Einstellungen
 - 🧩 **Plugin-System** - Erweiterbare Kommando-Registrierung
 - 💾 **State-Persistierung** - Hierarchisches State-Management mit localStorage/sessionStorage
+- 🔧 **Worker Multithreading** - Echtes Multithreading mit Web Workers, einfacher als async/await
 
 ## 🚀 Quick Start
 
@@ -39,6 +40,7 @@ npm run storybook  # Startet auf http://localhost:6006
 - 🔧 **Core-System Tests** - Kernel, VFS, StateManager, CommandRegistry Tests
 - 📱 **Framework Examples** - React, Angular, Vue, Svelte Live-Beispiele
 - 📚 **Live-Dokumentation** - API-Referenz mit Code-Snippets
+- 🔧 **Worker System Demo** - Interaktive Worker Multithreading Tests
 
 ### Option 2: Native Web Component
 
@@ -83,39 +85,44 @@ console.log(result.stdout);
 
 ### Core-Module (✅ Implementiert)
 
-| Modul                  | Status    | Verantwortung                              | Features                                    |
-| ---------------------- | --------- | ------------------------------------------ | ------------------------------------------- |
-| **🧠 Kernel**          | ✅ Fertig | Zentrale Event- und Lebenszyklus-Steuerung | Singleton, Event-System, Console-Management |
-| **� VFS**              | ✅ Fertig | Virtuelles Dateisystem mit localStorage    | POSIX-like, Inode-System, Mount-Points      |
-| **🎨 ThemeManager**    | ✅ Fertig | Design-System mit CSS Custom Properties    | Hot-Reload, Token-System, Built-in Themes   |
-| **📊 StateManager**    | ✅ Fertig | Hierarchische State-Verwaltung             | Persistenz-Modi, Event-driven Updates       |
-| **🔧 CommandRegistry** | ✅ Fertig | Command-Registrierung und -Verwaltung      | Plugin-System, Aliase, Built-ins            |
-| **⚙️ Parser/Lexer**    | ⚠️ Basis  | Shell-Syntax Parsing (bash-ähnlich)        | Grundbefehle ✅, Pipes/Redirects 🔄         |
+| Modul                  | Status    | Verantwortung                              | Features                                      |
+| ---------------------- | --------- | ------------------------------------------ | --------------------------------------------- |
+| **🧠 Kernel**          | ✅ Fertig | Zentrale Event- und Lebenszyklus-Steuerung | Singleton, Event-System, Console-Management   |
+| **📁 VFS**             | ✅ Fertig | Virtuelles Dateisystem mit localStorage    | POSIX-like, Inode-System, Mount-Points        |
+| **🎨 ThemeManager**    | ✅ Fertig | Design-System mit CSS Custom Properties    | Hot-Reload, Token-System, Built-in Themes     |
+| **📊 StateManager**    | ✅ Fertig | Hierarchische State-Verwaltung             | Persistenz-Modi, Event-driven Updates         |
+| **🔧 CommandRegistry** | ✅ Fertig | Command-Registrierung und -Verwaltung      | Plugin-System, Aliase, Built-ins              |
+| **⚙️ Parser/Lexer**    | ⚠️ Basis  | Shell-Syntax Parsing (bash-ähnlich)        | Grundbefehle ✅, Pipes/Redirects 🔄           |
+| **🔧 WorkerManager**   | ✅ Fertig | Web Worker Multithreading-System           | Worker-Pools, Task-Queues, Parallel-Execution |
 
 ### Built-in Commands (Aktueller Stand)
 
-| Command   | Status | Beschreibung           | Features                         |
-| --------- | ------ | ---------------------- | -------------------------------- |
-| `help`    | ✅     | Hilfe-System           | Interaktive Befehlsreferenz      |
-| `clear`   | ✅     | Terminal leeren        | ANSI Escape Sequences            |
-| `echo`    | ✅     | Text ausgeben          | Variable-Substitution            |
-| `test`    | ✅     | System-Tests           | Core-Module Validierung          |
-| `cat`     | 🔄     | Datei-Inhalt anzeigen  | Basic ✅, Syntax-Highlighting 🔄 |
-| `ls`      | 🔄     | Verzeichnis-Listing    | Basic ✅, Farben/Icons 🔄        |
-| `cd`      | 🔄     | Verzeichnis wechseln   | Basic ✅, Tab-Completion 🔄      |
-| `pwd`     | 🔄     | Aktueller Pfad         | Basic ✅                         |
-| `mkdir`   | 🔄     | Verzeichnis erstellen  | Basic ✅, Recursive-Flag 🔄      |
-| `rm`      | 🔄     | Dateien/Ordner löschen | Basic ✅, Sicherheits-Prompts 🔄 |
-| `cp`      | 🔄     | Kopieren               | Implementierung läuft            |
-| `mv`      | 🔄     | Verschieben/Umbenennen | Implementierung läuft            |
-| `alias`   | 🔄     | Command-Aliase         | Basis-Funktionalität             |
-| `export`  | 🔄     | Umgebungsvariablen     | Implementierung läuft            |
-| `env`     | 🔄     | Environment anzeigen   | Implementierung läuft            |
-| `date`    | 🔄     | Datum/Zeit             | Implementierung läuft            |
-| `history` | 🔄     | Befehlshistorie        | Implementierung läuft            |
-| `theme`   | 🔄     | Theme-Wechsel          | Implementierung läuft            |
-| `which`   | 🔄     | Command-Pfad finden    | Implementierung läuft            |
-| `unset`   | 🔄     | Variablen löschen      | Implementierung läuft            |
+| Command   | Status | Beschreibung           | Features                          |
+| --------- | ------ | ---------------------- | --------------------------------- |
+| `help`    | ✅     | Hilfe-System           | Interaktive Befehlsreferenz       |
+| `clear`   | ✅     | Terminal leeren        | ANSI Escape Sequences             |
+| `echo`    | ✅     | Text ausgeben          | Variable-Substitution             |
+| `test`    | ✅     | System-Tests           | Core-Module Validierung           |
+| `jobs`    | ✅     | Worker-Status anzeigen | Active Tasks, Pool-Management     |
+| `kill`    | ✅     | Tasks beenden          | Task-Cancellation, Worker-Cleanup |
+| `worker`  | ✅     | Worker-Management      | Pool-Ops, Status, Configuration   |
+| `run`     | ✅     | Parallel-Ausführung    | Batch-Processing, Multi-Threading |
+| `cat`     | 🔄     | Datei-Inhalt anzeigen  | Basic ✅, Syntax-Highlighting 🔄  |
+| `ls`      | 🔄     | Verzeichnis-Listing    | Basic ✅, Farben/Icons 🔄         |
+| `cd`      | 🔄     | Verzeichnis wechseln   | Basic ✅, Tab-Completion 🔄       |
+| `pwd`     | 🔄     | Aktueller Pfad         | Basic ✅                          |
+| `mkdir`   | 🔄     | Verzeichnis erstellen  | Basic ✅, Recursive-Flag 🔄       |
+| `rm`      | 🔄     | Dateien/Ordner löschen | Basic ✅, Sicherheits-Prompts 🔄  |
+| `cp`      | 🔄     | Kopieren               | Implementierung läuft             |
+| `mv`      | 🔄     | Verschieben/Umbenennen | Implementierung läuft             |
+| `alias`   | 🔄     | Command-Aliase         | Basis-Funktionalität              |
+| `export`  | 🔄     | Umgebungsvariablen     | Implementierung läuft             |
+| `env`     | 🔄     | Environment anzeigen   | Implementierung läuft             |
+| `date`    | 🔄     | Datum/Zeit             | Implementierung läuft             |
+| `history` | 🔄     | Befehlshistorie        | Implementierung läuft             |
+| `theme`   | 🔄     | Theme-Wechsel          | Implementierung läuft             |
+| `which`   | 🔄     | Command-Pfad finden    | Implementierung läuft             |
+| `unset`   | 🔄     | Variablen löschen      | Implementierung läuft             |
 
 ### Framework-Integration
 
@@ -135,7 +142,96 @@ console.log(result.stdout);
 - **Performance**: Virtual-Scrolling, Command-Caching, Lazy-Loading
 - **Testing**: Unit-Tests (Vitest), E2E-Tests, Performance-Benchmarks
 
-## 📦 Installation & Framework-Integration
+## � Worker Multithreading System
+
+WebConsole bietet ein innovatives **Web Worker Multithreading System**, das echte Parallelität im Browser ermöglicht und **einfacher zu verwenden ist als async/await**.
+
+### ✨ Worker-Features
+
+- **🔧 Echtes Multithreading** - Web Workers für CPU-intensive Tasks
+- **⚡ Einfacher als async/await** - Keine komplexe Promise-Verkettung
+- **🏊‍♂️ Worker-Pool Management** - Automatische Skalierung und Load-Balancing
+- **📋 Task-Queuing** - Prioritäten, Timeouts, Retry-Mechanismus
+- **🔄 VFS-Integration** - Dateizugriff aus Workern über Proxy
+- **📊 Performance-Monitoring** - Live-Status und Ausführungszeiten
+- **🛡️ Sandbox-Sicherheit** - Isolierte Worker-Umgebung
+
+### 🎯 Worker CLI-Befehle
+
+```bash
+# Worker-Status anzeigen
+$ jobs
+🔧 Worker Status
+Active Workers: 3
+Worker Pools: 2
+
+Pool 'default': 2/4 workers, 0 queued, 15 completed, 0 failed
+Pool 'compute': 1/2 workers, 3 queued, 8 completed, 1 failed
+
+Active Tasks:
+  ├─ task_001: running (2.3s)
+  ├─ task_002: running (0.8s)
+  └─ task_003: queued
+
+# Task beenden
+$ kill task_001
+✅ Task 'task_001' wurde erfolgreich beendet
+
+# Worker-Pool Management
+$ worker status
+$ worker create compute-pool 4
+$ worker destroy old-pool
+
+# Parallel-Ausführung
+$ run --parallel "ls -la" "pwd" "date"
+$ run --batch process-files *.txt
+```
+
+### 🚀 Programmier-API
+
+```typescript
+import { kernel } from "web-console";
+
+// Kernel starten
+await kernel.start();
+const workerManager = kernel.getWorkerManager();
+
+// Schwere Berechnung in Worker ausführen
+const result = await workerManager.runTask(() => {
+  let sum = 0;
+  for (let i = 0; i < 1000000; i++) {
+    sum += Math.sin(i) * Math.cos(i);
+  }
+  return sum;
+});
+
+// Batch-Verarbeitung
+const tasks = [
+  () => processFile("file1.txt"),
+  () => processFile("file2.txt"),
+  () => processFile("file3.txt"),
+];
+const results = await workerManager.runParallelBatch(tasks);
+
+// Command-Integration
+class MyCommand extends BaseCommand {
+  async execute(context: CommandContext): Promise<ExitCode> {
+    // Super einfach - kein async/await Chaos!
+    const result = await this.runInWorker(() => {
+      return heavyComputation(context.args[0]);
+    });
+
+    await this.writeToStdout(context, `Ergebnis: ${result}`);
+    return ExitCode.SUCCESS;
+  }
+}
+```
+
+### 📚 Worker-Dokumentation
+
+Für eine vollständige Anleitung zum Worker-System siehe: [**docs/WORKER_SYSTEM.md**](docs/WORKER_SYSTEM.md)
+
+## �📦 Installation & Framework-Integration
 
 ### NPM Installation
 
