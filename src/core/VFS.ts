@@ -20,6 +20,7 @@ import { EventHandler } from "../types/index.js";
 
 import { PathUtils } from "../utils/pathUtils.js";
 import { EventEmitter } from "./EventEmitter.js";
+import { Logger } from "./Logger.js";
 
 /**
  * Mount-Point Information
@@ -46,6 +47,7 @@ export class VFS extends EventEmitter implements IVFS {
   private readonly inodeCache = new Map<InodeNumber, INode>();
   private readonly pathCache = new Map<Path, InodeNumber>();
   private nextInodeNumber = 1;
+  private readonly vfsLogger = new Logger("VFS");
 
   constructor() {
     super();
@@ -683,8 +685,12 @@ Features:
             await searchDir(fullPath);
           }
         }
-      } catch {
-        // Directory cannot be read, ignore
+      } catch (error) {
+        // Directory cannot be read, log the error for debugging
+        this.vfsLogger.warn(
+          `Failed to read directory during glob search: ${dir}`,
+          error instanceof Error ? error.message : String(error),
+        );
       }
     };
 

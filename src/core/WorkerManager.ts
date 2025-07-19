@@ -150,7 +150,11 @@ class WorkerPool implements IWorkerPool {
         await this.createWorker();
         this.processQueue(); // Try recursively
       } catch (error) {
-        // Failed to create additional worker - continue with available workers
+        // Failed to create additional worker - log error and continue with available workers
+        this.logger.warn(
+          "Failed to create additional worker for queue processing",
+          error instanceof Error ? error.message : String(error),
+        );
       }
     }
   }
@@ -323,11 +327,11 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
   };
 
   private taskIdCounter = 0;
-  private logger: Logger;
+  private workerLogger: Logger;
 
   private constructor() {
     super();
-    this.logger = new Logger("WorkerManager");
+    this.workerLogger = new Logger("WorkerManager");
   }
 
   public static getInstance(): WorkerManager {
@@ -452,7 +456,7 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
       else {
         // Default to heavyComputation for unknown functions
         functionName = "heavyComputation";
-        this.logger.warn(
+        this.workerLogger.warn(
           "Unknown function pattern, defaulting to heavyComputation",
         );
       }

@@ -6,6 +6,7 @@
 import { FileType, Permission, VfsItemType } from "../../enums/index.js";
 import { IDirEntry, INode, IVFSProvider } from "../../interfaces/index.js";
 import type { InodeNumber } from "../../types/index.js";
+import { Logger } from "../Logger.js";
 
 interface StorageEntry {
   inode: INode;
@@ -38,6 +39,7 @@ export class LocalStorageProvider implements IVFSProvider {
   private readonly storageKey: string;
   private storage = new Map<InodeNumber, StorageEntry>();
   private nextInode = 1;
+  private readonly logger = new Logger("LocalStorageProvider");
 
   constructor(storageKey = "web-console-vfs") {
     this.storageKey = storageKey;
@@ -294,7 +296,10 @@ export class LocalStorageProvider implements IVFSProvider {
 
       localStorage.setItem(this.storageKey, JSON.stringify(data));
     } catch (error) {
-      console.error("Failed to save VFS to localStorage:", error);
+      this.logger.error(
+        "Failed to save VFS to localStorage",
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 

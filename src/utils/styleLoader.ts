@@ -2,6 +2,10 @@
  * Style utilities for loading SASS/CSS files
  */
 
+import { Logger } from "../core/Logger.js";
+
+const logger = new Logger("StyleLoader");
+
 /**
  * Load CSS content from a SASS file
  * This function should be used to import styles in components
@@ -16,7 +20,10 @@ export async function loadStyles(path: string): Promise<string> {
     }
     return await response.text();
   } catch (error) {
-    console.warn(`Could not load styles from ${path}:`, error);
+    logger.warn(
+      `Failed to load styles from ${path}`,
+      error instanceof Error ? error.message : String(error),
+    );
     return "";
   }
 }
