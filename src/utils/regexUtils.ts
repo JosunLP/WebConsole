@@ -21,7 +21,9 @@ export interface SafeRegexOptions {
  */
 export class RegexUtils {
   // Maximum allowed pattern length to prevent excessive memory usage
-  private static readonly MAX_PATTERN_LENGTH = 1000;
+  // Default maximum allowed pattern length to prevent excessive memory usage and potential ReDoS attacks.
+  // The value of 1000 was chosen based on typical use cases and performance considerations.
+  private static readonly DEFAULT_MAX_PATTERN_LENGTH = 1000;
 
   // Patterns that are known to be potentially dangerous (ReDoS)
   private static readonly DANGEROUS_PATTERNS = [
@@ -48,11 +50,11 @@ export class RegexUtils {
       };
     }
 
-    if (pattern.length > this.MAX_PATTERN_LENGTH) {
+    if (pattern.length > this.DEFAULT_MAX_PATTERN_LENGTH) {
       return {
         isValid: false,
-        error: `Pattern too long (max ${this.MAX_PATTERN_LENGTH} characters)`,
-        suggestedPattern: pattern.substring(0, this.MAX_PATTERN_LENGTH),
+        error: `Pattern too long (max ${this.DEFAULT_MAX_PATTERN_LENGTH} characters)`,
+        suggestedPattern: pattern.substring(0, this.DEFAULT_MAX_PATTERN_LENGTH),
       };
     }
 
@@ -67,7 +69,19 @@ export class RegexUtils {
       }
     }
 
-    // Try to create the regex to check for syntax errors
+    // Check basic syntax before attempting RegExp creation
+    const hasUnmatchedParens = this.hasUnmatchedParentheses(pattern);
+    const hasUnmatchedBrackets = this.hasUnmatchedBrackets(pattern);
+
+    if (hasUnmatchedParens || hasUnmatchedBrackets) {
+      return {
+        isValid: false,
+        error: "Pattern contains unmatched parentheses or brackets",
+        suggestedPattern: this.escapeRegexChars(pattern),
+      };
+    }
+
+    // Validate regex syntax
     try {
       new RegExp(pattern);
     } catch (error) {
@@ -108,7 +122,7 @@ export class RegexUtils {
   ): RegExp {
     const {
       flags = "",
-      maxLength = this.MAX_PATTERN_LENGTH,
+      maxLength = this.DEFAULT_MAX_PATTERN_LENGTH,
       allowComplexPatterns = false,
       escapeMode = "none",
     } = options;
@@ -181,5 +195,37 @@ export class RegexUtils {
       escapeMode: "glob",
       allowComplexPatterns: false,
     });
+  }
+
+  /**
+   * Checks if a pattern has unmatched parentheses
+   */
+  private static hasUnmatchedParentheses(pattern: string): boolean {
+    let depth = 0;
+    for (let i = 0; i < pattern.length; i++) {
+      if (pattern[i] === "(" && (i === 0 || pattern[i - 1] !== "\\")) {
+        depth++;
+      } else if (pattern[i] === ")" && (i === 0 || pattern[i - 1] !== "\\")) {
+        depth--;
+        if (depth < 0) return true; // More closing than opening
+      }
+    }
+    return depth !== 0; // Should be balanced
+  }
+
+  /**
+   * Checks if a pattern has unmatched brackets
+   */
+  private static hasUnmatchedBrackets(pattern: string): boolean {
+    let depth = 0;
+    for (let i = 0; i < pattern.length; i++) {
+      if (pattern[i] === "[" && (i === 0 || pattern[i - 1] !== "\\")) {
+        depth++;
+      } else if (pattern[i] === "]" && (i === 0 || pattern[i - 1] !== "\\")) {
+        depth--;
+        if (depth < 0) return true; // More closing than opening
+      }
+    }
+    return depth !== 0; // Should be balanced
   }
 }

@@ -231,20 +231,19 @@ export class CommandWorker extends BaseWorker {
       } catch (error) {
         // If regex creation fails, fall back to literal search
         console.warn(
-          `Invalid regex pattern '${pattern}', falling back to literal search:`,
+          "Invalid regex pattern, falling back to literal search:",
+          pattern,
           error,
         );
         regex = RegexUtils.createSearchRegex(pattern, !caseInsensitive, true);
       }
 
-      return content
-        .split("\n")
-        .reduce((result, line, index) => {
-          if (regex.test(line)) {
-            result.push(`${index + 1}: ${line}`);
-          }
-          return result;
-        }, []);
+      return content.split("\n").reduce((result, line, index) => {
+        if (regex.test(line)) {
+          result.push(`${index + 1}: ${line}`);
+        }
+        return result;
+      }, [] as string[]);
     }
 
     return [];

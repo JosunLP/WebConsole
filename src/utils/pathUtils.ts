@@ -167,7 +167,8 @@ export class PathUtils {
    */
   static globToRegex(pattern: string): RegExp {
     // Input validation
-    if (!pattern || pattern.length > 500) {
+    const MAX_PATTERN_LENGTH = 500; // Maximum length for glob patterns to ensure performance and security
+    if (!pattern || pattern.length > MAX_PATTERN_LENGTH) {
       throw new Error("Invalid or too long glob pattern");
     }
 
