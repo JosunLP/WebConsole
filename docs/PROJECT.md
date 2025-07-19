@@ -305,7 +305,57 @@ See also [STATUS_CURRENT.md] for more details and current status.
 
 ---
 
-## 12. License & Community
+## 12. Security Features
+
+### 12.1 Regular Expression Safety
+
+Web-Console implements comprehensive protection against Regular Expression Denial of Service (ReDoS) attacks and unsafe regex patterns:
+
+#### Key Security Features
+
+- **Pattern Validation**: All regex patterns are validated before execution
+- **Length Limits**: Maximum pattern length enforced (1000 characters default)
+- **Dangerous Pattern Detection**: Automatic detection of potentially harmful regex constructs
+- **Safe Fallbacks**: Automatic fallback to literal string matching for unsafe patterns
+- **Input Sanitization**: Proper escaping of special regex characters
+
+#### Implementation
+
+- `RegexUtils` class provides secure regex creation methods
+- Command workers (grep, find) use validated regex patterns
+- Three operation modes: literal, glob, and validated regex
+- Comprehensive error handling with fallback mechanisms
+
+#### Usage Examples
+
+```typescript
+// Safe search regex with automatic validation
+const searchRegex = RegexUtils.createSearchRegex(
+  userInput,
+  caseSensitive,
+  literal,
+);
+
+// Safe filename matching with glob patterns
+const filenameRegex = RegexUtils.createFilenameRegex("*.txt");
+
+// Manual pattern validation
+const validation = RegexUtils.validatePattern(userPattern);
+if (!validation.isValid) {
+  console.warn(`Unsafe pattern: ${validation.error}`);
+}
+```
+
+### 12.2 Input Validation
+
+- All user inputs are validated before processing
+- Command arguments are sanitized
+- File paths are normalized and validated
+- Prevents injection attacks through command parameters
+
+---
+
+## 13. License & Community
 
 - MIT License
 - GitHub monorepo with issues, discussions
@@ -313,7 +363,7 @@ See also [STATUS_CURRENT.md] for more details and current status.
 
 ---
 
-## 13. Next Steps
+## 14. Next Steps
 
 1. Create repository
 2. Sketch core modules (interfaces, enums, types)

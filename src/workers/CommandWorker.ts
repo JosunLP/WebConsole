@@ -12,6 +12,7 @@ import {
   WorkerTaskError,
 } from "../types/worker.type.js";
 import { generateMessageId } from "../utils/helpers.js";
+import { RegexUtils } from "../utils/regexUtils.js";
 import { BaseWorker } from "./BaseWorker.js";
 
 export interface CommandWorkerPayload {
@@ -203,15 +204,36 @@ export class CommandWorker extends BaseWorker {
       throw new Error("Invalid grep arguments");
     }
 
+    // Check for additional flags
+    const caseInsensitive = args.includes("-i");
+    const literalMode = args.includes("-F");
+
     // Simulate file reading and pattern matching
     if (this.vfsProxy && (await this.vfsProxy.exists(fileName))) {
       const content = await this.vfsProxy.readFile(fileName);
-      const regex = new RegExp(pattern, "gi");
+
+      // Use safe regex creation with validation
+      let regex: RegExp;
+      try {
+        regex = RegexUtils.createSearchRegex(
+          pattern,
+          !caseInsensitive,
+          literalMode,
+        );
+      } catch (error) {
+        // If regex creation fails, fall back to literal search
+        console.warn(
+          `Invalid regex pattern '${pattern}', falling back to literal search:`,
+          error,
+        );
+        regex = RegexUtils.createSearchRegex(pattern, !caseInsensitive, true);
+      }
 
       return content
         .split("\n")
-        .filter((line) => regex.test(line))
-        .map((line, index) => `${index + 1}: ${line}`);
+        .map((line, index) => ({ line, lineNumber: index + 1 }))
+        .filter(({ line }) => regex.test(line))
+        .map(({ line, lineNumber }) => `${lineNumber}: ${line}`);
     }
 
     return [];
@@ -237,7 +259,9 @@ export class CommandWorker extends BaseWorker {
     if (this.vfsProxy) {
       try {
         const files = await this.vfsProxy.readdir(searchPath);
-        const regex = new RegExp(namePattern.replace(/\*/g, ".*"), "i");
+
+        // Use safe regex creation for filename patterns
+        const regex = RegexUtils.createFilenameRegex(namePattern);
 
         return files.filter((file) => regex.test(file));
       } catch {
