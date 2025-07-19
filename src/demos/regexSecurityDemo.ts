@@ -57,7 +57,7 @@ console.log("3. Dangerous Pattern Handling:");
 
 const dangerousPatterns = [
   "a+b", // Safe alternative to demonstrate protection
-  "x+y", // Safe alternative to demonstrate protection (changed from x*y to avoid potential issues)
+  "x+y", // Safe alternative to demonstrate protection - avoids ReDoS risks
   "[a-zA-Z]", // Safe alternative to demonstrate protection - single character match
 ];
 
