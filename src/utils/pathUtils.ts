@@ -171,10 +171,13 @@ export class PathUtils {
       throw new Error("Invalid or too long glob pattern");
     }
 
+    // First replace wildcards, then escape regex chars
     const escaped = pattern
+      .replace(/\*/g, "__STAR__") // Temporarily replace *
+      .replace(/\?/g, "__QUESTION__") // Temporarily replace ?
       .replace(/[.+^${}()|[\]\\]/g, "\\$&") // Escape special regex chars
-      .replace(/\\\*/g, ".*") // * becomes .* (but only non-escaped *)
-      .replace(/\\\?/g, "."); // ? becomes . (but only non-escaped ?)
+      .replace(/__STAR__/g, ".*") // Convert back to .*
+      .replace(/__QUESTION__/g, "."); // Convert back to .
 
     try {
       return new RegExp(`^${escaped}$`);

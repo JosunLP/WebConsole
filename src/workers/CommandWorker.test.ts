@@ -2,7 +2,7 @@
  * CommandWorker Integration Tests
  */
 
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   IWorkerTask,
   WorkerTaskPriority,
@@ -15,12 +15,22 @@ import {
   VFSWorkerProxy,
 } from "./CommandWorker.js";
 
+// Mock Web Worker APIs for testing environment
+beforeEach(() => {
+  // Mock global self object
+  globalThis.self = {
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    postMessage: vi.fn(),
+  } as never;
+});
+
 // Mock VFS proxy for testing
 class MockVFSProxy implements VFSWorkerProxy {
   private files: Map<string, string> = new Map();
 
   constructor() {
-    // Add some test files
+    // Add test files matching the test expectations
     this.files.set(
       "/test.txt",
       "Hello World\nThis is a test file\nWith multiple lines",

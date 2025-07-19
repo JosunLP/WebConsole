@@ -197,16 +197,24 @@ export class CommandWorker extends BaseWorker {
       throw new Error("grep requires pattern and file arguments");
     }
 
-    const pattern = args[0];
-    const fileName = args[1];
+    // Parse flags and get pattern/filename
+    const flags = args.filter((arg) => arg.startsWith("-"));
+    const nonFlagArgs = args.filter((arg) => !arg.startsWith("-"));
+
+    if (nonFlagArgs.length < 2) {
+      throw new Error("grep requires pattern and file arguments");
+    }
+
+    const pattern = nonFlagArgs[0];
+    const fileName = nonFlagArgs[1];
 
     if (!pattern || !fileName) {
       throw new Error("Invalid grep arguments");
     }
 
     // Check for additional flags
-    const caseInsensitive = args.includes("-i");
-    const literalMode = args.includes("-F");
+    const caseInsensitive = flags.includes("-i");
+    const literalMode = flags.includes("-F");
 
     // Simulate file reading and pattern matching
     if (this.vfsProxy && (await this.vfsProxy.exists(fileName))) {
