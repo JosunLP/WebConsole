@@ -240,7 +240,9 @@ export class CommandWorker extends BaseWorker {
 
       return content.split("\n").reduce((result, line, index) => {
         if (regex.test(line)) {
-          result.push(`${index + 1}: ${line}`);
+          // Sanitize line content to prevent format string vulnerabilities
+          const sanitizedLine = line.replace(/[%${}]/g, "");
+          result.push(`${index + 1}: ${sanitizedLine}`);
         }
         return result;
       }, [] as string[]);

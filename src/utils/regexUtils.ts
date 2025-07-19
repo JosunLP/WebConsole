@@ -152,7 +152,7 @@ export class RegexUtils {
       const validation = this.validatePattern(processedPattern);
       if (!validation.isValid) {
         // Fall back to literal match if pattern is unsafe
-        processedPattern = this.escapeRegexChars(pattern);
+        processedPattern = this.escapeRegexChars(processedPattern);
       }
     }
 
