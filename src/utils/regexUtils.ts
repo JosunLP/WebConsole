@@ -20,7 +20,6 @@ export interface SafeRegexOptions {
  * Regular Expression Utilities Class
  */
 export class RegexUtils {
-  // Maximum allowed pattern length to prevent excessive memory usage
   // Default maximum allowed pattern length to prevent excessive memory usage and potential ReDoS attacks.
   // The value of 1000 was chosen based on typical use cases and performance considerations.
   private static readonly DEFAULT_MAX_PATTERN_LENGTH = 1000;
