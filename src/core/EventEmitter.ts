@@ -4,6 +4,7 @@
 
 import { IEventEmitter } from "../interfaces/index.js";
 import { EventHandler, EventUnsubscriber } from "../types/index.js";
+import { Logger } from "./Logger.js";
 
 /**
  * Internal event listener structure
@@ -18,6 +19,7 @@ interface EventListener {
  */
 export class EventEmitter implements IEventEmitter {
   private readonly listeners = new Map<string, Set<EventListener>>();
+  private readonly logger = new Logger("EventEmitter");
 
   /**
    * Register event listener
@@ -95,7 +97,10 @@ export class EventEmitter implements IEventEmitter {
           eventListeners.delete(listener);
         }
       } catch (error) {
-        console.error(`Error in event listener for "${event}":`, error);
+        this.logger.error(
+          `Error in event listener for "${event}"`,
+          error instanceof Error ? error.message : String(error),
+        );
       }
     }
   }

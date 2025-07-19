@@ -4,6 +4,7 @@
 
 import type { IComponentRegistry } from "../interfaces/IComponentRegistry.interface.js";
 import { EventEmitter } from "./EventEmitter.js";
+import { Logger } from "./Logger.js";
 
 export const ComponentRegistryEvents = {
   COMPONENT_REGISTERED: "component:registered",
@@ -18,6 +19,7 @@ export class ComponentRegistry
   private components = new Map<string, () => Promise<unknown>>();
   private loaded = new Map<string, unknown>();
   private initializing = new Map<string, Promise<unknown>>();
+  private readonly componentLogger = new Logger("ComponentRegistry");
 
   public register(name: string, loader: () => Promise<unknown>): void {
     this.components.set(name, loader);
@@ -109,7 +111,10 @@ export class ComponentRegistry
     const components = this.list();
     const loadPromises = components.map((name) =>
       this.load(name).catch((error) => {
-        console.warn(`Failed to preload component '${name}':`, error);
+        this.componentLogger.warn(
+          `Failed to preload component '${name}'`,
+          error instanceof Error ? error.message : String(error),
+        );
       }),
     );
 

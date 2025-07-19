@@ -6,6 +6,7 @@ import { PersistenceMode } from "../enums/index.js";
 import { IStateManager } from "../interfaces/index.js";
 import { StateConfig } from "../types/index.js";
 import { EventEmitter } from "./EventEmitter.js";
+import { Logger } from "./Logger.js";
 
 /**
  * Internal state entry structure
@@ -33,6 +34,7 @@ export class StateManager extends EventEmitter implements IStateManager {
   private readonly namespaceName: string;
   private readonly parent: StateManager | undefined;
   private readonly children = new Map<string, StateManager>();
+  private readonly stateLogger = new Logger("StateManager");
 
   constructor(namespaceName = "root", parent?: StateManager) {
     super();
@@ -88,7 +90,10 @@ export class StateManager extends EventEmitter implements IStateManager {
       config?.persistence === PersistenceMode.SESSION
     ) {
       this.persistKey(key).catch((error) => {
-        console.error(`Failed to persist state key "${key}":`, error);
+        this.stateLogger.error(
+          `Failed to persist state key "${key}"`,
+          error instanceof Error ? error.message : String(error),
+        );
       });
     }
   }
@@ -268,9 +273,9 @@ export class StateManager extends EventEmitter implements IStateManager {
         });
       }
     } catch (error) {
-      console.error(
-        `Failed to restore key "${key}" from ${entry.config.persistence}:`,
-        error,
+      this.stateLogger.error(
+        `Failed to restore key "${key}" from ${entry.config.persistence}`,
+        error instanceof Error ? error.message : String(error),
       );
       // Use default value on error
     }
@@ -292,9 +297,9 @@ export class StateManager extends EventEmitter implements IStateManager {
           break;
       }
     } catch (error) {
-      console.error(
-        `Failed to remove key "${key}" from ${persistence}:`,
-        error,
+      this.stateLogger.error(
+        `Failed to remove key "${key}" from ${persistence}`,
+        error instanceof Error ? error.message : String(error),
       );
     }
   }
