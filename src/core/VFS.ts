@@ -18,6 +18,7 @@ import { IDirEntry, INode, IVFS, IVFSProvider } from "../interfaces/index.js";
 
 import { EventHandler } from "../types/index.js";
 
+import { PathUtils } from "../utils/pathUtils.js";
 import { EventEmitter } from "./EventEmitter.js";
 
 /**
@@ -662,8 +663,7 @@ Features:
    * Glob-Pattern matching
    */
   async glob(pattern: GlobPattern, cwd = "/"): Promise<Path[]> {
-    // Vereinfachte Glob-Implementation
-    // Would use minimatch or similar library in real implementation
+    // Use PathUtils.globToRegex for secure and robust glob matching
     const results: Path[] = [];
 
     const searchDir = async (dir: Path) => {
@@ -672,13 +672,9 @@ Features:
         for (const entry of entries) {
           const fullPath = this.join(dir, entry.name);
 
-          // Simple * wildcard support
-          if (pattern.includes("*")) {
-            const regex = new RegExp(pattern.replace(/\*/g, ".*"));
-            if (regex.test(fullPath)) {
-              results.push(fullPath);
-            }
-          } else if (fullPath.includes(pattern)) {
+          // Use PathUtils.globToRegex for secure pattern matching
+          const regex = PathUtils.globToRegex(pattern);
+          if (regex.test(fullPath)) {
             results.push(fullPath);
           }
 
