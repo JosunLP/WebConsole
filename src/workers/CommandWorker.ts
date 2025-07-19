@@ -241,7 +241,7 @@ export class CommandWorker extends BaseWorker {
       return content.split("\n").reduce((result, line, index) => {
         if (regex.test(line)) {
           // Sanitize line content to prevent format string vulnerabilities
-          const sanitizedLine = line.replace(/[%${}]/g, "");
+          const sanitizedLine = line.replace(/[%${}]/g, (char) => `\\${char}`);
           result.push(`${index + 1}: ${sanitizedLine}`);
         }
         return result;
