@@ -93,51 +93,90 @@ export class VFSException extends Error {
  */
 export class VFSErrorHandler {
   static handleError(error: unknown, operation: string, path?: string): never {
+    // Handle VFSException instances first
     if (error instanceof VFSException) {
       throw error;
     }
 
-    // Better error categorization
+    // Handle standard Error objects with type safety
     if (error instanceof Error) {
       console.error(`VFS Error during ${operation}:`, error.message);
 
-      if (error.name === "TypeError") {
-        throw new VFSException(
-          VfsError.INVALID_PATH,
-          `Type error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
-          path,
-        );
-      }
+      // Map specific error types to appropriate VFS errors
+      switch (error.name) {
+        case "TypeError":
+          throw new VFSException(
+            VfsError.INVALID_PATH,
+            `Type error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
 
-      if (error.name === "ReferenceError") {
-        throw new VFSException(
-          VfsError.NOT_FOUND,
-          `Reference error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
-          path,
-        );
-      }
+        case "ReferenceError":
+          throw new VFSException(
+            VfsError.NOT_FOUND,
+            `Reference error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
 
-      // Default error handling
+        case "RangeError":
+          throw new VFSException(
+            VfsError.NO_SPACE,
+            `Range error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+
+        default:
+          // Default error handling for other Error types
+          throw new VFSException(
+            VfsError.INVALID_PATH,
+            `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+      }
+    }
+
+    // Handle string errors
+    if (typeof error === "string") {
+      console.error(`VFS Error during ${operation}:`, error);
       throw new VFSException(
         VfsError.INVALID_PATH,
-        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error.message}`,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error}`,
         path,
       );
     }
 
-    // Handle non-Error objects
-    const errorMessage =
-      typeof error === "string"
-        ? error
-        : error && typeof error === "object" && "toString" in error
-          ? String(error)
-          : "Unknown error occurred";
+    // Handle objects with message property (Error-like objects)
+    if (
+      error &&
+      typeof error === "object" &&
+      "message" in error &&
+      typeof (error as { message: unknown }).message === "string"
+    ) {
+      const errorMessage = (error as { message: string }).message;
+      console.error(`VFS Error during ${operation}:`, errorMessage);
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
+        path,
+      );
+    }
 
-    console.error(`VFS Error during ${operation}:`, errorMessage);
+    // Handle objects with toString method
+    if (error && typeof error === "object" && "toString" in error) {
+      const errorMessage = String(error);
+      console.error(`VFS Error during ${operation}:`, errorMessage);
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
+        path,
+      );
+    }
 
+    // Fallback for any other unknown types
+    console.error(`VFS Error during ${operation}:`, "Unknown error occurred");
     throw new VFSException(
       VfsError.INVALID_PATH,
-      `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
+      `Operation ${operation} failed${path ? ` on ${path}` : ""}: Unknown error occurred`,
       path,
     );
   }
