@@ -239,9 +239,12 @@ export class CommandWorker extends BaseWorker {
 
       return content
         .split("\n")
-        .map((line, index) => ({ line, lineNumber: index + 1 }))
-        .filter(({ line }) => regex.test(line))
-        .map(({ line, lineNumber }) => `${lineNumber}: ${line}`);
+        .reduce((result, line, index) => {
+          if (regex.test(line)) {
+            result.push(`${index + 1}: ${line}`);
+          }
+          return result;
+        }, []);
     }
 
     return [];
