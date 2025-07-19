@@ -12,6 +12,7 @@ import {
   WorkerTaskError,
 } from "../types/worker.type.js";
 import { generateMessageId } from "../utils/helpers.js";
+import { RegexUtils } from "../utils/regexUtils.js";
 import { BaseWorker } from "./BaseWorker.js";
 
 export interface CommandWorkerPayload {
@@ -196,22 +197,55 @@ export class CommandWorker extends BaseWorker {
       throw new Error("grep requires pattern and file arguments");
     }
 
-    const pattern = args[0];
-    const fileName = args[1];
+    // Parse flags and get pattern/filename
+    const flags = args.filter((arg) => arg.startsWith("-"));
+    const nonFlagArgs = args.filter((arg) => !arg.startsWith("-"));
+
+    if (nonFlagArgs.length < 2) {
+      throw new Error("grep requires pattern and file arguments");
+    }
+
+    const pattern = nonFlagArgs[0];
+    const fileName = nonFlagArgs[1];
 
     if (!pattern || !fileName) {
       throw new Error("Invalid grep arguments");
     }
 
+    // Check for additional flags
+    const caseInsensitive = flags.includes("-i");
+    const literalMode = flags.includes("-F");
+
     // Simulate file reading and pattern matching
     if (this.vfsProxy && (await this.vfsProxy.exists(fileName))) {
       const content = await this.vfsProxy.readFile(fileName);
-      const regex = new RegExp(pattern, "gi");
 
-      return content
-        .split("\n")
-        .filter((line) => regex.test(line))
-        .map((line, index) => `${index + 1}: ${line}`);
+      // Use safe regex creation with validation
+      let regex: RegExp;
+      try {
+        regex = RegexUtils.createSearchRegex(
+          pattern,
+          !caseInsensitive,
+          literalMode,
+        );
+      } catch (error) {
+        // If regex creation fails, fall back to literal search
+        console.warn(
+          "Invalid regex pattern, falling back to literal search:",
+          pattern,
+          error,
+        );
+        regex = RegexUtils.createSearchRegex(pattern, !caseInsensitive, true);
+      }
+
+      return content.split("\n").reduce((result, line, index) => {
+        if (regex.test(line)) {
+          // Sanitize line content to prevent format string vulnerabilities
+          const sanitizedLine = line.replace(/[%${}]/g, (char) => `\\${char}`);
+          result.push(`${index + 1}: ${sanitizedLine}`);
+        }
+        return result;
+      }, [] as string[]);
     }
 
     return [];
@@ -237,7 +271,9 @@ export class CommandWorker extends BaseWorker {
     if (this.vfsProxy) {
       try {
         const files = await this.vfsProxy.readdir(searchPath);
-        const regex = new RegExp(namePattern.replace(/\*/g, ".*"), "i");
+
+        // Use safe regex creation for filename patterns
+        const regex = RegexUtils.createFilenameRegex(namePattern);
 
         return files.filter((file) => regex.test(file));
       } catch {

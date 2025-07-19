@@ -166,12 +166,27 @@ export class PathUtils {
    * Convert glob pattern to RegExp (simplified)
    */
   static globToRegex(pattern: string): RegExp {
-    const escaped = pattern
-      .replace(/[.+^${}()|[\]\\]/g, "\\$&") // Escape special regex chars
-      .replace(/\*/g, ".*") // * becomes .*
-      .replace(/\?/g, "."); // ? becomes .
+    // Input validation
+    const MAX_PATTERN_LENGTH = 500; // Maximum length for glob patterns to ensure performance and security
+    if (!pattern || pattern.length > MAX_PATTERN_LENGTH) {
+      throw new Error("Invalid or too long glob pattern");
+    }
 
-    return new RegExp(`^${escaped}$`);
+    // First replace wildcards, then escape regex chars
+    const escaped = pattern
+      .replace(/\*/g, "__STAR__") // Temporarily replace *
+      .replace(/\?/g, "__QUESTION__") // Temporarily replace ?
+      .replace(/[.+^${}()|[\]\\]/g, "\\$&") // Escape special regex chars
+      .replace(/__STAR__/g, ".*") // Convert back to .*
+      .replace(/__QUESTION__/g, "."); // Convert back to .
+
+    try {
+      return new RegExp(`^${escaped}$`);
+    } catch (error) {
+      // Fallback to literal match if regex creation fails
+      const literalPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`^${literalPattern}$`);
+    }
   }
 
   /**
