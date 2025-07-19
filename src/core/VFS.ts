@@ -674,7 +674,7 @@ Features:
 
           // Use PathUtils.globToRegex for secure pattern matching
           const regex = PathUtils.globToRegex(pattern);
-          if (regex.test(fullPath) || regex.test(entry.name)) {
+          if (regex.test(fullPath)) {
             results.push(fullPath);
           }
 
