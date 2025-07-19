@@ -6,7 +6,7 @@ interface CoreSystemArgs {
   showLogs: boolean;
 }
 
-// Meta-Konfiguration
+// Meta configuration
 const meta = {
   title: "Core/System Tests",
   tags: ["autodocs"],
@@ -81,7 +81,7 @@ const meta = {
       return button;
     };
 
-    // Test-Funktionen
+    // Test functions
     const testKernelStart = async () => {
       log("🚀 Starting Kernel...");
       await kernel.start();
@@ -134,7 +134,7 @@ const meta = {
       log("🎉 All tests completed successfully!", "#00ff00");
     };
 
-    // Buttons erstellen
+    // Create buttons
     const buttons = [
       { label: "🚀 Start Kernel", action: testKernelStart, color: "#4caf50" },
       { label: "🛑 Stop Kernel", action: testKernelStop, color: "#f44336" },
@@ -168,7 +168,7 @@ const meta = {
     container.appendChild(logContainer);
     container.appendChild(buttonContainer);
 
-    // Auto-start wenn gewünscht
+    // Auto-start if desired
     if (args.autoStart) {
       setTimeout(runAllTests, 1000);
     } else {
@@ -181,11 +181,11 @@ const meta = {
   argTypes: {
     autoStart: {
       control: "boolean",
-      description: "Automatisch alle Tests starten",
+      description: "Automatically start all tests",
     },
     showLogs: {
       control: "boolean",
-      description: "Detaillierte Logs anzeigen",
+      description: "Show detailed logs",
     },
   },
   args: {
@@ -196,7 +196,7 @@ const meta = {
 
 export default meta;
 
-// Standard Core-Tests
+// Standard core tests
 export const CoreSystemTests = {
   name: "🔧 Manual Tests",
 };

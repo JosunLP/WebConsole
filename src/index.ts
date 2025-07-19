@@ -1,21 +1,21 @@
-// Einfacher Build-Test ohne Framework-spezifische Teile
+// Simple build test without framework-specific parts
 import { Kernel } from "./core/Kernel.js";
 
-// Core-Exports für grundlegende Funktionalität
+// Core exports for basic functionality
 export { Kernel };
 
-// Core-Klassen
+// Core classes
 export { CommandRegistry } from "./core/CommandRegistry.js";
 export { ComponentRegistry } from "./core/ComponentRegistry.js";
 export { StateManager } from "./core/StateManager.js";
 export { VFS } from "./core/VFS.js";
 
-// Console-Komponenten
+// Console components
 export { ConsoleInstance } from "./console/ConsoleInstance.js";
 export { Lexer } from "./console/Lexer.js";
 export { Parser } from "./console/Parser.js";
 
-// Base-Classes für Extension
+// Base classes for extension
 export { BaseCommand } from "./console/BaseCommand.js";
 
 // Lazy loading exports for modules that are also dynamically imported
@@ -24,15 +24,15 @@ export const loadWebConsoleElement = () =>
 export const loadThemeManager = () =>
   import("./core/ThemeManager.js").then((m) => m.ThemeManager);
 
-// Lazy loading für Themes
+// Lazy loading for themes
 export const loadThemes = () => import("./themes/index.js");
 
-// Types & Interfaces für API
+// Types & interfaces for API
 export type * from "./enums/index.js";
 export type * from "./interfaces/index.js";
 export type * from "./types/index.js";
 
-// Auto-Register Web Component
+// Auto-register web component
 if (typeof window !== "undefined" && !customElements.get("web-console")) {
   loadWebConsoleElement().then((WebConsoleElement) => {
     customElements.define("web-console", WebConsoleElement);

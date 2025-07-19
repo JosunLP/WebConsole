@@ -1,12 +1,12 @@
 /**
- * Logger-Implementierung für das Web-Console-System
+ * Logger implementation for the Web-Console system
  */
 
 import { LogLevel } from "../enums/index.js";
 import { ILogger } from "../interfaces/index.js";
 
 /**
- * Log-Eintrag Struktur
+ * Log entry structure
  */
 interface LogEntry {
   level: LogLevel;
@@ -17,7 +17,7 @@ interface LogEntry {
 }
 
 /**
- * Console-Logger mit konfigurierbarem Level
+ * Console logger with configurable level
  */
 export class Logger implements ILogger {
   private level: LogLevel = LogLevel.INFO;
@@ -25,7 +25,7 @@ export class Logger implements ILogger {
   private readonly history: LogEntry[] = [];
   private readonly maxHistorySize: number;
 
-  // Log-Level Prioritäten (höhere Zahl = höhere Priorität)
+  // Log level priorities (higher number = higher priority)
   private static readonly LEVEL_PRIORITY = {
     [LogLevel.DEBUG]: 0,
     [LogLevel.INFO]: 1,
@@ -39,70 +39,70 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Debug-Nachricht loggen
+   * Log debug message
    */
   debug(message: string, ...args: unknown[]): void {
     this.log(LogLevel.DEBUG, message, args);
   }
 
   /**
-   * Info-Nachricht loggen
+   * Log info message
    */
   info(message: string, ...args: unknown[]): void {
     this.log(LogLevel.INFO, message, args);
   }
 
   /**
-   * Warning-Nachricht loggen
+   * Log warning message
    */
   warn(message: string, ...args: unknown[]): void {
     this.log(LogLevel.WARN, message, args);
   }
 
   /**
-   * Error-Nachricht loggen
+   * Log error message
    */
   error(message: string, ...args: unknown[]): void {
     this.log(LogLevel.ERROR, message, args);
   }
 
   /**
-   * Log-Level setzen
+   * Set log level
    */
   setLevel(level: LogLevel): void {
     this.level = level;
   }
 
   /**
-   * Aktuelles Log-Level abrufen
+   * Get current log level
    */
   getLevel(): LogLevel {
     return this.level;
   }
 
   /**
-   * Log-History abrufen
+   * Get log history
    */
   getHistory(): readonly LogEntry[] {
     return this.history;
   }
 
   /**
-   * Log-History leeren
+   * Clear log history
    */
   clearHistory(): void {
     this.history.length = 0;
   }
 
   /**
-   * Prüfen ob ein Level geloggt werden soll
+   * Check if a level should be logged
    */
   shouldLog(level: LogLevel): boolean {
     return Logger.LEVEL_PRIORITY[level] >= Logger.LEVEL_PRIORITY[this.level];
   }
 
   /**
-   * Interne Log-Methode
+   * Internal log method
    */
   private log(level: LogLevel, message: string, args: unknown[]): void {
     if (!this.shouldLog(level)) {
@@ -118,28 +118,28 @@ export class Logger implements ILogger {
       source: this.prefix,
     };
 
-    // Zur History hinzufügen
+    // Add to history
     this.addToHistory(entry);
 
-    // Console-Output formatieren
+    // Format console output
     const formattedMessage = this.formatMessage(entry);
     this.writeToConsole(level, formattedMessage, args);
   }
 
   /**
-   * Eintrag zur History hinzufügen
+   * Add entry to history
    */
   private addToHistory(entry: LogEntry): void {
     this.history.push(entry);
 
-    // History-Größe begrenzen
+    // Limit history size
     if (this.history.length > this.maxHistorySize) {
       this.history.shift();
     }
   }
 
   /**
-   * Log-Nachricht formatieren
+   * Format log message
    */
   private formatMessage(entry: LogEntry): string {
     const timestamp = new Date(entry.timestamp).toISOString();
@@ -148,7 +148,7 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Zur Browser-Console schreiben
+   * Write to browser console
    */
   private writeToConsole(
     level: LogLevel,
@@ -172,14 +172,14 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Child-Logger erstellen mit zusätzlichem Prefix
+   * Create child logger with additional prefix
    */
   child(suffix: string): Logger {
     return new Logger(`${this.prefix}:${suffix}`, this.maxHistorySize);
   }
 
   /**
-   * Timing-Methoden für Performance-Messung
+   * Timing methods for performance measurement
    */
   time(label: string): void {
     console.time(`${this.prefix}:${label}`);
@@ -190,11 +190,19 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Memory-Usage loggen (falls verfügbar)
+   * Log memory usage (if available)
    */
   memory(): void {
     if ("memory" in performance) {
-      const memory = (performance as any).memory;
+      const memory = (
+        performance as {
+          memory: {
+            usedJSHeapSize: number;
+            totalJSHeapSize: number;
+            jsHeapSizeLimit: number;
+          };
+        }
+      ).memory;
       this.debug("Memory usage:", {
         used: `${Math.round(memory.usedJSHeapSize / 1024 / 1024)} MB`,
         total: `${Math.round(memory.totalJSHeapSize / 1024 / 1024)} MB`,
@@ -204,21 +212,21 @@ export class Logger implements ILogger {
   }
 
   /**
-   * Gruppe starten (für bessere Console-Organisation)
+   * Start group (for better console organization)
    */
   group(label: string): void {
     console.group(`${this.prefix}: ${label}`);
   }
 
   /**
-   * Gruppe beenden
+   * End group
    */
   groupEnd(): void {
     console.groupEnd();
   }
 
   /**
-   * Tabelle ausgeben
+   * Output table
    */
   table(data: unknown): void {
     console.table(data);

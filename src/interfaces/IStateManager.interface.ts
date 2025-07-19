@@ -14,13 +14,13 @@ export interface IStateManager extends IEventEmitter {
   clear(): void;
   keys(): string[];
 
-  // Konfiguration für Keys
+  // Configuration for keys
   configure<T>(config: StateConfig<T>): void;
 
   // Namespaces
   namespace(name: string): IStateManager;
 
-  // Persistierung
+  // Persistence
   persist(): Promise<void>;
   restore(): Promise<void>;
   load(): Promise<void>;

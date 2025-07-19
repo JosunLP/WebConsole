@@ -1,39 +1,39 @@
 /**
- * Console-Events
+ * Console events
  */
 export enum ConsoleEvent {
-  /** Console bereit */
+  /** Console ready */
   READY = "console:ready",
-  /** Console zerstört */
+  /** Console destroyed */
   DESTROYED = "console:destroyed",
-  /** Console wird zerstört */
+  /** Console being destroyed */
   DESTROYING = "console:destroying",
-  /** Befehl wurde eingegeben */
+  /** Command was entered */
   COMMAND_ENTERED = "command:entered",
-  /** Befehl startet */
+  /** Command starts */
   COMMAND_START = "command:start",
-  /** Befehl wird ausgeführt */
+  /** Command being executed */
   COMMAND_EXECUTING = "command:executing",
-  /** Befehl abgeschlossen */
+  /** Command completed */
   COMMAND_COMPLETED = "command:completed",
-  /** Befehl beendet */
+  /** Command ended */
   COMMAND_END = "command:end",
-  /** Befehl fehlgeschlagen */
+  /** Command failed */
   COMMAND_FAILED = "command:failed",
-  /** Befehl Fehler */
+  /** Command error */
   COMMAND_ERROR = "command:error",
-  /** Working Directory geändert */
+  /** Working directory changed */
   DIRECTORY_CHANGED = "directory:changed",
-  /** CWD geändert */
+  /** CWD changed */
   CWD_CHANGED = "cwd:changed",
-  /** Environment Variable geändert */
+  /** Environment variable changed */
   ENV_CHANGED = "env:changed",
-  /** Prompt geändert */
+  /** Prompt changed */
   PROMPT_CHANGED = "prompt:changed",
-  /** History geleert */
+  /** History cleared */
   HISTORY_CLEARED = "history:cleared",
-  /** History aktualisiert */
+  /** History updated */
   HISTORY_UPDATED = "history:updated",
-  /** Theme geändert */
+  /** Theme changed */
   THEME_CHANGED = "theme:changed",
 }

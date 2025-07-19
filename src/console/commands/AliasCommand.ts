@@ -137,10 +137,13 @@ export class AliasCommand extends BaseCommand {
         context.state.set(aliasKey, value);
       } else {
         // Fallback: use a global aliases object (not ideal for real implementation)
-        if (!(globalThis as any).__consoleAliases) {
-          (globalThis as any).__consoleAliases = {};
+        const globalAliases = globalThis as unknown as {
+          __consoleAliases?: Record<string, string>;
+        };
+        if (!globalAliases.__consoleAliases) {
+          globalAliases.__consoleAliases = {};
         }
-        (globalThis as any).__consoleAliases[name] = value;
+        globalAliases.__consoleAliases[name] = value;
       }
     } catch (error) {
       throw new Error(`Failed to set alias: ${error}`);
@@ -155,7 +158,10 @@ export class AliasCommand extends BaseCommand {
         return context.state.get(aliasKey);
       } else {
         // Fallback: use global aliases object
-        return (globalThis as any).__consoleAliases?.[name];
+        const globalAliases = globalThis as unknown as {
+          __consoleAliases?: Record<string, string>;
+        };
+        return globalAliases.__consoleAliases?.[name];
       }
     } catch {
       return undefined;
@@ -166,11 +172,15 @@ export class AliasCommand extends BaseCommand {
     try {
       // Get all aliases from state manager
       if (context.state && typeof context.state.get === "function") {
-        const aliases = context.state.get("console.aliases", {});
+        const aliases =
+          context.state.get<Record<string, string>>("console.aliases");
         return aliases || {};
       } else {
         // Fallback: use global aliases object
-        return (globalThis as any).__consoleAliases || {};
+        const globalAliases = globalThis as unknown as {
+          __consoleAliases?: Record<string, string>;
+        };
+        return globalAliases.__consoleAliases || {};
       }
     } catch {
       return {};
@@ -187,8 +197,11 @@ export class AliasCommand extends BaseCommand {
         return context.state.delete(aliasKey);
       } else {
         // Fallback: delete from global object
-        if ((globalThis as any).__consoleAliases?.[name]) {
-          delete (globalThis as any).__consoleAliases[name];
+        const globalAliases = globalThis as unknown as {
+          __consoleAliases?: Record<string, string>;
+        };
+        if (globalAliases.__consoleAliases?.[name]) {
+          delete globalAliases.__consoleAliases[name];
           return true;
         }
         return false;

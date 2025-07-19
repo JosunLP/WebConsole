@@ -89,28 +89,99 @@ export class VFSException extends Error {
 }
 
 /**
- * Error Handler für bessere Fehlerbehandlung
+ * Error Handler for better error handling
  */
 export class VFSErrorHandler {
-  static handleError(error: any, operation: string, path?: string): never {
+  static handleError(error: unknown, operation: string, path?: string): never {
+    // Handle VFSException instances first
     if (error instanceof VFSException) {
       throw error;
     }
 
-    console.error(`VFS Error during ${operation}:`, error);
+    // Handle standard Error objects with type safety
+    if (error instanceof Error) {
+      console.error(`VFS Error during ${operation}:`, error.message);
 
-    if (path) {
-      throw VFSException.notFound(path);
+      // Map specific error types to appropriate VFS errors
+      switch (error.name) {
+        case "TypeError":
+          throw new VFSException(
+            VfsError.INVALID_PATH,
+            `Type error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+
+        case "ReferenceError":
+          throw new VFSException(
+            VfsError.NOT_FOUND,
+            `Reference error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+
+        case "RangeError":
+          throw new VFSException(
+            VfsError.NO_SPACE,
+            `Range error during ${operation}${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+
+        default:
+          // Default error handling for other Error types
+          throw new VFSException(
+            VfsError.INVALID_PATH,
+            `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error.message}`,
+            path,
+          );
+      }
     }
 
+    // Handle string errors
+    if (typeof error === "string") {
+      console.error(`VFS Error during ${operation}:`, error);
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${error}`,
+        path,
+      );
+    }
+
+    // Handle objects with message property (Error-like objects)
+    if (
+      error &&
+      typeof error === "object" &&
+      "message" in error &&
+      typeof (error as { message: unknown }).message === "string"
+    ) {
+      const errorMessage = (error as { message: string }).message;
+      console.error(`VFS Error during ${operation}:`, errorMessage);
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
+        path,
+      );
+    }
+
+    // Handle objects with toString method
+    if (error && typeof error === "object" && "toString" in error) {
+      const errorMessage = String(error);
+      console.error(`VFS Error during ${operation}:`, errorMessage);
+      throw new VFSException(
+        VfsError.INVALID_PATH,
+        `Operation ${operation} failed${path ? ` on ${path}` : ""}: ${errorMessage}`,
+        path,
+      );
+    }
+
+    // Fallback for any other unknown types
+    console.error(`VFS Error during ${operation}:`, "Unknown error occurred");
     throw new VFSException(
       VfsError.INVALID_PATH,
-      `Unknown error during ${operation}: ${error.message}`,
+      `Operation ${operation} failed${path ? ` on ${path}` : ""}: Unknown error occurred`,
       path,
     );
   }
 
-  static wrapAsync<T extends any[], R>(
+  static wrapAsync<T extends unknown[], R>(
     fn: (...args: T) => Promise<R>,
     operation: string,
   ) {

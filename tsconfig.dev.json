@@ -1,4 +1,4 @@
-// TypeScript-Konfiguration für Entwicklung mit weniger restriktiven Regeln
+// TypeScript configuration for development with less restrictive rules
 {
   "compilerOptions": {
     "target": "ES2020",

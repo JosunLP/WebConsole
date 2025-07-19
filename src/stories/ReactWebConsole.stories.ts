@@ -8,15 +8,14 @@ const meta: Meta<typeof WebConsole> = {
     layout: "centered",
     docs: {
       description: {
-        component:
-          "Eine vollständige React-WebConsole-Komponente mit Theme-Unterstützung.",
+        component: "A complete React WebConsole component with theme support.",
       },
     },
   },
   argTypes: {
     prompt: {
       control: "text",
-      description: "Das Command-Prompt-Zeichen",
+      description: "The command prompt character",
     },
     theme: {
       control: { type: "select" },
@@ -27,15 +26,15 @@ const meta: Meta<typeof WebConsole> = {
         "solarized-dark",
         "light",
       ],
-      description: "Das zu verwendende Theme",
+      description: "The theme to use",
     },
     width: {
       control: "text",
-      description: "Breite der Console",
+      description: "Width of the console",
     },
     height: {
       control: "number",
-      description: "Höhe der Console",
+      description: "Height of the console",
     },
   },
   tags: ["autodocs"],

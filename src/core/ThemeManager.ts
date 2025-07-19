@@ -1,5 +1,5 @@
 /**
- * ThemeManager - Zentrale Theme-Verwaltung
+ * ThemeManager - Central theme management
  */
 
 import { ThemeMode } from "../enums/ThemeMode.enum.js";
@@ -16,11 +16,11 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   constructor() {
     super();
 
-    // Lade Standard-Theme
+    // Load default theme
     this.currentTheme = this.createDefaultTheme();
     this.registerTheme(this.currentTheme);
 
-    // Registriere weitere Standard-Themes
+    // Register additional standard themes
     this.registerBuiltInThemes();
   }
 
@@ -37,7 +37,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
     const oldTheme = this.currentTheme.name;
     this.currentTheme = theme;
 
-    // CSS aktualisieren
+    // Update CSS
     this.injectCSS();
 
     this.emit("theme-changed", { oldTheme, newTheme: name });
@@ -62,10 +62,10 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   }
 
   public injectCSS(): void {
-    // Entferne vorhandenes CSS
+    // Remove existing CSS
     this.removeCSS();
 
-    // Erstelle neue Style-Element
+    // Create new style element
     this.cssElement = document.createElement("style");
     this.cssElement.id = "web-console-theme";
 
@@ -87,7 +87,7 @@ export class ThemeManager extends EventEmitter implements IThemeManager {
   }
 
   public setToken(name: string, value: string): void {
-    // Temporäre Token-Überschreibung
+    // Temporary token override
     const newTokens = { ...this.currentTheme.tokens, [name]: value };
     this.currentTheme = { ...this.currentTheme, tokens: newTokens };
     this.injectCSS();
@@ -148,7 +148,7 @@ web-console {
 
   private async registerBuiltInThemes(): Promise<void> {
     try {
-      // Dynamisches Laden der Theme-Module
+      // Dynamic loading of theme modules
       const { DefaultTheme } = await import("../themes/DefaultTheme.js");
       const { DarkTheme } = await import("../themes/DarkTheme.js");
       const { LightTheme } = await import("../themes/LightTheme.js");
@@ -168,7 +168,7 @@ web-console {
       this.registerTheme(WindowsTerminalTheme);
     } catch (error) {
       console.warn("Failed to load some themes:", error);
-      // Fallback: Registriere inline-definierte Themes
+      // Fallback: Register inline-defined themes
       this.registerLegacyThemes();
     }
   }

@@ -1,5 +1,5 @@
 /**
- * Dark Theme (Monokai-inspiriert)
+ * Dark Theme (Monokai-inspired)
  */
 
 import { ThemeMode } from "../enums/index.js";

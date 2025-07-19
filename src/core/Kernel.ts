@@ -1,5 +1,5 @@
 /**
- * Kernel - Zentrale Event- und Lebenszyklus-Steuerung (Singleton)
+ * Kernel - Central event and lifecycle control (Singleton)
  */
 
 import { ConsoleInstance } from "../console/index.js";
@@ -19,6 +19,7 @@ import type { ILogger } from "../interfaces/ILogger.interface.js";
 import type { IStateManager } from "../interfaces/IStateManager.interface.js";
 import type { IThemeManager } from "../interfaces/IThemeManager.interface.js";
 import type { IVFS } from "../interfaces/IVFS.interface.js";
+import type { IWorkerManager } from "../interfaces/IWorkerManager.interface.js";
 import type { ID } from "../types/index.js";
 
 import { KernelEvent } from "../enums/KernelEvent.enum.js";
@@ -33,6 +34,7 @@ export class Kernel extends EventEmitter implements IKernel {
   // Subsystems
   private _vfs: IVFS;
   private _themeManager: IThemeManager | null = null;
+  private _workerManager: IWorkerManager | null = null;
   private _commandRegistry: ICommandRegistry;
   private _componentRegistry: IComponentRegistry;
   private _pluginManager: PluginManager;
@@ -96,6 +98,11 @@ export class Kernel extends EventEmitter implements IKernel {
       this._themeManager = new ThemeManager();
       this._themeManager.injectCSS();
 
+      // Initialize worker manager
+      const { WorkerManager } = await import("./WorkerManager.js");
+      this._workerManager = WorkerManager.getInstance();
+      await this._workerManager.initialize();
+
       this._isStarted = true;
       this.emit(KernelEvent.STARTED);
 
@@ -125,6 +132,10 @@ export class Kernel extends EventEmitter implements IKernel {
       // Cleanup subsystems
       if (this._themeManager) {
         this._themeManager.dispose();
+      }
+
+      if (this._workerManager) {
+        await this._workerManager.shutdown();
       }
 
       this._isStarted = false;
@@ -168,6 +179,13 @@ export class Kernel extends EventEmitter implements IKernel {
 
   public getGlobalState(): IStateManager {
     return this._globalState;
+  }
+
+  public getWorkerManager(): IWorkerManager {
+    if (!this._workerManager) {
+      throw new Error("Worker manager not initialized");
+    }
+    return this._workerManager;
   }
 
   // Console Management

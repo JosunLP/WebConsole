@@ -1,15 +1,22 @@
 /**
- * Basis-Klasse für Built-in Commands
+ * Base class for built-in commands
  */
 
 import { ICommandHandler } from "../interfaces/index.js";
+import {
+  IWorkerTask,
+  WorkerTaskPriority,
+  WorkerTaskType,
+} from "../interfaces/IWorkerTask.interface.js";
 
 import { CommandContext, Path } from "../types/index.js";
+import { generateMessageId } from "../utils/helpers.js";
 
+import { kernel } from "../core/Kernel.js";
 import { CommandType, ExitCode } from "../enums/index.js";
 
 /**
- * Abstrakte Basis-Klasse für Commands
+ * Abstract base class for commands
  */
 export abstract class BaseCommand implements ICommandHandler {
   public readonly type = CommandType.BUILTIN;
@@ -21,12 +28,12 @@ export abstract class BaseCommand implements ICommandHandler {
   ) {}
 
   /**
-   * Command ausführen (muss von Subklassen implementiert werden)
+   * Execute command (must be implemented by subclasses)
    */
   abstract execute(context: CommandContext): Promise<ExitCode>;
 
   /**
-   * Hilfe-Text ausgeben
+   * Output help text
    */
   protected async outputHelp(context: CommandContext): Promise<void> {
     const helpText = `${this.name} - ${this.description}\n\nUsage: ${this.usage}\n`;
@@ -34,7 +41,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Text zu stdout schreiben
+   * Write text to stdout
    */
   protected async writeToStdout(
     context: CommandContext,
@@ -49,7 +56,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Text zu stderr schreiben
+   * Write text to stderr
    */
   protected async writeToStderr(
     context: CommandContext,
@@ -64,7 +71,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Fehler ausgeben und Error-Code zurückgeben
+   * Output error and return error code
    */
   protected async outputError(
     context: CommandContext,
@@ -75,21 +82,21 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Prüft ob Help-Flag gesetzt ist
+   * Check if help flag is set
    */
   protected hasHelpFlag(context: CommandContext): boolean {
     return context.args.includes("--help") || context.args.includes("-h");
   }
 
   /**
-   * Pfad relativ zum Working Directory auflösen
+   * Resolve path relative to working directory
    */
   protected resolvePath(context: CommandContext, path: string): Path {
     if (path.startsWith("/")) {
-      return path; // Absoluter Pfad
+      return path; // Absolute path
     }
 
-    // Relativer Pfad zum Working Directory
+    // Relative path to working directory
     const cwd = context.workingDirectory.endsWith("/")
       ? context.workingDirectory
       : context.workingDirectory + "/";
@@ -98,7 +105,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Environment-Variable abrufen
+   * Get environment variable
    */
   protected getEnvVar(
     context: CommandContext,
@@ -109,7 +116,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Argumente parsen und Flags extrahieren
+   * Parse arguments and extract flags
    */
   protected parseArgs(context: CommandContext): {
     flags: Set<string>;
@@ -151,7 +158,7 @@ export abstract class BaseCommand implements ICommandHandler {
         // Short option(s)
         const chars = arg.substring(1);
 
-        // Könnte mehrere Flags sein: -abc = -a -b -c
+        // Could be multiple flags: -abc = -a -b -c
         for (const char of chars) {
           flags.add(char);
         }
@@ -165,7 +172,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Standardmäßige Validierung für Command-Argumente
+   * Standard validation for command arguments
    */
   protected validateArgs(
     context: CommandContext,
@@ -192,7 +199,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Bytes in menschenlesbare Größe formatieren
+   * Format bytes into human-readable size
    */
   protected formatFileSize(bytes: number): string {
     const units = ["B", "K", "M", "G", "T"];
@@ -210,7 +217,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Permissions in rwx-Format formatieren
+   * Format permissions in rwx format
    */
   protected formatPermissions(permissions: number): string {
     const perms = permissions.toString(8).padStart(3, "0");
@@ -227,7 +234,7 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * Datum formatieren
+   * Format date
    */
   protected formatDate(timestamp: number): string {
     const date = new Date(timestamp);
@@ -235,7 +242,7 @@ export abstract class BaseCommand implements ICommandHandler {
     const isThisYear = date.getFullYear() === now.getFullYear();
 
     if (isThisYear) {
-      // Innerhalb des aktuellen Jahres: "Jan 15 14:30"
+      // Within current year: "Jan 15 14:30"
       return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -244,7 +251,7 @@ export abstract class BaseCommand implements ICommandHandler {
         hour12: false,
       });
     } else {
-      // Anderes Jahr: "Jan 15  2023"
+      // Other year: "Jan 15  2023"
       return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -254,14 +261,14 @@ export abstract class BaseCommand implements ICommandHandler {
   }
 
   /**
-   * ANSI-Farbcodes für Terminal-Output
+   * ANSI color codes for terminal output
    */
   protected static readonly COLORS = {
     RESET: "\x1b[0m",
     BOLD: "\x1b[1m",
     DIM: "\x1b[2m",
 
-    // Vordergrundfarben
+    // Foreground colors
     BLACK: "\x1b[30m",
     RED: "\x1b[31m",
     GREEN: "\x1b[32m",
@@ -271,7 +278,7 @@ export abstract class BaseCommand implements ICommandHandler {
     CYAN: "\x1b[36m",
     WHITE: "\x1b[37m",
 
-    // Helle Vordergrundfarben
+    // Bright foreground colors
     BRIGHT_BLACK: "\x1b[90m",
     BRIGHT_RED: "\x1b[91m",
     BRIGHT_GREEN: "\x1b[92m",
@@ -283,9 +290,92 @@ export abstract class BaseCommand implements ICommandHandler {
   };
 
   /**
-   * Text mit Farbe formatieren
+   * Format text with color
    */
   protected colorize(text: string, color: string): string {
     return `${color}${text}${BaseCommand.COLORS.RESET}`;
+  }
+
+  /**
+   * Execute task in worker
+   */
+  protected async runInWorker<T, R>(
+    payload: T,
+    options: {
+      command?: string;
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+      type?: WorkerTaskType;
+    } = {},
+  ): Promise<R> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+
+    const task: IWorkerTask<T, R> = {
+      id: this.generateTaskId(),
+      payload,
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000, // 30 seconds default
+      command: options.command || this.name,
+      type: options.type || WorkerTaskType.COMMAND,
+    };
+
+    return workerManager.executeTask(task);
+  }
+
+  /**
+   * Simplified worker execution for command-specific tasks
+   */
+  protected async runCommandInWorker<T>(
+    taskFunction: string | (() => T),
+    options: {
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+    } = {},
+  ): Promise<T> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+    return workerManager.runTask<T, T>(taskFunction, {
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000,
+      command: this.name,
+      type: WorkerTaskType.COMMAND,
+    });
+  }
+
+  /**
+   * Parallel executed command tasks
+   */
+  protected async runParallelCommands<T>(
+    taskFunctions: (string | (() => T))[],
+    options: {
+      priority?: WorkerTaskPriority;
+      timeout?: number;
+    } = {},
+  ): Promise<T[]> {
+    if (!kernel.isStarted) {
+      throw new Error("Kernel not started - cannot execute worker tasks");
+    }
+
+    const workerManager = kernel.getWorkerManager();
+    return workerManager.runParallelBatch(taskFunctions, {
+      priority: options.priority || WorkerTaskPriority.NORMAL,
+      timeout: options.timeout || 30000,
+      command: this.name,
+      type: WorkerTaskType.COMMAND,
+    });
+  }
+
+  /**
+   * Generate task ID
+   */
+  private generateTaskId(): string {
+    return `${this.name}-task-${Date.now()}-${generateMessageId()}`;
   }
 }

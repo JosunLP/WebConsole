@@ -1,5 +1,5 @@
 /**
- * Component Registry - Verwaltung von Framework-Komponenten
+ * Component Registry - Management of framework components
  */
 
 import type { IComponentRegistry } from "../interfaces/IComponentRegistry.interface.js";
@@ -25,17 +25,17 @@ export class ComponentRegistry
   }
 
   public async load(name: string): Promise<unknown> {
-    // Bereits geladen?
+    // Already loaded?
     if (this.loaded.has(name)) {
       return this.loaded.get(name)!;
     }
 
-    // Bereits am Laden?
+    // Already loading?
     if (this.initializing.has(name)) {
       return this.initializing.get(name)!;
     }
 
-    // Loader vorhanden?
+    // Loader available?
     const loader = this.components.get(name);
     if (!loader) {
       throw new Error(`Component '${name}' not registered`);
@@ -81,7 +81,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Alle registrierten Framework-Komponenten automatisch registrieren
+   * Automatically register all registered framework components
    */
   public async registerBuiltInComponents(): Promise<void> {
     // React Component
@@ -103,7 +103,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Alle Framework-Komponenten vorladen
+   * Preload all framework components
    */
   public async preloadAllComponents(): Promise<void> {
     const components = this.list();
@@ -117,7 +117,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Framework-spezifischen Loader abrufen
+   * Get framework-specific loader
    */
   public getFrameworkLoader(
     framework: string,
@@ -126,7 +126,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Debug-Informationen
+   * Debug information
    */
   public debug(): object {
     return {
@@ -137,7 +137,7 @@ export class ComponentRegistry
   }
 
   /**
-   * Ressourcen freigeben
+   * Release resources
    */
   public override dispose(): void {
     this.components.clear();
@@ -147,5 +147,5 @@ export class ComponentRegistry
   }
 }
 
-// Globale Instanz
+// Global instance
 export const componentRegistry = new ComponentRegistry();

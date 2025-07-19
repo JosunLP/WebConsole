@@ -20,5 +20,5 @@ export interface ICommandRegistry {
   getAliases(): Record<string, string>;
 
   // Built-in Commands
-  registerBuiltinCommands(vfs: any): void;
+  registerBuiltinCommands(vfs: import("./IVFS.interface.js").IVFS): void;
 }
