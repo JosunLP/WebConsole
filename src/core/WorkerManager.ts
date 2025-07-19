@@ -76,7 +76,6 @@ class WorkerPool implements IWorkerPool {
     });
 
     worker.addEventListener("error", (error) => {
-      // Use Logger instead of console
       this.handleWorkerError(worker, error);
     });
 
@@ -564,10 +563,14 @@ export class WorkerManager extends EventEmitter implements IWorkerManager {
 
   listActiveTasks(): string[] {
     const tasks: string[] = [];
-    // Implementation would collect all active task IDs here
-    // for (const pool of this.pools.values()) {
-    //   tasks.push(...pool.getActiveTaskIds());
-    // }
+    // Collect all active task IDs from all pools
+    for (const pool of this.pools.values()) {
+      // Access the private activeTasks map to get task IDs
+      const activeTaskIds = Array.from(
+        (pool as WorkerPool)["activeTasks"].keys(),
+      ) as string[];
+      tasks.push(...activeTaskIds);
+    }
     return tasks;
   }
 

@@ -364,9 +364,8 @@ export class TaskWorker extends BaseWorker {
 
       const { payload } = task;
 
-      if (typeof payload === "object" && payload && "operation" in payload) {
-        // Type assertion mit vorheriger Überprüfung
-        const filePayload = payload as unknown as FileProcessingPayload;
+      if (this.isFileProcessingPayload(payload)) {
+        const filePayload = payload;
 
         switch (filePayload.operation) {
           case "parse": {
@@ -401,6 +400,17 @@ export class TaskWorker extends BaseWorker {
         error: error instanceof Error ? error : new Error(String(error)),
       };
     }
+  }
+
+  private isFileProcessingPayload(
+    payload: unknown,
+  ): payload is FileProcessingPayload {
+    return (
+      typeof payload === "object" &&
+      payload !== null &&
+      "operation" in payload &&
+      (payload as FileProcessingPayload).operation !== undefined
+    );
   }
 
   private async executeCustomTask(
